@@ -49,6 +49,9 @@ export const DashboardTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Accessible View Heading for Screen Readers */}
+      <h2 className="sr-only">Executive Bento Overview</h2>
+
       {/* Over Budget Alert Banner if applicable */}
       {metrics.isOverBudget && (
         <div className="flex items-center justify-between p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-lg text-xs text-rose-900 dark:text-rose-300">

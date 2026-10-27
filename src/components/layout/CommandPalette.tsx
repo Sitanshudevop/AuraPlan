@@ -168,13 +168,22 @@ export const CommandPalette: React.FC = () => {
             placeholder="Type a command, search vendor or task (↑↓ to navigate, ↵ to run)..."
             className="flex-1 bg-transparent text-xs text-[#18181B] dark:text-[#FAFAFA] placeholder:text-stone-400 outline-none"
             autoFocus
+            aria-label="Search workspace commands, vendors, or tasks"
+            aria-autocomplete="list"
+            aria-controls="command-results"
           />
           <kbd className="text-[10px] font-mono px-1.5 py-0.5 bg-stone-100 dark:bg-zinc-800 text-stone-500 rounded border border-stone-200 dark:border-zinc-700 shrink-0">
             ESC
           </kbd>
         </div>
 
-        <div ref={listRef} className="max-h-80 overflow-y-auto p-2 space-y-0.5 no-scrollbar">
+        <div
+          ref={listRef}
+          id="command-results"
+          role="listbox"
+          aria-label="Available commands"
+          className="max-h-80 overflow-y-auto p-2 space-y-0.5 no-scrollbar"
+        >
           {filtered.length === 0 ? (
             <div className="p-8 text-center text-xs text-stone-400">
               No matching actions, vendors, or tasks found.
@@ -185,6 +194,8 @@ export const CommandPalette: React.FC = () => {
               return (
                 <button
                   key={item.id}
+                  role="option"
+                  aria-selected={isSelected}
                   onClick={() => {
                     item.action();
                     setCommandPaletteOpen(false);

@@ -49,14 +49,14 @@ export const Header: React.FC = () => {
           <span className="font-semibold text-sm tracking-tight hidden md:inline text-[#18181B] dark:text-[#FAFAFA]">
             Vow & Venue
           </span>
-          <span className="text-[10px] text-stone-400 font-mono hidden md:inline">by AuraPlan</span>
+          <span className="text-[10px] text-stone-500 dark:text-zinc-400 font-mono hidden md:inline">by AuraPlan</span>
         </div>
 
         <div className="h-4 w-px bg-stone-200 dark:bg-zinc-800 shrink-0" />
 
         {/* 1-Click Judge Demo Presets */}
         <div className="flex items-center gap-1.5 shrink-0">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-stone-400 hidden xl:inline">
+          <span className="text-[10px] uppercase font-bold tracking-wider text-stone-500 dark:text-zinc-400 hidden xl:inline">
             Judge Presets:
           </span>
           {PRESET_OPTIONS.map((p) => {
@@ -65,6 +65,7 @@ export const Header: React.FC = () => {
               <button
                 key={p.id}
                 onClick={() => switchPreset(p.id)}
+                aria-pressed={isActive}
                 className={`text-xs px-2.5 py-1 rounded-md font-medium transition-all ${
                   isActive
                     ? 'bg-[#18181B] text-white dark:bg-white dark:text-[#18181B] shadow-xs'
@@ -79,6 +80,7 @@ export const Header: React.FC = () => {
 
           <button
             onClick={() => setNewEventModalOpen(true)}
+            aria-label="New Event - Generate Custom Event Plan"
             className="flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-stone-100 hover:bg-stone-200 text-stone-700 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-300 font-medium"
             title="Generate Custom Event Plan"
           >

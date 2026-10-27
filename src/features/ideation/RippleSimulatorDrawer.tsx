@@ -6,25 +6,22 @@ import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { formatCurrency } from '../../utils/formatters';
 import { logger } from '../../utils/logger';
+import { useFocusTrap } from '../../hooks';
 import {
   Sparkles, X, RotateCcw, CheckCircle2, TrendingUp, Loader2, CloudRain, Users, Percent,
 } from 'lucide-react';
 
 export const RippleSimulatorDrawer: React.FC = () => {
   const {
-    isCopilotOpen,
-    setCopilotOpen,
-    state,
-    currency,
-    applyRipple,
-    undoLastRipple,
-    canUndo,
+    isCopilotOpen, setCopilotOpen, state, currency, applyRipple, undoLastRipple, canUndo,
   } = useWorkspace();
 
   const [selectedPreset, setSelectedPreset] = useState<RipplePresetId>('guest_surge_25');
   const [customPrompt, setCustomPrompt] = useState('');
   const [loading, setLoading] = useState(false);
   const [diffResult, setDiffResult] = useState<RippleDiffResult | null>(null);
+
+  const drawerRef = useFocusTrap<HTMLDivElement>(isCopilotOpen, () => setCopilotOpen(false));
 
   const presets: { id: RipplePresetId; label: string; icon: React.ReactNode }[] = [
     { id: 'guest_surge_25', label: '+25% Guest Surge', icon: <Users className="w-3.5 h-3.5 text-indigo-500" /> },
@@ -56,12 +53,18 @@ export const RippleSimulatorDrawer: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden bg-black/40 backdrop-blur-xs flex justify-end">
-      <div className="w-full max-w-xl bg-white dark:bg-[#121215] border-l border-stone-200/90 dark:border-zinc-800 h-full flex flex-col shadow-md animate-in slide-in-from-right duration-150">
+      <div
+        ref={drawerRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ripple-drawer-title"
+        className="w-full max-w-xl bg-white dark:bg-[#121215] border-l border-stone-200/90 dark:border-zinc-800 h-full flex flex-col shadow-md animate-in slide-in-from-right duration-150"
+      >
         {/* Drawer Header */}
         <div className="p-4 border-b border-stone-200 dark:border-zinc-800 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-            <h3 className="font-bold text-sm text-[#18181B] dark:text-[#FAFAFA]">
+            <h3 id="ripple-drawer-title" className="font-bold text-sm text-[#18181B] dark:text-[#FAFAFA]">
               "What-If" Ripple Simulator
             </h3>
           </div>

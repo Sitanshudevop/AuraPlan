@@ -92,6 +92,7 @@ export const Sidebar: React.FC = () => {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
+              aria-current={isActive ? 'page' : undefined}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-xs font-medium transition-colors text-left ${
                 isActive
                   ? 'bg-stone-100 text-[#18181B] dark:bg-zinc-800 dark:text-white font-semibold'
@@ -105,7 +106,7 @@ export const Sidebar: React.FC = () => {
               {!isCollapsed && (
                 <div className="flex items-center justify-between flex-1">
                   <span className="truncate">{item.label}</span>
-                  <kbd className="text-[9px] font-mono text-stone-400 dark:text-zinc-500 opacity-60">
+                  <kbd className="text-[9px] font-mono text-stone-500 dark:text-zinc-400 opacity-75">
                     {item.shortcut}
                   </kbd>
                 </div>
@@ -118,13 +119,13 @@ export const Sidebar: React.FC = () => {
       {/* Bottom: Collapse Button & Status */}
       <div className="p-3 border-t border-stone-200 dark:border-zinc-800 flex items-center justify-between">
         {!isCollapsed && (
-          <div className="text-[10px] font-mono text-stone-400 dark:text-zinc-500">
+          <div className="text-[10px] font-mono text-stone-500 dark:text-zinc-400">
             <span>AuraPlan v1.0 • AA Compliant</span>
           </div>
         )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-1 text-stone-400 hover:text-stone-700 dark:hover:text-zinc-200 rounded-md hover:bg-stone-100 dark:hover:bg-zinc-800 transition-colors ml-auto"
+          className="p-1 text-stone-500 hover:text-stone-800 dark:text-zinc-400 dark:hover:text-zinc-100 rounded-md hover:bg-stone-100 dark:hover:bg-zinc-800 transition-colors ml-auto"
           aria-label={isCollapsed ? 'Expand navigation' : 'Collapse navigation'}
         >
           {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}

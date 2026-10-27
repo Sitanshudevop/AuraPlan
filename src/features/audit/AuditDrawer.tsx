@@ -5,6 +5,7 @@ import { getStorageUsageBytes } from '../../utils/storage';
 import { sanitizeInput } from '../../utils/sanitizer';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
+import { useFocusTrap } from '../../hooks';
 import {
   ShieldCheck,
   X,
@@ -27,6 +28,8 @@ export const AuditDrawer: React.FC = () => {
   const [sanitizedOutput, setSanitizedOutput] = useState('');
   const [testRun, setTestRun] = useState(false);
 
+  const drawerRef = useFocusTrap<HTMLDivElement>(isAuditDrawerOpen, () => setAuditDrawerOpen(false));
+
   if (!isAuditDrawerOpen) return null;
 
   const aiStatus = getAiEngineStatus();
@@ -40,13 +43,19 @@ export const AuditDrawer: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden bg-black/40 backdrop-blur-xs flex justify-end">
-      <div className="w-full max-w-xl bg-white dark:bg-[#121215] border-l border-stone-200/90 dark:border-zinc-800 h-full flex flex-col shadow-md animate-in slide-in-from-right duration-150">
+      <div
+        ref={drawerRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="audit-drawer-title"
+        className="w-full max-w-xl bg-white dark:bg-[#121215] border-l border-stone-200/90 dark:border-zinc-800 h-full flex flex-col shadow-md animate-in slide-in-from-right duration-150"
+      >
         {/* Drawer Header */}
         <div className="p-4 border-b border-stone-200 dark:border-zinc-800 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             <div>
-              <h3 className="font-bold text-sm text-[#18181B] dark:text-[#FAFAFA]">
+              <h3 id="audit-drawer-title" className="font-bold text-sm text-[#18181B] dark:text-[#FAFAFA]">
                 100/100 Judge Audit & System Health
               </h3>
               <p className="text-[11px] text-stone-500 font-mono">

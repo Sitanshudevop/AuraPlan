@@ -54,6 +54,11 @@ export const TaxAndCateringCalc: React.FC = () => {
             step="50"
             value={perPlateRate}
             onChange={(e) => setPerPlateRate(Number(e.target.value))}
+            aria-label="Catering rate per plate cover"
+            aria-valuemin={300}
+            aria-valuemax={5000}
+            aria-valuenow={perPlateRate}
+            aria-valuetext={formatCurrency(perPlateRate, currency)}
             className="w-full h-1.5 bg-stone-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-stone-900 dark:accent-white"
           />
 
