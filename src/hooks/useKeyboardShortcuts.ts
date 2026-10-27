@@ -46,3 +46,4 @@ export function useKeyboardShortcuts({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onToggleCommandPalette, onCloseOverlays, onSelectTabByIndex, tabCount]);
 }
+

@@ -26,3 +26,4 @@ export function useTheme(initialDark = false): UseThemeReturn {
 
   return { isDark, toggleDarkMode, setDarkMode };
 }
+
