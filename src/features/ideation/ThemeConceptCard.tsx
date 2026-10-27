@@ -27,7 +27,13 @@ export const ThemeConceptCard: React.FC<ThemeConceptCardProps> = ({
     setTimeout(() => setCopiedHex(null), 1800);
   };
 
-  const handleAdd = (id: string, title: string, cost: number, category: any, task: string) => {
+  const handleAdd = (
+    id: string,
+    title: string,
+    cost: number,
+    category: 'decor' | 'av_photo' | 'venue' | 'catering',
+    task: string
+  ) => {
     onAddToPlan(title, cost, category, task);
     setAddedIds((prev) => new Set(prev).add(id));
   };

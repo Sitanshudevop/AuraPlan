@@ -10,6 +10,7 @@ import { INITIAL_PRESETS } from '../data/presets';
 import { workspaceReducer } from './workspaceReducer';
 import { loadPersistedState, savePersistedState, clearPersistedState } from '../utils/storage';
 import { WorkspaceContextType } from './WorkspaceContextTypes';
+import { useTheme, useKeyboardShortcuts } from '../hooks';
 
 const WorkspaceContext = createContext<WorkspaceContextType | null>(null);
 
@@ -21,7 +22,7 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [activePresetId, setActivePresetId] = useState<string>(initialPresetId);
   const [activeTab, setActiveTab] = useState<ActiveTab>('dashboard');
   const [currency, setCurrency] = useState<Currency>(initialData.event.currency || 'INR');
-  const [isDark, setIsDark] = useState<boolean>(persisted?.theme === 'dark');
+  const { isDark, toggleDarkMode } = useTheme(persisted?.theme === 'dark');
   const [history, setHistory] = useState<EventWorkspaceState[]>([]);
   const [isCommandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [isAuditDrawerOpen, setAuditDrawerOpen] = useState(false);
@@ -32,12 +33,6 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [state, dispatch] = useReducer(workspaceReducer, initialData);
 
   const announce = useCallback((msg: string) => setAnnouncerMessage(msg), []);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDark);
-  }, [isDark]);
-
-  const toggleDarkMode = useCallback(() => setIsDark((p) => !p), []);
 
   useEffect(() => {
     savePersistedState({
@@ -171,28 +166,29 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const toggleTax = useCallback((include: boolean) => dispatch({ type: 'TOGGLE_TAX', payload: include }), []);
   const setTaxRate = useCallback((rate: number) => dispatch({ type: 'SET_TAX_RATE', payload: rate }), []);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        setCommandPaletteOpen((p) => !p);
-      } else if (e.key === 'Escape') {
-        setCommandPaletteOpen(false);
-        setAuditDrawerOpen(false);
-        setCopilotOpen(false);
-        setNewEventModalOpen(false);
-      } else if (e.altKey && !isNaN(Number(e.key))) {
-        const tabs: ActiveTab[] = ['dashboard', 'budget', 'timeline', 'vendors', 'ideation', 'guests'];
-        const num = Number(e.key);
-        if (num >= 1 && num <= tabs.length) {
-          e.preventDefault();
-          setActiveTab(tabs[num - 1]);
-        }
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+  const closeAllOverlays = useCallback(() => {
+    setCommandPaletteOpen(false);
+    setAuditDrawerOpen(false);
+    setCopilotOpen(false);
+    setNewEventModalOpen(false);
   }, []);
+
+  const toggleCommandPalette = useCallback(() => {
+    setCommandPaletteOpen((p) => !p);
+  }, []);
+
+  const selectTabByIndex = useCallback((index: number) => {
+    const tabs: ActiveTab[] = ['dashboard', 'budget', 'timeline', 'vendors', 'ideation', 'guests'];
+    if (index >= 0 && index < tabs.length) {
+      setActiveTab(tabs[index]);
+    }
+  }, []);
+
+  useKeyboardShortcuts({
+    onToggleCommandPalette: toggleCommandPalette,
+    onCloseOverlays: closeAllOverlays,
+    onSelectTabByIndex: selectTabByIndex,
+  });
 
   const value = useMemo(
     () => ({

@@ -140,7 +140,7 @@ export function workspaceReducer(state: EventWorkspaceState, action: WorkspaceAc
 
     case 'APPLY_RIPPLE': {
       const diff = action.payload;
-      let budgetItems = [...state.budgetItems];
+      const budgetItems = [...state.budgetItems];
 
       // Mutate budget allocations based on ripple
       diff.budgetAdjustments.forEach((adj) => {

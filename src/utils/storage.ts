@@ -1,4 +1,5 @@
 import { EventWorkspaceState } from '../types/state';
+import { logger } from './logger';
 
 const STORAGE_KEY = 'auraplan_workspace_v1';
 
@@ -18,7 +19,7 @@ export function loadPersistedState(): PersistedState | null {
       return parsed;
     }
   } catch (err) {
-    console.warn('Failed to parse saved state from localStorage:', err);
+    logger.warn('Failed to parse saved state from localStorage:', err);
   }
   return null;
 }
@@ -27,7 +28,7 @@ export function savePersistedState(state: PersistedState): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch (err) {
-    console.warn('Failed to persist state to localStorage:', err);
+    logger.warn('Failed to persist state to localStorage:', err);
   }
 }
 
@@ -35,7 +36,7 @@ export function clearPersistedState(): void {
   try {
     localStorage.removeItem(STORAGE_KEY);
   } catch (err) {
-    console.warn('Failed to clear storage:', err);
+    logger.warn('Failed to clear storage:', err);
   }
 }
 

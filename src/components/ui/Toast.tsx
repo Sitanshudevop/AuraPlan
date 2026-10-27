@@ -8,14 +8,14 @@ export const Toast: React.FC = () => {
   const [currentMessage, setCurrentMessage] = useState('');
 
   useEffect(() => {
-    if (announcerMessage) {
-      setCurrentMessage(announcerMessage);
-      setVisible(true);
-      const timer = setTimeout(() => {
-        setVisible(false);
-      }, 2600);
-      return () => clearTimeout(timer);
-    }
+    if (!announcerMessage) return;
+
+    setCurrentMessage(announcerMessage);
+    setVisible(true);
+    const timer = setTimeout(() => {
+      setVisible(false);
+    }, 2600);
+    return () => clearTimeout(timer);
   }, [announcerMessage]);
 
   if (!visible || !currentMessage) return null;

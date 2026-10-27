@@ -6,6 +6,7 @@ import { EventType, EventSetting } from '../../types/event';
 import { generateCustomPlan } from '../../services/geminiService';
 import { Sparkles, Loader2 } from 'lucide-react';
 import { sanitizeInput } from '../../utils/sanitizer';
+import { logger } from '../../utils/logger';
 
 export const NewEventModal: React.FC = () => {
   const { isNewEventModalOpen, setNewEventModalOpen, setCustomState, currency, setActiveTab } = useWorkspace();
@@ -56,7 +57,7 @@ export const NewEventModal: React.FC = () => {
       setNewEventModalOpen(false);
       setActiveTab('dashboard');
     } catch (err) {
-      console.error(err);
+      logger.error('Custom plan synthesis failed', err);
       setError('Plan synthesis failed. Please review your parameters.');
     } finally {
       setLoading(false);
