@@ -3,6 +3,7 @@ import { Vendor, VendorVetQuestions } from '../../types/vendor';
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
 import { generateVendorVet } from '../../services/geminiService';
+import { logger } from '../../utils/logger';
 import { Copy, Check, MessageSquare, Mail, AlertCircle, HelpCircle, Loader2 } from 'lucide-react';
 
 interface VendorNegotiationModalProps {
@@ -27,7 +28,7 @@ export const VendorNegotiationModal: React.FC<VendorNegotiationModalProps> = ({
     setLoading(true);
     generateVendorVet(vendor.name, vendor.category, vendor.estimatedPrice || vendor.contractedPrice)
       .then((res) => setData(res))
-      .catch((err) => console.error(err))
+      .catch((err) => logger.error('Vendor vetting generation failed', err))
       .finally(() => setLoading(false));
   }, [vendor]);
 

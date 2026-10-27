@@ -5,16 +5,9 @@ import { generateRippleScenario } from '../../services/geminiService';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { formatCurrency } from '../../utils/formatters';
+import { logger } from '../../utils/logger';
 import {
-  Sparkles,
-  X,
-  RotateCcw,
-  CheckCircle2,
-  TrendingUp,
-  Loader2,
-  CloudRain,
-  Users,
-  Percent,
+  Sparkles, X, RotateCcw, CheckCircle2, TrendingUp, Loader2, CloudRain, Users, Percent,
 } from 'lucide-react';
 
 export const RippleSimulatorDrawer: React.FC = () => {
@@ -47,7 +40,7 @@ export const RippleSimulatorDrawer: React.FC = () => {
       const res = await generateRippleScenario(presetId, state, presetId === 'custom' ? customPrompt : undefined);
       setDiffResult(res);
     } catch (err) {
-      console.error(err);
+      logger.error('Ripple simulation failed', err);
     } finally {
       setLoading(false);
     }

@@ -4,6 +4,7 @@ import { ThemeIdea } from '../../types/ideation';
 import { ThemeConceptCard } from './ThemeConceptCard';
 import { generateThemeIdea } from '../../services/geminiService';
 import { Button } from '../../components/ui/Button';
+import { logger } from '../../utils/logger';
 import { Sparkles, RefreshCw, Loader2 } from 'lucide-react';
 
 export const IdeationTab: React.FC = () => {
@@ -26,7 +27,7 @@ export const IdeationTab: React.FC = () => {
       const result = await generateThemeIdea(state.event.type, vibe);
       setIdea(result);
     } catch (err) {
-      console.error(err);
+      logger.error('Theme generation failed', err);
     } finally {
       setLoading(false);
     }

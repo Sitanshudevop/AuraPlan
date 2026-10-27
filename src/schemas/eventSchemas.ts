@@ -140,3 +140,24 @@ export const zoneCapacitySchema = z.object({
   assignedCount: z.number().nonnegative(),
   type: z.enum(['table', 'zone', 'lounge']),
 });
+
+export const eventWorkspaceStateSchema = z.object({
+  event: eventDataSchema,
+  budgetItems: z.array(budgetItemSchema),
+  paymentMilestones: z.array(paymentMilestoneSchema),
+  sponsorships: z.array(sponsorshipInflowSchema),
+  vendors: z.array(vendorSchema),
+  macroTasks: z.array(macroTaskSchema),
+  dayOfActivities: z.array(dayOfActivitySchema),
+  guests: z.array(guestSchema),
+  zones: z.array(zoneCapacitySchema),
+  taxRatePercent: z.number().nonnegative(),
+  includeTaxInTotals: z.boolean(),
+});
+
+export const persistedStateSchema = z.object({
+  version: z.literal(1),
+  activePresetId: z.string(),
+  states: z.record(eventWorkspaceStateSchema),
+  theme: z.enum(['light', 'dark']),
+});

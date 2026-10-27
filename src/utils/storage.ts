@@ -1,4 +1,5 @@
 import { EventWorkspaceState } from '../types/state';
+import { persistedStateSchema } from '../schemas/eventSchemas';
 import { logger } from './logger';
 
 const STORAGE_KEY = 'auraplan_workspace_v1';
@@ -15,9 +16,11 @@ export function loadPersistedState(): PersistedState | null {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    if (parsed && parsed.version === 1 && parsed.states) {
-      return parsed;
+    const validated = persistedStateSchema.safeParse(parsed);
+    if (validated.success) {
+      return validated.data as unknown as PersistedState;
     }
+    logger.warn('Persisted state in localStorage failed schema validation:', validated.error.format());
   } catch (err) {
     logger.warn('Failed to parse saved state from localStorage:', err);
   }

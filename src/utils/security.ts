@@ -10,23 +10,38 @@
 export function sanitizeText(input: string): string {
   if (!input || typeof input !== 'string') return '';
 
-  // Remove script, iframe, object, embed tags and their contents
-  let clean = input.replace(/<(script|iframe|object|embed)[^>]*>([\s\S]*?)<\/\1>/gi, '');
+  let clean = input;
+  let previous = '';
+  let passes = 0;
 
-  // Remove self-closing or lone script-like tags
-  clean = clean.replace(/<(script|iframe|object|embed)[^>]*>/gi, '');
+  // Multi-pass sanitization loop to eliminate recursive/nested evasion payloads
+  while (clean !== previous && passes < 3) {
+    previous = clean;
+    passes++;
 
-  // Remove inline event handlers (e.g. onerror=, onclick=, onload=)
-  clean = clean.replace(/on\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+    // Remove script, iframe, object, embed tags and their contents
+    clean = clean.replace(/<(script|iframe|object|embed)[^>]*>([\s\S]*?)<\/\1>/gi, '');
 
-  // Remove javascript: and data: URL schemes
-  clean = clean.replace(/javascript\s*:\s*[^\s"'>]*/gi, '');
+    // Remove self-closing or lone script-like tags
+    clean = clean.replace(/<(script|iframe|object|embed)[^>]*>/gi, '');
 
-  // Strip all remaining HTML tags
-  clean = clean.replace(/<[^>]+>/g, '');
+    // Remove inline event handlers (e.g. onerror=, onclick=, onload=)
+    clean = clean.replace(/on\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+
+    // Remove javascript:, vbscript:, and data: URL schemes
+    clean = clean.replace(/(javascript|vbscript|data)\s*:\s*[^\s"'>]*/gi, '');
+
+    // Strip all remaining HTML tags
+    clean = clean.replace(/<[^>]+>/g, '');
+  }
 
   return clean.trim();
 }
+
+/**
+ * Keys blocked to defend against prototype pollution attacks
+ */
+const FORBIDDEN_OBJECT_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
 
 /**
  * Alias for backward compatibility across modules
@@ -34,7 +49,8 @@ export function sanitizeText(input: string): string {
 export const sanitizeInput = sanitizeText;
 
 /**
- * Sanitizes an object deeply by applying sanitizeText to all string properties.
+ * Sanitizes an object deeply by applying sanitizeText to all string properties,
+ * while proactively blocking and omitting prototype pollution keys.
  */
 export function sanitizeObject<T>(obj: T): T {
   if (typeof obj === 'string') {
@@ -46,7 +62,9 @@ export function sanitizeObject<T>(obj: T): T {
   if (obj !== null && typeof obj === 'object') {
     const result: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(obj)) {
-      result[key] = sanitizeObject(value);
+      if (!FORBIDDEN_OBJECT_KEYS.has(key)) {
+        result[key] = sanitizeObject(value);
+      }
     }
     return result as T;
   }
