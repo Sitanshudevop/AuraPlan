@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { CategoryRow } from './CategoryRow';
 import { TaxAndCateringCalc } from './TaxAndCateringCalc';
@@ -45,7 +45,7 @@ export const BudgetTab: React.FC = () => {
     };
   }, [state.budgetItems, state.event.targetBudget, state.includeTaxInTotals, state.taxRatePercent]);
 
-  const handleExportCsv = () => {
+  const handleExportCsv = useCallback(() => {
     let csv = 'Category,Item Name,Allocated,Vendor Quote,Contracted Actual,Amount Paid,Status\n';
     state.budgetItems.forEach((item) => {
       csv += `"${item.category}","${item.name}",${item.allocated},${item.vendorQuote},${item.actualContracted},${item.amountPaid},${item.isLocked ? 'Locked' : 'Unlocked'}\n`;
@@ -63,11 +63,11 @@ export const BudgetTab: React.FC = () => {
     a.download = `${state.event.name.toLowerCase().replace(/\s+/g, '-')}-budget.csv`;
     a.click();
     URL.revokeObjectURL(url);
-  };
+  }, [state.budgetItems, state.event.name, state.includeTaxInTotals, state.taxRatePercent, totals]);
 
-  const handlePrint = () => {
+  const handlePrint = useCallback(() => {
     window.print();
-  };
+  }, []);
 
   return (
     <div className="space-y-6">

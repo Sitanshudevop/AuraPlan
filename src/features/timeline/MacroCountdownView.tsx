@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
@@ -25,12 +25,24 @@ export const MacroCountdownView: React.FC = () => {
   const { state, updateMacroTask } = useWorkspace();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
-  const categories = Array.from(new Set(state.macroTasks.map((t) => t.category)));
+  const categories = useMemo(
+    () => Array.from(new Set(state.macroTasks.map((t) => t.category))),
+    [state.macroTasks]
+  );
 
-  const filteredTasks = state.macroTasks.filter((t) => {
-    if (selectedCategory === 'all') return true;
-    return t.category.toLowerCase() === selectedCategory.toLowerCase();
-  });
+  const filteredTasks = useMemo(() => {
+    if (selectedCategory === 'all') return state.macroTasks;
+    const lower = selectedCategory.toLowerCase();
+    return state.macroTasks.filter((t) => t.category.toLowerCase() === lower);
+  }, [state.macroTasks, selectedCategory]);
+
+  const tasksByHorizon = useMemo(() => {
+    const map = new Map<TimelineHorizon, typeof filteredTasks>();
+    horizonsOrder.forEach((h) => {
+      map.set(h, filteredTasks.filter((t) => t.horizon === h));
+    });
+    return map;
+  }, [filteredTasks]);
 
   const getPriorityVariant = (p: Priority) => {
     if (p === 'critical') return 'rose';
@@ -75,7 +87,7 @@ export const MacroCountdownView: React.FC = () => {
       ) : (
         <div className="space-y-5">
           {horizonsOrder.map((horizon) => {
-            const horizonTasks = filteredTasks.filter((t) => t.horizon === horizon);
+            const horizonTasks = tasksByHorizon.get(horizon) || [];
             if (horizonTasks.length === 0) return null;
 
             const completedCount = horizonTasks.filter((t) => t.completed).length;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { VendorKanban } from './VendorKanban';
 import { VendorQuoteTable } from './VendorQuoteTable';
@@ -12,12 +12,16 @@ export const VendorsTab: React.FC = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [activeNegotiatingVendor, setActiveNegotiatingVendor] = useState<Vendor | null>(null);
 
-  const categories = Array.from(new Set(state.vendors.map((v) => v.category)));
+  const categories = useMemo(
+    () => Array.from(new Set(state.vendors.map((v) => v.category))),
+    [state.vendors]
+  );
 
-  const filteredVendors = state.vendors.filter((v) => {
-    if (categoryFilter === 'all') return true;
-    return v.category.toLowerCase() === categoryFilter.toLowerCase();
-  });
+  const filteredVendors = useMemo(() => {
+    if (categoryFilter === 'all') return state.vendors;
+    const lowerFilter = categoryFilter.toLowerCase();
+    return state.vendors.filter((v) => v.category.toLowerCase() === lowerFilter);
+  }, [state.vendors, categoryFilter]);
 
   return (
     <div className="space-y-6">

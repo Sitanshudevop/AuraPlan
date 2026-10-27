@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Guest, RsvpStatus, GuestGroup, DietaryTag, ZoneCapacity } from '../../types/guest';
 import { Badge } from '../../components/ui/Badge';
 import { Trash2, Search } from 'lucide-react';
@@ -19,11 +19,14 @@ export const GuestTable: React.FC<GuestTableProps> = ({
   const [search, setSearch] = useState('');
   const [rsvpFilter, setRsvpFilter] = useState<string>('all');
 
-  const filtered = guests.filter((g) => {
-    const matchesSearch = g.name.toLowerCase().includes(search.toLowerCase());
-    const matchesRsvp = rsvpFilter === 'all' || g.rsvp === rsvpFilter;
-    return matchesSearch && matchesRsvp;
-  });
+  const filtered = useMemo(() => {
+    const query = search.toLowerCase();
+    return guests.filter((g) => {
+      const matchesSearch = !query || g.name.toLowerCase().includes(query);
+      const matchesRsvp = rsvpFilter === 'all' || g.rsvp === rsvpFilter;
+      return matchesSearch && matchesRsvp;
+    });
+  }, [guests, search, rsvpFilter]);
 
   const getGroupVariant = (group: GuestGroup) => {
     if (group === 'vip' || group === 'speaker_sponsor') return 'indigo';

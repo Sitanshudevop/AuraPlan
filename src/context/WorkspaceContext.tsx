@@ -35,12 +35,16 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const announce = useCallback((msg: string) => setAnnouncerMessage(msg), []);
 
   useEffect(() => {
-    savePersistedState({
-      version: 1,
-      activePresetId,
-      states: { [activePresetId]: state },
-      theme: isDark ? 'dark' : 'light',
-    });
+    const timer = setTimeout(() => {
+      savePersistedState({
+        version: 1,
+        activePresetId,
+        states: { [activePresetId]: state },
+        theme: isDark ? 'dark' : 'light',
+      });
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, [state, activePresetId, isDark]);
 
   const pushHistory = useCallback((curr: EventWorkspaceState) => {

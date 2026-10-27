@@ -15,7 +15,12 @@ export const Skeleton: React.FC<SkeletonProps> = ({ className = 'h-4 w-full' }) 
 
 export const TabSkeleton: React.FC = () => {
   return (
-    <div className="space-y-6 p-6 animate-pulse" role="status" aria-label="Loading content">
+    <div
+      className="space-y-6 p-6 animate-pulse"
+      role="status"
+      aria-busy="true"
+      aria-label="Loading workspace module..."
+    >
       <div className="h-8 bg-stone-200 dark:bg-zinc-800 rounded w-1/4" />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="h-28 bg-stone-200 dark:bg-zinc-800 rounded" />
