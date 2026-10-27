@@ -101,3 +101,18 @@ export function maskApiKey(key: string | undefined): string {
   return `${key.slice(0, 4)}••••••••${key.slice(-3)}`;
 }
 
+/**
+ * Content-Security-Policy (CSP) Directives
+ * Enforces strict script execution boundaries, disallowing untrusted remote scripts, framing, and unauthorized connections.
+ */
+export const CSP_POLICY_DIRECTIVES = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' https://fonts.gstatic.com data:",
+  "img-src 'self' data: https: blob:",
+  "connect-src 'self' https://generativelanguage.googleapis.com",
+  "object-src 'none'",
+  "base-uri 'self'",
+].join('; ');
+

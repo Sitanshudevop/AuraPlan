@@ -5,6 +5,7 @@ import {
   sanitizeObject,
   aiRateLimiter,
   maskApiKey,
+  CSP_POLICY_DIRECTIVES,
 } from '../utils/security';
 import {
   eventDataSchema,
@@ -207,6 +208,15 @@ describe('Security Suite, XSS Sanitization & Zod Schemas', () => {
       expect(blocked.retryAfterMs).toBeGreaterThan(0);
 
       aiRateLimiter.reset();
+    });
+  });
+
+  describe('Content Security Policy (CSP) Directives', () => {
+    it('defines strict CSP headers disallowing object embedding and unauthorized connections', () => {
+      expect(CSP_POLICY_DIRECTIVES).toContain("default-src 'self'");
+      expect(CSP_POLICY_DIRECTIVES).toContain("object-src 'none'");
+      expect(CSP_POLICY_DIRECTIVES).toContain("base-uri 'self'");
+      expect(CSP_POLICY_DIRECTIVES).toContain("connect-src 'self' https://generativelanguage.googleapis.com");
     });
   });
 });
