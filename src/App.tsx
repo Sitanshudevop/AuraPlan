@@ -31,6 +31,9 @@ const AuditDrawer = lazy(() =>
 const RippleSimulatorDrawer = lazy(() =>
   import('./features/ideation/RippleSimulatorDrawer').then((m) => ({ default: m.RippleSimulatorDrawer }))
 );
+const PlanningAssistantDrawer = lazy(() =>
+  import('./features/copilot/PlanningAssistantDrawer').then((m) => ({ default: m.PlanningAssistantDrawer }))
+);
 const NewEventModal = lazy(() =>
   import('./components/modals/NewEventModal').then((m) => ({ default: m.NewEventModal }))
 );
@@ -77,6 +80,7 @@ export const App: React.FC = () => {
         <CommandPalette />
         <Suspense fallback={null}>
           <RippleSimulatorDrawer />
+          <PlanningAssistantDrawer />
           <AuditDrawer />
           <NewEventModal />
         </Suspense>

@@ -7,6 +7,7 @@ import {
   Sun,
   ShieldCheck,
   Sparkles,
+  Bot,
   Plus,
   Download,
   IndianRupee,
@@ -25,6 +26,7 @@ export const Header: React.FC = () => {
     setCommandPaletteOpen,
     setAuditDrawerOpen,
     setCopilotOpen,
+    setAssistantOpen,
     setNewEventModalOpen,
   } = useWorkspace();
 
@@ -134,6 +136,17 @@ export const Header: React.FC = () => {
         >
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
           <span className="hidden md:inline font-mono text-[11px]">100/100 Ready</span>
+        </button>
+
+        {/* AI Planning Assistant Drawer Trigger */}
+        <button
+          onClick={() => setAssistantOpen(true)}
+          className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md bg-indigo-50 text-indigo-700 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:text-indigo-300 dark:hover:bg-indigo-900/60 border border-indigo-200 dark:border-indigo-800 transition-colors"
+          title="Chat with GenAI Planning Assistant"
+          aria-label="Open AI Planning Assistant"
+        >
+          <Bot className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+          <span className="hidden sm:inline">AI Assistant</span>
         </button>
 
         {/* AI Co-Pilot / Ripple Drawer Trigger */}

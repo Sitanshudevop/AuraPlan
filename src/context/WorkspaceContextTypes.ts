@@ -16,6 +16,7 @@ export interface WorkspaceContextType {
   isCommandPaletteOpen: boolean;
   isAuditDrawerOpen: boolean;
   isCopilotOpen: boolean;
+  isAssistantOpen: boolean;
   isNewEventModalOpen: boolean;
   announcerMessage: string;
   setActiveTab: (tab: ActiveTab) => void;
@@ -45,6 +46,7 @@ export interface WorkspaceContextType {
   setCommandPaletteOpen: (open: boolean) => void;
   setAuditDrawerOpen: (open: boolean) => void;
   setCopilotOpen: (open: boolean) => void;
+  setAssistantOpen: (open: boolean) => void;
   setNewEventModalOpen: (open: boolean) => void;
   announce: (msg: string) => void;
 }

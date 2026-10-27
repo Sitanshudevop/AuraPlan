@@ -7,6 +7,7 @@ import {
   CalendarClock,
   Briefcase,
   Sparkles,
+  Bot,
   Users,
   Moon,
   Sun,
@@ -40,6 +41,7 @@ export const CommandPalette: React.FC = () => {
     toggleDarkMode,
     setAuditDrawerOpen,
     setCopilotOpen,
+    setAssistantOpen,
     setNewEventModalOpen,
     autoBalanceBudget,
     resetToFactoryDefaults,
@@ -62,6 +64,7 @@ export const CommandPalette: React.FC = () => {
     { id: 'pre-birthday', title: 'Switch to Midnight Botanical 25th Milestone Gala (Birthday Mode)', category: 'Presets', icon: <Sparkles className="w-4 h-4 text-amber-500" />, action: () => switchPreset('preset-birthday-botanical') },
     { id: 'pre-community', title: 'Switch to Bengaluru Open-Source AI Builders Summit (Community Mode)', category: 'Presets', icon: <Sparkles className="w-4 h-4 text-emerald-500" />, action: () => switchPreset('preset-community-builders') },
 
+    { id: 'act-assistant', title: 'Open AuraPlan AI Planning Assistant (Q&A and 1-Click Injection)', category: 'Actions', icon: <Bot className="w-4 h-4 text-indigo-500" />, action: () => setAssistantOpen(true) },
     { id: 'act-ripple', title: 'Trigger "What-If" Ripple Simulator Drawer', category: 'Actions', icon: <Sparkles className="w-4 h-4 text-indigo-500" />, action: () => setCopilotOpen(true) },
     { id: 'act-audit', title: 'Open 100/100 System Diagnostic Audit Drawer', category: 'Actions', icon: <ShieldCheck className="w-4 h-4 text-emerald-500" />, action: () => setAuditDrawerOpen(true) },
     { id: 'act-new-event', title: 'Create + New Custom Event with AI Synthesizer', category: 'Actions', icon: <Plus className="w-4 h-4" />, action: () => setNewEventModalOpen(true) },
@@ -84,7 +87,7 @@ export const CommandPalette: React.FC = () => {
     { id: 'act-currency', title: `Toggle Currency (Currently ${currency})`, category: 'Settings', icon: currency === 'INR' ? <DollarSign className="w-4 h-4" /> : <IndianRupee className="w-4 h-4" />, action: () => setCurrency(currency === 'INR' ? 'USD' : 'INR') },
     { id: 'act-theme', title: `Toggle Dark / Light Mode (Currently ${isDark ? 'Dark' : 'Light'})`, category: 'Settings', icon: isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />, action: () => toggleDarkMode() },
     { id: 'act-reset', title: 'Reset Workspace to Factory Presets', category: 'Settings', icon: <RefreshCw className="w-4 h-4 text-rose-500" />, action: () => resetToFactoryDefaults() },
-  ], [setActiveTab, switchPreset, setCopilotOpen, setAuditDrawerOpen, setNewEventModalOpen, autoBalanceBudget, currency, setCurrency, isDark, toggleDarkMode, resetToFactoryDefaults, state, announce]);
+  ], [setActiveTab, switchPreset, setCopilotOpen, setAssistantOpen, setAuditDrawerOpen, setNewEventModalOpen, autoBalanceBudget, currency, setCurrency, isDark, toggleDarkMode, resetToFactoryDefaults, state, announce]);
 
   // Dynamic searchable vendors and tasks
   const dynamicItems: PaletteItem[] = useMemo(() => {

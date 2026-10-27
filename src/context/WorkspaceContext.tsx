@@ -27,6 +27,7 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [isCommandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [isAuditDrawerOpen, setAuditDrawerOpen] = useState(false);
   const [isCopilotOpen, setCopilotOpen] = useState(false);
+  const [isAssistantOpen, setAssistantOpen] = useState(false);
   const [isNewEventModalOpen, setNewEventModalOpen] = useState(false);
   const [announcerMessage, setAnnouncerMessage] = useState('');
 
@@ -174,6 +175,7 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setCommandPaletteOpen(false);
     setAuditDrawerOpen(false);
     setCopilotOpen(false);
+    setAssistantOpen(false);
     setNewEventModalOpen(false);
   }, []);
 
@@ -198,17 +200,17 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     () => ({
       state, activePresetId, activeTab, currency, isDark,
       canUndo: history.length > 0,
-      isCommandPaletteOpen, isAuditDrawerOpen, isCopilotOpen, isNewEventModalOpen,
+      isCommandPaletteOpen, isAuditDrawerOpen, isCopilotOpen, isAssistantOpen, isNewEventModalOpen,
       announcerMessage, setActiveTab, setCurrency, toggleDarkMode, switchPreset,
       setCustomState, updateEvent, updateBudgetItem, autoBalanceBudget, addBudgetItem,
       updateVendor, addVendor, updateMacroTask, addMacroTask, updateDayOfActivity,
       addDayOfActivity, shiftActivity30m, updateGuest, addGuest, deleteGuest,
       applyRipple, undoLastRipple, resetToFactoryDefaults, toggleTax, setTaxRate,
-      setCommandPaletteOpen, setAuditDrawerOpen, setCopilotOpen, setNewEventModalOpen, announce,
+      setCommandPaletteOpen, setAuditDrawerOpen, setCopilotOpen, setAssistantOpen, setNewEventModalOpen, announce,
     }),
     [
       state, activePresetId, activeTab, currency, isDark, history.length,
-      isCommandPaletteOpen, isAuditDrawerOpen, isCopilotOpen, isNewEventModalOpen, announcerMessage,
+      isCommandPaletteOpen, isAuditDrawerOpen, isCopilotOpen, isAssistantOpen, isNewEventModalOpen, announcerMessage,
       setActiveTab, setCurrency, toggleDarkMode, switchPreset, setCustomState, updateEvent,
       updateBudgetItem, autoBalanceBudget, addBudgetItem, updateVendor, addVendor, updateMacroTask,
       addMacroTask, updateDayOfActivity, addDayOfActivity, shiftActivity30m, updateGuest, addGuest,

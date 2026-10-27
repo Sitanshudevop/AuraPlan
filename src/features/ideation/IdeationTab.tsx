@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { ThemeIdea } from '../../types/ideation';
 import { ThemeConceptCard } from './ThemeConceptCard';
+import { PersonalizedActivitiesView, PersonalizedActivity } from './PersonalizedActivitiesView';
 import { generateThemeIdea } from '../../services/geminiService';
 import { Button } from '../../components/ui/Button';
 import { logger } from '../../utils/logger';
@@ -13,6 +14,7 @@ export const IdeationTab: React.FC = () => {
     currency,
     addBudgetItem,
     addMacroTask,
+    addDayOfActivity,
     setCopilotOpen,
     announce,
   } = useWorkspace();
@@ -43,7 +45,6 @@ export const IdeationTab: React.FC = () => {
     category: 'decor' | 'av_photo' | 'venue' | 'catering',
     timelineTask: string
   ) => {
-    // Inject into budget
     addBudgetItem({
       id: `b-idea-${Date.now()}`,
       category,
@@ -55,7 +56,6 @@ export const IdeationTab: React.FC = () => {
       isLocked: false,
     });
 
-    // Inject into timeline
     addMacroTask({
       id: `mt-idea-${Date.now()}`,
       horizon: '1_week',
@@ -70,6 +70,35 @@ export const IdeationTab: React.FC = () => {
     announce(`Injected "${title}" into Budget and Timeline`);
   };
 
+  const handleAddActivityToTimeline = (act: PersonalizedActivity) => {
+    addDayOfActivity({
+      id: `act-day-${Date.now()}`,
+      startTime: '19:00',
+      endTime: '20:30',
+      title: act.title,
+      durationMinutes: act.durationMinutes,
+      locationZone: act.location,
+      poc: act.poc,
+      notes: act.description,
+    });
+    announce(`Scheduled "${act.title}" in Day-Of Run-of-Show`);
+  };
+
+  const handleAddActivityToBudget = (act: PersonalizedActivity) => {
+    addBudgetItem({
+      id: `b-act-${Date.now()}`,
+      category: act.category,
+      name: act.title,
+      allocated: act.estimatedCost,
+      vendorQuote: act.estimatedCost,
+      actualContracted: 0,
+      amountPaid: 0,
+      isLocked: false,
+      notes: act.description,
+    });
+    announce(`Allocated budget for "${act.title}"`);
+  };
+
   return (
     <div className="space-y-6">
       {/* Top Header & Ripple Trigger */}
@@ -79,7 +108,7 @@ export const IdeationTab: React.FC = () => {
             Personalized AI Ideation Studio & Theme Engine
           </h2>
           <p className="text-xs text-stone-500 dark:text-zinc-400">
-            Synthesizes hex palettes, decor concepts, and menu pairings with 1-click plan injection
+            Synthesizes hex palettes, decor concepts, and experiential activity moments with 1-click plan injection
           </p>
         </div>
 
@@ -128,6 +157,14 @@ export const IdeationTab: React.FC = () => {
           onAddToPlan={handleAddToPlan}
         />
       ) : null}
+
+      {/* Curated Experiential Moments & Activities */}
+      <PersonalizedActivitiesView
+        eventType={state.event.type}
+        currency={currency}
+        onAddToTimeline={handleAddActivityToTimeline}
+        onAddToBudget={handleAddActivityToBudget}
+      />
     </div>
   );
 };
