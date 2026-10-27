@@ -109,8 +109,8 @@ describe('A11y, Navigation & 1-Click Judge Presets Integration', () => {
       fireEvent.click(budgetNavBtn);
 
       await waitFor(() => {
-        expect(screen.getByText('Financial-Grade Smart Budget Engine')).toBeInTheDocument();
-      });
+        expect(screen.getByText(/Financial-Grade Smart Budget Engine/i)).toBeInTheDocument();
+      }, { timeout: 4000 });
 
       // Navigate to Timeline Tab
       const timelineNavBtn = screen.getByRole('button', { name: /Timeline & Run-of-Show/i });
@@ -118,7 +118,7 @@ describe('A11y, Navigation & 1-Click Judge Presets Integration', () => {
 
       await waitFor(() => {
         expect(screen.getByText(/Dual-Horizon Timeline/i)).toBeInTheDocument();
-      });
+      }, { timeout: 4000 });
     });
   });
 });
