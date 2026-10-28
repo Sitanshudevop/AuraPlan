@@ -140,7 +140,8 @@ export async function askPlanningAssistant(
   const sanitizedQuery = sanitizeText(query);
   const apiKey = (import.meta as unknown as { env: Record<string, string> }).env?.VITE_GEMINI_API_KEY;
 
-  if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY') {
+  const envMode = (import.meta as unknown as { env: Record<string, string> }).env?.MODE;
+  if (envMode === 'test' || !apiKey || apiKey === 'YOUR_GEMINI_API_KEY') {
     return getLocalAssistantResponse(sanitizedQuery, event);
   }
 
@@ -148,7 +149,7 @@ export async function askPlanningAssistant(
     const prompt = `AuraPlan AI planner for ${event.type}. Event: "${event.name}", City: "${event.city}", Guests: ${event.guestCount}, Budget: ${event.targetBudget}. Question: "${sanitizedQuery}". Return JSON: {"content": "advice", "suggestedActions": []}`;
 
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -175,3 +176,4 @@ export async function askPlanningAssistant(
     return getLocalAssistantResponse(sanitizedQuery, event);
   }
 }
+

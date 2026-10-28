@@ -2,18 +2,13 @@ import React, { useMemo } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
-import { formatCurrency, formatPercent, getDaysRemaining } from '../../utils/formatters';
+import { formatCurrency } from '../../utils/formatters';
+import { WelcomeHero } from './WelcomeHero';
+import { DashboardStatTiles } from './DashboardStatTiles';
 import { AdaptiveWeddingWidget } from './AdaptiveWeddingWidget';
 import { AdaptiveBirthdayWidget } from './AdaptiveBirthdayWidget';
 import { AdaptiveCommunityWidget } from './AdaptiveCommunityWidget';
-import {
-  WalletCards,
-  Users,
-  Clock,
-  Briefcase,
-  CheckCircle2,
-  AlertTriangle,
-} from 'lucide-react';
+import { AlertTriangle, ArrowRight } from 'lucide-react';
 
 export const DashboardTab: React.FC = () => {
   const { state, currency, setActiveTab } = useWorkspace();
@@ -45,20 +40,34 @@ export const DashboardTab: React.FC = () => {
     };
   }, [state]);
 
-  const daysRemaining = getDaysRemaining(state.event.date);
+  const formatFriendlyDate = (dateStr: string) => {
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    } catch {
+      return dateStr;
+    }
+  };
 
   return (
     <div className="space-y-6">
-      {/* Accessible View Heading for Screen Readers */}
       <h2 className="sr-only">Executive Bento Overview</h2>
+
+      {/* Warm Greeting Hero Moment */}
+      <WelcomeHero
+        taskCompletionPct={metrics.taskCompletionPct}
+        signedVendors={metrics.signedVendors}
+        totalVendors={state.vendors.length}
+      />
 
       {/* Over Budget Alert Banner if applicable */}
       {metrics.isOverBudget && (
-        <div className="flex items-center justify-between p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-lg text-xs text-rose-900 dark:text-rose-300">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/80 rounded-2xl text-xs text-rose-900 dark:text-rose-300">
+          <div className="flex items-center gap-2.5">
             <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
             <span>
-              <strong>Budget Variance Warning:</strong> Actual contracted commitments exceed target budget by{' '}
+              <strong>Budget Variance Alert:</strong> Contracted obligations exceed target by{' '}
               <strong className="font-mono tabular-nums">
                 {formatCurrency(metrics.totalActual - state.event.targetBudget, currency)}
               </strong>.
@@ -66,144 +75,73 @@ export const DashboardTab: React.FC = () => {
           </div>
           <button
             onClick={() => setActiveTab('budget')}
-            className="underline font-semibold hover:text-rose-700"
+            className="underline font-semibold hover:text-rose-700 text-xs shrink-0 ml-2"
           >
             Review Allocations →
           </button>
         </div>
       )}
 
-      {/* 5 KPI Summary Bento Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5">
-        {/* Total Budget Card */}
-        <Card className="p-4 space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-stone-500 dark:text-zinc-400">
-              Target Budget
-            </span>
-            <WalletCards className="w-4 h-4 text-stone-400" />
-          </div>
-          <div className="text-lg font-mono font-bold text-[#18181B] dark:text-[#FAFAFA] tabular-nums">
-            {formatCurrency(state.event.targetBudget, currency)}
-          </div>
-          <div className="text-[10px] text-stone-500 dark:text-zinc-400 truncate">
-            Paid: <span className="font-mono tabular-nums font-semibold">{formatCurrency(metrics.totalPaid, currency)}</span>
-          </div>
-        </Card>
-
-        {/* Per-Guest Metric */}
-        <Card className="p-4 space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-stone-500 dark:text-zinc-400">
-              Per-Guest Cost
-            </span>
-            <Users className="w-4 h-4 text-stone-400" />
-          </div>
-          <div className="text-lg font-mono font-bold text-[#18181B] dark:text-[#FAFAFA] tabular-nums">
-            {formatCurrency(metrics.perGuestCost, currency)}
-          </div>
-          <div className="text-[10px] text-stone-500 dark:text-zinc-400 truncate">
-            Headcount: <span className="font-mono tabular-nums font-semibold">{state.event.guestCount} pax</span>
-          </div>
-        </Card>
-
-        {/* Days Countdown */}
-        <Card className="p-4 space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-stone-500 dark:text-zinc-400">
-              Countdown
-            </span>
-            <Clock className="w-4 h-4 text-amber-500" />
-          </div>
-          <div className="text-lg font-mono font-bold text-amber-600 dark:text-amber-400 tabular-nums">
-            {daysRemaining} Days
-          </div>
-          <div className="text-[10px] text-stone-500 dark:text-zinc-400 truncate font-mono tabular-nums">
-            {state.event.date}
-          </div>
-        </Card>
-
-        {/* Vendor Readiness */}
-        <Card className="p-4 space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-stone-500 dark:text-zinc-400">
-              Vendor Contracts
-            </span>
-            <Briefcase className="w-4 h-4 text-stone-400" />
-          </div>
-          <div className="text-lg font-mono font-bold text-[#18181B] dark:text-[#FAFAFA] tabular-nums">
-            {metrics.signedVendors} / {state.vendors.length}
-          </div>
-          <div className="w-full bg-stone-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
-            <div
-              className="bg-emerald-600 h-full rounded-full transition-all duration-300"
-              style={{ width: `${metrics.vendorReadinessPct}%` }}
-            />
-          </div>
-        </Card>
-
-        {/* Checklist Completion */}
-        <Card className="p-4 space-y-1 col-span-2 md:col-span-1">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-stone-500 dark:text-zinc-400">
-              Tasks Done
-            </span>
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-          </div>
-          <div className="text-lg font-mono font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
-            {formatPercent(metrics.taskCompletionPct)}
-          </div>
-          <div className="w-full bg-stone-100 dark:bg-zinc-800 h-1.5 rounded-full overflow-hidden">
-            <div
-              className="bg-stone-900 dark:bg-white h-full rounded-full transition-all duration-300"
-              style={{ width: `${metrics.taskCompletionPct}%` }}
-            />
-          </div>
-        </Card>
-      </div>
+      {/* 4 Focused Stat Tiles with generous spacing */}
+      <DashboardStatTiles
+        targetBudget={state.event.targetBudget}
+        totalPaid={metrics.totalPaid}
+        perGuestCost={metrics.perGuestCost}
+        guestCount={state.event.guestCount}
+        signedVendors={metrics.signedVendors}
+        totalVendors={state.vendors.length}
+        vendorReadinessPct={metrics.vendorReadinessPct}
+        taskCompletionPct={metrics.taskCompletionPct}
+        currency={currency}
+      />
 
       {/* 12-Column Responsive Bento Main Grid */}
-      <div className="grid grid-cols-12 gap-5">
+      <div className="grid grid-cols-12 gap-6">
         {/* Adaptive Widget based on Event Mode */}
         {state.event.type === 'wedding' && <AdaptiveWeddingWidget />}
         {state.event.type === 'birthday' && <AdaptiveBirthdayWidget />}
         {state.event.type === 'community' && <AdaptiveCommunityWidget />}
 
-        {/* Side Bento Card: Upcoming Payment Milestones */}
-        <Card className="col-span-12 lg:col-span-5 space-y-4">
-          <div className="flex items-center justify-between border-b border-stone-200 dark:border-zinc-800 pb-3">
+        {/* Upcoming Payment Milestones Card */}
+        <Card className="col-span-12 lg:col-span-5 p-5 sm:p-6 space-y-4 rounded-2xl border-stone-200 dark:border-zinc-800">
+          <div className="flex items-center justify-between border-b border-stone-100 dark:border-zinc-800 pb-3.5">
             <div>
-              <h3 className="text-sm font-semibold text-[#18181B] dark:text-[#FAFAFA]">
-                Upcoming Milestones & Deposits
+              <h3 className="text-base font-serif font-semibold text-[#18181B] dark:text-[#FAFAFA]">
+                Upcoming Milestones
               </h3>
               <p className="text-xs text-stone-500 dark:text-zinc-400">
-                Scheduled vendor payment obligations
+                Next vendor tranche release deadlines
               </p>
             </div>
             <button
               onClick={() => setActiveTab('budget')}
-              className="text-xs text-stone-600 dark:text-zinc-400 hover:text-stone-900 flex items-center gap-1 font-medium"
+              className="inline-flex items-center gap-1 text-xs text-amber-700 dark:text-amber-400 hover:text-amber-800 font-medium transition-colors"
             >
-              All →
+              <span>View all in Budget</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="space-y-2.5">
-            {state.paymentMilestones.slice(0, 4).map((pm) => (
+          <div className="space-y-3">
+            {state.paymentMilestones.slice(0, 3).map((pm) => (
               <div
                 key={pm.id}
-                className="flex items-center justify-between p-2.5 rounded-lg border border-stone-200 dark:border-zinc-800 bg-stone-50/50 dark:bg-zinc-900/40 text-xs"
+                className="flex items-start justify-between p-3.5 rounded-xl border border-stone-200/80 dark:border-zinc-800 bg-stone-50/50 dark:bg-zinc-900/40 text-xs transition-colors hover:border-amber-500/30 gap-3"
               >
-                <div>
-                  <div className="font-semibold text-stone-900 dark:text-white truncate max-w-[180px]">
+                <div className="space-y-0.5 min-w-0 flex-1">
+                  <div className="font-semibold text-stone-900 dark:text-white leading-snug">
                     {pm.title}
                   </div>
-                  <div className="text-[10px] text-stone-500 dark:text-zinc-400 font-mono tabular-nums">
-                    Due: {pm.dueDate} • {pm.vendorName}
+                  <div className="text-[11px] text-stone-500 dark:text-zinc-400 font-medium">
+                    {pm.vendorName}
+                  </div>
+                  <div className="text-[11px] text-stone-600 dark:text-zinc-400 font-mono tabular-nums">
+                    Due: {formatFriendlyDate(pm.dueDate)}
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="font-mono font-bold text-stone-800 dark:text-zinc-200 tabular-nums">
+
+                <div className="text-right shrink-0 space-y-1">
+                  <div className="font-mono font-bold text-stone-900 dark:text-white text-xs tabular-nums">
                     {formatCurrency(pm.amount, currency)}
                   </div>
                   <Badge

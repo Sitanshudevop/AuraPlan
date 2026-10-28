@@ -11,10 +11,31 @@ export interface PersistedState {
   theme: 'light' | 'dark';
 }
 
+let inMemoryFallbackState: PersistedState | null = null;
+let quotaExceededFlag = false;
+
+export function isQuotaExceededError(err: unknown): boolean {
+  if (err instanceof DOMException) {
+    return (
+      err.name === 'QuotaExceededError' ||
+      err.name === 'NS_ERROR_DOM_QUOTA_REACHED' ||
+      err.code === 22 ||
+      err.code === 1014
+    );
+  }
+  return false;
+}
+
+export function isStorageQuotaExceeded(): boolean {
+  return quotaExceededFlag;
+}
+
 export function loadPersistedState(): PersistedState | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
+    if (!raw) {
+      return inMemoryFallbackState;
+    }
     const parsed = JSON.parse(raw);
     const validated = persistedStateSchema.safeParse(parsed);
     if (validated.success) {
@@ -24,20 +45,33 @@ export function loadPersistedState(): PersistedState | null {
   } catch (err) {
     logger.warn('Failed to parse saved state from localStorage:', err);
   }
-  return null;
+  return inMemoryFallbackState;
 }
 
-export function savePersistedState(state: PersistedState): void {
+export function savePersistedState(state: PersistedState): boolean {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    inMemoryFallbackState = state;
+    quotaExceededFlag = false;
+    return true;
   } catch (err) {
+    if (isQuotaExceededError(err)) {
+      quotaExceededFlag = true;
+      inMemoryFallbackState = state;
+      logger.warn('Storage quota exceeded! Operating in in-memory session cache mode.');
+      return false;
+    }
     logger.warn('Failed to persist state to localStorage:', err);
+    inMemoryFallbackState = state;
+    return false;
   }
 }
 
 export function clearPersistedState(): void {
   try {
     localStorage.removeItem(STORAGE_KEY);
+    inMemoryFallbackState = null;
+    quotaExceededFlag = false;
   } catch (err) {
     logger.warn('Failed to clear storage:', err);
   }

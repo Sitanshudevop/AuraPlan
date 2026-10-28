@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   formatCurrency,
   convertCurrency,
@@ -53,6 +53,29 @@ describe('Services, Storage & Formatters Unit Tests', () => {
 
       localStorage.setItem('auraplan_workspace_v1', JSON.stringify({ version: 99 }));
       expect(loadPersistedState()).toBeNull();
+    });
+
+    it('falls back to in-memory session cache when localStorage throws QuotaExceededError', () => {
+      const mockSetItem = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        const quotaError = new DOMException('Storage quota exceeded', 'QuotaExceededError');
+        throw quotaError;
+      });
+
+      const payload = {
+        version: 1,
+        activePresetId: 'preset-wedding',
+        states: { 'preset-wedding': weddingPreset },
+        theme: 'light' as const,
+      };
+
+      const success = savePersistedState(payload);
+      expect(success).toBe(false);
+
+      // In-memory fallback allows retrieval during the active session
+      const recovered = loadPersistedState();
+      expect(recovered?.activePresetId).toBe('preset-wedding');
+
+      mockSetItem.mockRestore();
     });
   });
 

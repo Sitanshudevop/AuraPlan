@@ -145,3 +145,4 @@ export const MODALITY_ACTIVITIES: Record<EventType, PersonalizedActivity[]> = {
     },
   ],
 };
+

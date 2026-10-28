@@ -6,6 +6,8 @@ import {
 } from '../../services/planningAssistantService';
 import { Button } from '../../components/ui/Button';
 import { Bot, X, Send, Sparkles, Loader2, Check, CalendarPlus, Wallet } from 'lucide-react';
+import { executeAssistantAction } from './assistantActionHandler';
+import { FormattedAssistantMessage } from './FormattedAssistantMessage';
 
 export const PlanningAssistantDrawer: React.FC = () => {
   const {
@@ -55,53 +57,13 @@ export const PlanningAssistantDrawer: React.FC = () => {
   };
 
   const handleExecuteAction = (action: AssistantAction) => {
-    if (action.type === 'add_task' && action.payload.task) {
-      const t = action.payload.task;
-      addMacroTask({
-        id: `task-ai-${Date.now()}`,
-        title: t.title,
-        horizon: t.horizon,
-        category: t.category,
-        priority: t.priority,
-        assignee: 'Lead Coordinator',
-        dueDate: state.event.date,
-        completed: false,
-      });
-      announce(`Scheduled "${t.title}"`);
-    } else if (action.type === 'add_budget' && action.payload.budget) {
-      const b = action.payload.budget;
-      addBudgetItem({
-        id: `b-ai-${Date.now()}`,
-        name: b.name,
-        category: b.category,
-        allocated: b.allocated,
-        vendorQuote: b.allocated,
-        actualContracted: 0,
-        amountPaid: 0,
-        isLocked: false,
-      });
-      announce(`Allocated budget for "${b.name}"`);
-    } else if (action.type === 'add_vendor' && action.payload.vendor) {
-      const v = action.payload.vendor;
-      addVendor({
-        id: `v-ai-${Date.now()}`,
-        name: v.name,
-        category: v.category,
-        status: 'shortlisted',
-        estimatedPrice: v.estimatedPrice,
-        contractedPrice: 0,
-        paidAmount: 0,
-        contactName: 'Inquiry Desk',
-        phone: '+91 98200 55555',
-        email: 'info@partner.com',
-        rating: 4.9,
-        ratingCount: 12,
-        location: state.event.city,
-        notes: 'Sourced via AuraPlan AI Assistant',
-        deliverables: v.deliverables,
-      });
-      announce(`Added vendor "${v.name}"`);
-    }
+    executeAssistantAction(action, {
+      event: state.event,
+      addMacroTask,
+      addBudgetItem,
+      addVendor,
+      announce,
+    });
     setExecutedLabels((prev) => new Set(prev).add(action.label));
   };
 
@@ -167,7 +129,7 @@ export const PlanningAssistantDrawer: React.FC = () => {
                     : 'bg-stone-100/80 dark:bg-zinc-900/80 text-stone-900 dark:text-zinc-100 border border-stone-200 dark:border-zinc-800 rounded-bl-xs'
                 }`}
               >
-                <div className="whitespace-pre-wrap leading-relaxed text-xs">{m.content}</div>
+                <FormattedAssistantMessage content={m.content} isUser={m.role === 'user'} />
 
                 {m.suggestedActions && m.suggestedActions.length > 0 && (
                   <div className="pt-2 border-t border-stone-200 dark:border-zinc-800 space-y-1.5">
@@ -225,3 +187,4 @@ export const PlanningAssistantDrawer: React.FC = () => {
     </div>
   );
 };
+

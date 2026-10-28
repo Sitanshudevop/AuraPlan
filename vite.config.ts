@@ -20,6 +20,9 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
     testTimeout: 15000,
+    env: {
+      VITE_GEMINI_API_KEY: '',
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

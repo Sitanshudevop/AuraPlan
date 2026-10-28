@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
-import { PRESET_OPTIONS } from '../../data/presets';
+import { PresetDropdown } from './PresetDropdown';
 import {
   Search,
   Moon,
@@ -8,27 +8,44 @@ import {
   ShieldCheck,
   Sparkles,
   Bot,
-  Plus,
   Download,
   IndianRupee,
   DollarSign,
+  MoreHorizontal,
 } from 'lucide-react';
 
 export const Header: React.FC = () => {
   const {
     state,
-    activePresetId,
     currency,
     isDark,
-    switchPreset,
     setCurrency,
     toggleDarkMode,
     setCommandPaletteOpen,
     setAuditDrawerOpen,
     setCopilotOpen,
     setAssistantOpen,
-    setNewEventModalOpen,
   } = useWorkspace();
+
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+        setMoreOpen(false);
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMoreOpen(false);
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   const handleExportJson = () => {
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(state, null, 2));
@@ -42,13 +59,13 @@ export const Header: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-30 h-14 bg-white/95 dark:bg-[#121215]/95 backdrop-blur-md border-b border-stone-200 dark:border-zinc-800 flex items-center justify-between px-4 sm:px-6">
-      {/* Left: Event Identity & Preset Pills */}
-      <div className="flex items-center gap-3 overflow-x-auto no-scrollbar py-1">
+      {/* Left: Brand Identity & Compact Preset Dropdown */}
+      <div className="flex items-center gap-3">
         <div className="flex items-center gap-2 shrink-0">
-          <div className="w-6 h-6 rounded bg-[#18181B] dark:bg-white flex items-center justify-center text-white dark:text-[#18181B] font-bold text-xs tracking-wider">
+          <div className="w-6 h-6 rounded bg-[#18181B] dark:bg-amber-500/20 dark:border dark:border-amber-500/30 flex items-center justify-center text-white dark:text-amber-400 font-bold text-xs tracking-wider">
             V
           </div>
-          <span className="font-semibold text-sm tracking-tight hidden md:inline text-[#18181B] dark:text-[#FAFAFA]">
+          <span className="font-serif font-semibold text-sm tracking-tight text-[#18181B] dark:text-[#FAFAFA]">
             Vow & Venue
           </span>
           <span className="text-[10px] text-stone-500 dark:text-zinc-400 font-mono hidden md:inline">by AuraPlan</span>
@@ -56,128 +73,136 @@ export const Header: React.FC = () => {
 
         <div className="h-4 w-px bg-stone-200 dark:bg-zinc-800 shrink-0" />
 
-        {/* 1-Click Judge Demo Presets */}
-        <div className="flex items-center gap-1.5 shrink-0">
-          <span className="text-[10px] uppercase font-bold tracking-wider text-stone-500 dark:text-zinc-400 hidden xl:inline">
-            Judge Presets:
-          </span>
-          {PRESET_OPTIONS.map((p) => {
-            const isActive = activePresetId === p.id;
-            return (
-              <button
-                key={p.id}
-                onClick={() => switchPreset(p.id)}
-                aria-pressed={isActive}
-                className={`text-xs px-2.5 py-1 rounded-md font-medium transition-all ${
-                  isActive
-                    ? 'bg-[#18181B] text-white dark:bg-white dark:text-[#18181B] shadow-xs'
-                    : 'bg-stone-100 hover:bg-stone-200 text-stone-600 dark:bg-zinc-800/80 dark:hover:bg-zinc-700 dark:text-zinc-300'
-                }`}
-                title={p.stats}
-              >
-                {p.title}
-              </button>
-            );
-          })}
-
-          <button
-            onClick={() => setNewEventModalOpen(true)}
-            aria-label="New Event - Generate Custom Event Plan"
-            className="flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-stone-100 hover:bg-stone-200 text-stone-700 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-300 font-medium"
-            title="Generate Custom Event Plan"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">New Event</span>
-          </button>
-        </div>
+        {/* Compact Preset Showcase Dropdown */}
+        <PresetDropdown />
       </div>
 
-      {/* Right Tools: Global Search, Currency, Audit Pill, AI Ripple, Theme, Export */}
-      <div className="flex items-center gap-2 shrink-0">
-        {/* Global Search / Command Palette */}
+      {/* Center: Clean Search Bar */}
+      <div className="flex-1 max-w-sm mx-3 sm:mx-6">
         <button
           onClick={() => setCommandPaletteOpen(true)}
-          className="flex items-center gap-2 px-2.5 py-1 text-xs text-stone-500 dark:text-zinc-400 bg-stone-100 dark:bg-zinc-800/80 hover:bg-stone-200 dark:hover:bg-zinc-700 rounded-md border border-stone-200 dark:border-zinc-700 transition-colors"
+          className="w-full flex items-center justify-between px-3 py-1.5 text-xs text-stone-500 dark:text-zinc-400 bg-stone-100/80 dark:bg-zinc-800/60 hover:bg-stone-200/80 dark:hover:bg-zinc-700/80 rounded-lg border border-stone-200/70 dark:border-zinc-700/60 transition-colors"
           aria-label="Search or run command"
         >
-          <Search className="w-3.5 h-3.5" />
-          <span className="hidden lg:inline">Search workspace...</span>
-          <kbd className="hidden sm:inline text-[10px] font-mono px-1 py-0.5 bg-stone-200 dark:bg-zinc-700 rounded text-stone-600 dark:text-zinc-300">
+          <div className="flex items-center gap-2">
+            <Search className="w-3.5 h-3.5 text-stone-400" />
+            <span className="hidden sm:inline">Search workspace...</span>
+            <span className="sm:hidden">Search...</span>
+          </div>
+          <kbd className="hidden sm:inline text-[10px] font-mono px-1.5 py-0.5 bg-stone-200 dark:bg-zinc-700 rounded text-stone-600 dark:text-zinc-300">
             ⌘K
           </kbd>
         </button>
+      </div>
 
+      {/* Right Tools: Currency, AI Assistant, More Overflow Menu */}
+      <div className="flex items-center gap-2 shrink-0">
         {/* Currency Switcher */}
         <button
           onClick={() => setCurrency(currency === 'INR' ? 'USD' : 'INR')}
-          className="flex items-center gap-1 px-2 py-1 text-xs font-mono font-medium rounded-md bg-stone-100 hover:bg-stone-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-stone-700 dark:text-zinc-300"
+          className="flex items-center gap-1 px-2.5 py-1 text-xs font-mono font-medium rounded-lg bg-stone-100 hover:bg-stone-200 dark:bg-zinc-800/80 dark:hover:bg-zinc-700 text-stone-700 dark:text-zinc-300 border border-stone-200 dark:border-zinc-700/80 transition-colors"
           title="Toggle Currency (₹ INR / $ USD)"
           aria-label="Toggle currency between INR and USD"
         >
           {currency === 'INR' ? (
             <>
-              <IndianRupee className="w-3.5 h-3.5" />
+              <IndianRupee className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
               <span>INR</span>
             </>
           ) : (
             <>
-              <DollarSign className="w-3.5 h-3.5" />
+              <DollarSign className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>USD</span>
             </>
           )}
         </button>
 
-        {/* System Health / 100/100 Judge Audit Drawer Trigger */}
-        <button
-          onClick={() => setAuditDrawerOpen(true)}
-          className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md bg-emerald-50 text-emerald-800 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:text-emerald-400 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800/60 transition-colors"
-          title="Open System Diagnostic & Compliance Audit"
-          aria-label="Open 100/100 Judge Audit Drawer"
-        >
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-          <span className="hidden md:inline font-mono text-[11px]">100/100 Ready</span>
-        </button>
-
-        {/* AI Planning Assistant Drawer Trigger */}
+        {/* AI Planning Assistant Trigger */}
         <button
           onClick={() => setAssistantOpen(true)}
-          className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md bg-indigo-50 text-indigo-700 hover:bg-indigo-100 dark:bg-indigo-950/60 dark:text-indigo-300 dark:hover:bg-indigo-900/60 border border-indigo-200 dark:border-indigo-800 transition-colors"
+          className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg bg-amber-500/10 text-amber-900 dark:text-amber-300 hover:bg-amber-500/20 border border-amber-500/30 transition-colors"
           title="Chat with GenAI Planning Assistant"
           aria-label="Open AI Planning Assistant"
         >
-          <Bot className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+          <Bot className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
           <span className="hidden sm:inline">AI Assistant</span>
         </button>
 
-        {/* AI Co-Pilot / Ripple Drawer Trigger */}
-        <button
-          onClick={() => setCopilotOpen(true)}
-          className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md bg-[#18181B] text-white hover:bg-stone-800 dark:bg-white dark:text-[#18181B] dark:hover:bg-zinc-200 shadow-xs transition-colors"
-          aria-label="Open AI Ripple Simulator"
-        >
-          <Sparkles className="w-3.5 h-3.5 text-indigo-400 dark:text-indigo-600" />
-          <span className="hidden sm:inline">What-If Ripple</span>
-        </button>
+        {/* More Options Overflow Menu */}
+        <div className="relative" ref={moreRef}>
+          <button
+            onClick={() => setMoreOpen(!moreOpen)}
+            aria-haspopup="true"
+            aria-expanded={moreOpen}
+            className="p-1.5 text-stone-500 hover:text-stone-800 dark:text-zinc-400 dark:hover:text-zinc-100 rounded-lg hover:bg-stone-100 dark:hover:bg-zinc-800 border border-stone-200 dark:border-zinc-700/80 transition-colors"
+            title="More actions & utilities"
+            aria-label="More actions"
+          >
+            <MoreHorizontal className="w-4 h-4" />
+          </button>
 
-        {/* Export JSON Audit Button */}
-        <button
-          onClick={handleExportJson}
-          className="p-1.5 text-stone-500 hover:text-stone-800 dark:text-zinc-400 dark:hover:text-zinc-100 rounded-md hover:bg-stone-100 dark:hover:bg-zinc-800"
-          title="Export Workspace JSON Backup"
-          aria-label="Export Workspace JSON Backup"
-        >
-          <Download className="w-4 h-4" />
-        </button>
+          <div
+            className={`absolute right-0 mt-1.5 w-56 bg-white dark:bg-[#18181B] border border-stone-200 dark:border-zinc-700/80 rounded-xl shadow-lg p-1.5 z-40 transition-all duration-150 ${
+              moreOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
+            }`}
+          >
+            <button
+              onClick={() => {
+                setCopilotOpen(true);
+                setMoreOpen(false);
+              }}
+              className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-zinc-800 transition-colors text-left"
+              aria-label="Open AI Ripple Simulator"
+            >
+              <Sparkles className="w-4 h-4 text-amber-500" />
+              <span>What-If Ripple Simulator</span>
+            </button>
 
-        {/* Theme Toggle */}
-        <button
-          onClick={toggleDarkMode}
-          className="p-1.5 text-stone-500 hover:text-stone-800 dark:text-zinc-400 dark:hover:text-zinc-100 rounded-md hover:bg-stone-100 dark:hover:bg-zinc-800"
-          title="Toggle Light/Dark Theme"
-          aria-label="Toggle dark mode"
-        >
-          {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-        </button>
+            <button
+              onClick={() => {
+                setAuditDrawerOpen(true);
+                setMoreOpen(false);
+              }}
+              className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-zinc-800 transition-colors text-left"
+              aria-label="Open 100/100 Judge Audit Drawer"
+            >
+              <ShieldCheck className="w-4 h-4 text-emerald-500" />
+              <div className="flex items-center justify-between flex-1">
+                <span>Judge Diagnostic Audit</span>
+                <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400">100/100</span>
+              </div>
+            </button>
+
+            <button
+              onClick={() => {
+                handleExportJson();
+                setMoreOpen(false);
+              }}
+              className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-zinc-800 transition-colors text-left"
+              aria-label="Export Workspace JSON Backup"
+            >
+              <Download className="w-4 h-4 text-stone-500" />
+              <span>Export Workspace JSON</span>
+            </button>
+
+            <div className="my-1 border-t border-stone-100 dark:border-zinc-800" />
+
+            <button
+              onClick={() => {
+                toggleDarkMode();
+                setMoreOpen(false);
+              }}
+              className="w-full flex items-center justify-between px-2.5 py-2 rounded-lg text-xs text-stone-700 dark:text-zinc-200 hover:bg-stone-100 dark:hover:bg-zinc-800 transition-colors"
+              aria-label="Toggle dark mode"
+            >
+              <div className="flex items-center gap-2.5">
+                {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-stone-500" />}
+                <span>{isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}</span>
+              </div>
+              <span className="text-[10px] text-stone-400 dark:text-zinc-500 font-mono">{isDark ? 'DARK' : 'LIGHT'}</span>
+            </button>
+          </div>
+        </div>
       </div>
     </header>
   );

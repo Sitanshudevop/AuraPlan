@@ -182,3 +182,4 @@ export const VendorChecklistView: React.FC<Props> = ({
     </div>
   );
 };
+

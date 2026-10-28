@@ -83,7 +83,7 @@ export const GuestTable: React.FC<GuestTableProps> = ({
           <tbody className="divide-y divide-stone-100 dark:divide-zinc-800/60">
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-8 text-center text-xs text-stone-400">
+                <td colSpan={6} className="py-8 text-center text-xs text-stone-600 dark:text-zinc-400">
                   No attendees matching this filter.
                 </td>
               </tr>
@@ -95,7 +95,7 @@ export const GuestTable: React.FC<GuestTableProps> = ({
                     {guest.name}
                   </div>
                   {guest.plusOnes > 0 && (
-                    <div className="text-[10px] text-stone-400 font-mono tabular-nums">
+                    <div className="text-[10px] text-stone-600 dark:text-zinc-400 font-mono tabular-nums">
                       +{guest.plusOnes} guest cover
                     </div>
                   )}

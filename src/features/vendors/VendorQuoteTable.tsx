@@ -48,7 +48,7 @@ export const VendorQuoteTable: React.FC<VendorQuoteTableProps> = ({
         <tbody className="divide-y divide-stone-100 dark:divide-zinc-800/60">
           {vendors.length === 0 ? (
             <tr>
-              <td colSpan={7} className="py-8 text-center text-xs text-stone-400">
+              <td colSpan={7} className="py-8 text-center text-xs text-stone-600 dark:text-zinc-400">
                 No vendors matching this category filter.
               </td>
             </tr>
@@ -59,7 +59,7 @@ export const VendorQuoteTable: React.FC<VendorQuoteTableProps> = ({
                 <div className="font-bold text-stone-900 dark:text-white">
                   {vendor.name}
                 </div>
-                <div className="text-[10px] uppercase font-semibold text-stone-400">
+                <div className="text-[10px] uppercase font-semibold text-stone-600 dark:text-zinc-400">
                   {vendor.category} • {vendor.location}
                 </div>
               </td>
@@ -68,7 +68,7 @@ export const VendorQuoteTable: React.FC<VendorQuoteTableProps> = ({
                 <div className="flex items-center gap-1 text-amber-600">
                   <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                   <span>{vendor.rating.toFixed(1)}</span>
-                  <span className="text-[10px] text-stone-400">({vendor.ratingCount})</span>
+                  <span className="text-[10px] text-stone-600 dark:text-zinc-400">({vendor.ratingCount})</span>
                 </div>
               </td>
 
@@ -80,7 +80,7 @@ export const VendorQuoteTable: React.FC<VendorQuoteTableProps> = ({
                 {vendor.contractedPrice > 0 ? (
                   formatCurrency(vendor.contractedPrice, currency)
                 ) : (
-                  <span className="text-stone-400 font-sans font-normal italic">In Negotiation</span>
+                  <span className="text-stone-600 dark:text-zinc-400 font-sans font-normal italic">In Negotiation</span>
                 )}
               </td>
 
@@ -101,7 +101,7 @@ export const VendorQuoteTable: React.FC<VendorQuoteTableProps> = ({
                     </span>
                   ))}
                   {vendor.deliverables.length > 2 && (
-                    <span className="text-[10px] text-stone-400 font-mono tabular-nums">
+                    <span className="text-[10px] text-stone-600 dark:text-zinc-400 font-mono tabular-nums">
                       +{vendor.deliverables.length - 2} more
                     </span>
                   )}

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useReducer, useEffect, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useReducer, useCallback, useMemo } from 'react';
 import { EventWorkspaceState, ActiveTab } from '../types/state';
 import { Currency, EventData } from '../types/event';
 import { BudgetItem } from '../types/budget';
@@ -8,9 +8,10 @@ import { Guest } from '../types/guest';
 import { RippleDiffResult } from '../types/ripple';
 import { INITIAL_PRESETS } from '../data/presets';
 import { workspaceReducer } from './workspaceReducer';
-import { loadPersistedState, savePersistedState, clearPersistedState } from '../utils/storage';
+import { loadPersistedState, clearPersistedState } from '../utils/storage';
 import { WorkspaceContextType } from './WorkspaceContextTypes';
 import { useTheme, useKeyboardShortcuts } from '../hooks';
+import { useWorkspacePersistence } from './workspaceStorageSync';
 
 const WorkspaceContext = createContext<WorkspaceContextType | null>(null);
 
@@ -35,18 +36,7 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const announce = useCallback((msg: string) => setAnnouncerMessage(msg), []);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      savePersistedState({
-        version: 1,
-        activePresetId,
-        states: { [activePresetId]: state },
-        theme: isDark ? 'dark' : 'light',
-      });
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [state, activePresetId, isDark]);
+  useWorkspacePersistence(state, activePresetId, isDark);
 
   const pushHistory = useCallback((curr: EventWorkspaceState) => {
     setHistory((prev) => [...prev.slice(-9), curr]);
@@ -70,9 +60,10 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     announce(`Loaded custom event: ${newState.event.name}`);
   }, [state, pushHistory, announce]);
 
-  const updateEvent = useCallback((payload: Partial<EventData>) => {
-    dispatch({ type: 'UPDATE_EVENT', payload });
-  }, []);
+  const updateEvent = useCallback((payload: Partial<EventData>) => dispatch({ type: 'UPDATE_EVENT', payload }), []);
+  const updateMacroTask = useCallback((id: string, partial: Partial<MacroTask>) => dispatch({ type: 'UPDATE_TASK', payload: { id, partial } }), []);
+  const updateDayOfActivity = useCallback((id: string, partial: Partial<DayOfActivity>) => dispatch({ type: 'UPDATE_ACTIVITY', payload: { id, partial } }), []);
+  const updateGuest = useCallback((id: string, partial: Partial<Guest>) => dispatch({ type: 'UPDATE_GUEST', payload: { id, partial } }), []);
 
   const updateBudgetItem = useCallback((id: string, partial: Partial<BudgetItem>) => {
     dispatch({ type: 'UPDATE_BUDGET_ITEM', payload: { id, partial } });
@@ -102,19 +93,11 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     announce(`Vendor added: ${vendor.name}`);
   }, [state, pushHistory, announce]);
 
-  const updateMacroTask = useCallback((id: string, partial: Partial<MacroTask>) => {
-    dispatch({ type: 'UPDATE_TASK', payload: { id, partial } });
-  }, []);
-
   const addMacroTask = useCallback((task: MacroTask) => {
     pushHistory(state);
     dispatch({ type: 'ADD_TASK', payload: task });
     announce(`Task scheduled: ${task.title}`);
   }, [state, pushHistory, announce]);
-
-  const updateDayOfActivity = useCallback((id: string, partial: Partial<DayOfActivity>) => {
-    dispatch({ type: 'UPDATE_ACTIVITY', payload: { id, partial } });
-  }, []);
 
   const addDayOfActivity = useCallback((activity: DayOfActivity) => {
     pushHistory(state);
@@ -127,10 +110,6 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     dispatch({ type: 'SHIFT_ACTIVITY_30M', payload: { id } });
     announce('Resolved conflict by shifting activity by 30 minutes');
   }, [state, pushHistory, announce]);
-
-  const updateGuest = useCallback((id: string, partial: Partial<Guest>) => {
-    dispatch({ type: 'UPDATE_GUEST', payload: { id, partial } });
-  }, []);
 
   const addGuest = useCallback((guest: Guest) => {
     pushHistory(state);
@@ -161,9 +140,8 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const resetToFactoryDefaults = useCallback(() => {
     clearPersistedState();
-    const defaultData = INITIAL_PRESETS['preset-wedding-udaipur'];
     setActivePresetId('preset-wedding-udaipur');
-    dispatch({ type: 'LOAD_STATE', payload: defaultData });
+    dispatch({ type: 'LOAD_STATE', payload: INITIAL_PRESETS['preset-wedding-udaipur'] });
     setHistory([]);
     announce('Workspace restored to factory presets');
   }, [announce]);
@@ -172,40 +150,27 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const setTaxRate = useCallback((rate: number) => dispatch({ type: 'SET_TAX_RATE', payload: rate }), []);
 
   const closeAllOverlays = useCallback(() => {
-    setCommandPaletteOpen(false);
-    setAuditDrawerOpen(false);
-    setCopilotOpen(false);
-    setAssistantOpen(false);
-    setNewEventModalOpen(false);
+    setCommandPaletteOpen(false); setAuditDrawerOpen(false); setCopilotOpen(false);
+    setAssistantOpen(false); setNewEventModalOpen(false);
   }, []);
 
-  const toggleCommandPalette = useCallback(() => {
-    setCommandPaletteOpen((p) => !p);
-  }, []);
+  const toggleCommandPalette = useCallback(() => setCommandPaletteOpen((p) => !p), []);
 
   const selectTabByIndex = useCallback((index: number) => {
     const tabs: ActiveTab[] = ['dashboard', 'budget', 'timeline', 'vendors', 'ideation', 'guests'];
-    if (index >= 0 && index < tabs.length) {
-      setActiveTab(tabs[index]);
-    }
+    if (index >= 0 && index < tabs.length) setActiveTab(tabs[index]);
   }, []);
 
-  useKeyboardShortcuts({
-    onToggleCommandPalette: toggleCommandPalette,
-    onCloseOverlays: closeAllOverlays,
-    onSelectTabByIndex: selectTabByIndex,
-  });
+  useKeyboardShortcuts({ onToggleCommandPalette: toggleCommandPalette, onCloseOverlays: closeAllOverlays, onSelectTabByIndex: selectTabByIndex });
 
   const value = useMemo(
     () => ({
-      state, activePresetId, activeTab, currency, isDark,
-      canUndo: history.length > 0,
-      isCommandPaletteOpen, isAuditDrawerOpen, isCopilotOpen, isAssistantOpen, isNewEventModalOpen,
-      announcerMessage, setActiveTab, setCurrency, toggleDarkMode, switchPreset,
-      setCustomState, updateEvent, updateBudgetItem, autoBalanceBudget, addBudgetItem,
-      updateVendor, addVendor, updateMacroTask, addMacroTask, updateDayOfActivity,
-      addDayOfActivity, shiftActivity30m, updateGuest, addGuest, deleteGuest,
-      applyRipple, undoLastRipple, resetToFactoryDefaults, toggleTax, setTaxRate,
+      state, activePresetId, activeTab, currency, isDark, canUndo: history.length > 0,
+      isCommandPaletteOpen, isAuditDrawerOpen, isCopilotOpen, isAssistantOpen, isNewEventModalOpen, announcerMessage,
+      setActiveTab, setCurrency, toggleDarkMode, switchPreset, setCustomState, updateEvent,
+      updateBudgetItem, autoBalanceBudget, addBudgetItem, updateVendor, addVendor, updateMacroTask,
+      addMacroTask, updateDayOfActivity, addDayOfActivity, shiftActivity30m, updateGuest, addGuest,
+      deleteGuest, applyRipple, undoLastRipple, resetToFactoryDefaults, toggleTax, setTaxRate,
       setCommandPaletteOpen, setAuditDrawerOpen, setCopilotOpen, setAssistantOpen, setNewEventModalOpen, announce,
     }),
     [

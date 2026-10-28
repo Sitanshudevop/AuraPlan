@@ -47,7 +47,7 @@ export async function generateThemeIdea(
   const cleanVibe = sanitizeText(vibePreference);
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
-  if (!apiKey || !aiRateLimiter.checkRateLimit().allowed) {
+  if (import.meta.env.MODE === 'test' || !apiKey || !aiRateLimiter.checkRateLimit().allowed) {
     return getLocalThemeIdea(eventType, cleanVibe);
   }
 
@@ -64,7 +64,7 @@ export async function generateThemeIdea(
       "activities": [{"id": "ea-1", "title": string, "description": string, "estimatedCost": number, "timelineTask": string, "durationMinutes": number}]
     }`;
 
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -93,13 +93,13 @@ export async function generateVendorVet(
   const cleanCat = sanitizeText(category);
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
-  if (!apiKey || !aiRateLimiter.checkRateLimit().allowed) {
+  if (import.meta.env.MODE === 'test' || !apiKey || !aiRateLimiter.checkRateLimit().allowed) {
     return getLocalVendorVet(cleanName, cleanCat, contractedPrice);
   }
 
   try {
     const prompt = `Generate vendor vetting & negotiation scripts for vendor "${cleanName}" in category "${cleanCat}" with budget target ₹${contractedPrice}. Return ONLY JSON with keys: whatsappOutreachScript, emailOutreachScript, vettingQuestions (array of 5), hiddenCostRedFlags (array of 4).`;
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -126,13 +126,13 @@ export async function generateRippleScenario(
   const cleanPrompt = customPrompt ? sanitizeText(customPrompt) : undefined;
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
-  if (!apiKey || presetId !== 'custom' || !aiRateLimiter.checkRateLimit().allowed) {
+  if (import.meta.env.MODE === 'test' || !apiKey || presetId !== 'custom' || !aiRateLimiter.checkRateLimit().allowed) {
     return calculateDeterministicRipple(presetId, state, cleanPrompt);
   }
 
   try {
     const prompt = `Simulate ripple effect for event "${state.event.name}" (Guests: ${state.event.guestCount}, Budget: ${state.event.targetBudget}). Scenario: "${cleanPrompt}". Return JSON schema matching rippleDiffResult with scenarioTitle, scenarioDescription, budgetAdjustments, newVendors, timelineModifications, netBudgetImpact, guestCountImpact, summaryRationale.`;
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

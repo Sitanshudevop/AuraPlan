@@ -40,3 +40,4 @@ export const MODALITY_CHECKLISTS: Record<EventType, ChecklistRequirement[]> = {
     { id: 'c-medical', category: 'buffer', roleTitle: 'First Aid & EMT Station', description: 'Paramedic tent with emergency equipment', priority: 'critical', defaultEstimate: 40000, iconName: 'shield' },
   ],
 };
+

@@ -51,15 +51,15 @@ export const Sidebar: React.FC = () => {
       }`}
       aria-label="Workspace Navigation"
     >
-      {/* Top: Event Context Summary */}
-      <div className="p-3 border-b border-stone-200 dark:border-zinc-800">
+      {/* Top: Event Context Summary Card */}
+      <div className="p-3.5 border-b border-stone-200 dark:border-zinc-800">
         {!isCollapsed ? (
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Badge variant={getBadgeVariant(state.event.type)} size="sm">
                 {state.event.type.toUpperCase()} MODE
               </Badge>
-              <div className="flex items-center gap-1 text-[11px] font-mono tabular-nums text-stone-500 dark:text-zinc-400">
+              <div className="flex items-center gap-1 text-[11px] font-mono tabular-nums text-amber-700 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md font-semibold">
                 <Clock className="w-3 h-3 text-amber-600 dark:text-amber-400" />
                 <span>{daysLeft}d left</span>
               </div>
@@ -68,24 +68,24 @@ export const Sidebar: React.FC = () => {
               <h1 className="font-semibold text-xs tracking-tight truncate text-[#18181B] dark:text-[#FAFAFA]" title={state.event.name}>
                 {state.event.name}
               </h1>
-              <div className="flex items-center gap-1 text-[11px] text-stone-500 dark:text-zinc-400 mt-0.5 truncate">
-                <MapPin className="w-3 h-3 shrink-0" />
+              <div className="flex items-center gap-1.5 text-[11px] text-stone-500 dark:text-zinc-400 mt-1 truncate">
+                <MapPin className="w-3 h-3 shrink-0 text-stone-400" />
                 <span className="truncate">{state.event.city}</span>
               </div>
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-1">
+          <div className="flex flex-col items-center gap-1.5 py-1">
             <Badge variant={getBadgeVariant(state.event.type)} size="sm">
               {state.event.type.slice(0, 1).toUpperCase()}
             </Badge>
-            <span className="text-[10px] font-mono tabular-nums text-stone-500">{daysLeft}d</span>
+            <span className="text-[10px] font-mono tabular-nums text-amber-600 dark:text-amber-400 font-semibold">{daysLeft}d</span>
           </div>
         )}
       </div>
 
       {/* Middle: Feature Nav Items */}
-      <nav className="p-2 space-y-1 flex-1 overflow-y-auto no-scrollbar">
+      <nav className="p-2.5 space-y-1.5 flex-1 overflow-y-auto no-scrollbar">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
           return (
@@ -93,20 +93,20 @@ export const Sidebar: React.FC = () => {
               key={item.id}
               onClick={() => setActiveTab(item.id)}
               aria-current={isActive ? 'page' : undefined}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-xs font-medium transition-colors text-left ${
+              className={`group w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all text-left ${
                 isActive
-                  ? 'bg-stone-100 text-[#18181B] dark:bg-zinc-800 dark:text-white font-semibold'
-                  : 'text-stone-600 hover:bg-stone-50 dark:text-zinc-400 dark:hover:bg-zinc-800/50'
+                  ? 'bg-amber-500/10 text-amber-950 dark:text-amber-200 border border-amber-500/25 font-semibold shadow-xs'
+                  : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100/70 dark:text-zinc-400 dark:hover:text-zinc-100 dark:hover:bg-zinc-800/60'
               } ${isCollapsed ? 'justify-center px-0' : ''}`}
               title={`${item.label} (${item.shortcut})`}
             >
-              <span className={isActive ? 'text-stone-900 dark:text-white' : 'text-stone-500 dark:text-zinc-400'}>
+              <span className={`shrink-0 transition-colors ${isActive ? 'text-amber-600 dark:text-amber-400' : 'text-stone-400 group-hover:text-stone-600 dark:text-zinc-500 dark:group-hover:text-zinc-300'}`}>
                 {item.icon}
               </span>
               {!isCollapsed && (
-                <div className="flex items-center justify-between flex-1">
+                <div className="flex items-center justify-between flex-1 min-w-0">
                   <span className="truncate">{item.label}</span>
-                  <kbd className="text-[9px] font-mono text-stone-500 dark:text-zinc-400 opacity-75">
+                  <kbd className="text-[9px] font-mono text-stone-400 dark:text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity">
                     {item.shortcut}
                   </kbd>
                 </div>
@@ -119,13 +119,13 @@ export const Sidebar: React.FC = () => {
       {/* Bottom: Collapse Button & Status */}
       <div className="p-3 border-t border-stone-200 dark:border-zinc-800 flex items-center justify-between">
         {!isCollapsed && (
-          <div className="text-[10px] font-mono text-stone-500 dark:text-zinc-400">
-            <span>AuraPlan v1.0 • AA Compliant</span>
+          <div className="text-[10px] font-mono text-stone-600 dark:text-zinc-400">
+            <span>AuraPlan v1.0 • Concierge</span>
           </div>
         )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-1 text-stone-500 hover:text-stone-800 dark:text-zinc-400 dark:hover:text-zinc-100 rounded-md hover:bg-stone-100 dark:hover:bg-zinc-800 transition-colors ml-auto"
+          className="p-1.5 text-stone-400 hover:text-stone-700 dark:text-zinc-500 dark:hover:text-zinc-200 rounded-lg hover:bg-stone-100 dark:hover:bg-zinc-800 transition-colors ml-auto"
           aria-label={isCollapsed ? 'Expand navigation' : 'Collapse navigation'}
         >
           {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}

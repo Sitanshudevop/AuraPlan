@@ -46,7 +46,7 @@ export const MilestoneTracker: React.FC = () => {
             Escrow and tranche release timetable with due dates
           </p>
         </div>
-        <span className="text-xs font-mono tabular-nums text-stone-400">
+        <span className="text-xs font-mono tabular-nums text-stone-600 dark:text-zinc-400">
           {milestones.filter((m) => m.status === 'paid').length} / {milestones.length} Cleared
         </span>
       </div>
@@ -54,7 +54,7 @@ export const MilestoneTracker: React.FC = () => {
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs border-collapse">
           <thead>
-            <tr className="border-b border-stone-200 dark:border-zinc-800 text-[11px] font-semibold uppercase tracking-wider text-stone-400">
+            <tr className="border-b border-stone-200 dark:border-zinc-800 text-[11px] font-semibold uppercase tracking-wider text-stone-600 dark:text-zinc-400">
               <th className="py-2.5 px-3">Milestone Title</th>
               <th className="py-2.5 px-3">Vendor / Recipient</th>
               <th className="py-2.5 px-3 font-mono">Due Date</th>

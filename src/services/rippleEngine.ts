@@ -1,5 +1,6 @@
 import { RippleDiffResult, RipplePresetId } from '../types/ripple';
 import { EventWorkspaceState } from '../types/state';
+import { buildMonsoonScenario, buildInflationScenario } from './rippleScenarios';
 
 export function calculateDeterministicRipple(
   presetId: RipplePresetId,
@@ -35,12 +36,12 @@ export function calculateDeterministicRipple(
             oldAllocated: state.budgetItems.find((b) => b.category === 'logistics')?.allocated || 50000,
             newAllocated: (state.budgetItems.find((b) => b.category === 'logistics')?.allocated || 50000) + logisticsIncrease,
             diff: logisticsIncrease,
-            reason: `Additional shuttle vans, welcome kits, and badge print run.`,
+            reason: 'Additional shuttle vans, welcome kits, and badge print run.',
           },
         ],
         newVendors: [
           {
-            id: `rv-surge-1`,
+            id: 'rv-surge-1',
             name: 'Imperial Hospitality Staffing & Extra Crockery',
             category: 'catering',
             estimatedCost: Math.round(cateringIncrease * 0.4),
@@ -80,157 +81,57 @@ export function calculateDeterministicRipple(
       const bufferCut = targetCut - (decorCut + entCut);
 
       return {
-        scenarioTitle: 'Austerity Calibration (-15% Budget Cut)',
-        scenarioDescription: `Systematically trim ₹${targetCut.toLocaleString('en-IN')} across discretionary lines without degrading guest hospitality or core vendor commitments.`,
+        scenarioTitle: '-15% Budget Cut (Austerity Calibration)',
+        scenarioDescription: `Consolidating non-essential decor flourishes, transitioning to high-impact focal floral installations, and streamlining entertainment staging to save ${targetCut.toLocaleString('en-IN')}.`,
         budgetAdjustments: [
           {
             category: 'decor',
-            categoryLabel: 'Decor & Floral Architecture',
+            categoryLabel: 'Decor & Production Design',
             oldAllocated: decorItem?.allocated || 150000,
-            newAllocated: Math.max(0, (decorItem?.allocated || 150000) - decorCut),
+            newAllocated: (decorItem?.allocated || 150000) - decorCut,
             diff: -decorCut,
-            reason: 'Consolidate imported florals to local seasonal botanicals and repurpose ceremony backdrop for reception.',
+            reason: 'Consolidate perimeter draping and replace imported floral arches with local marigolds.',
           },
           {
             category: 'entertainment',
-            categoryLabel: 'Entertainment & Audio Rigging',
+            categoryLabel: 'Entertainment & Live Sound',
             oldAllocated: entItem?.allocated || 100000,
-            newAllocated: Math.max(0, (entItem?.allocated || 100000) - entCut),
+            newAllocated: (entItem?.allocated || 100000) - entCut,
             diff: -entCut,
-            reason: 'Package DJ audio rig with local acoustic set; eliminate duplicate lighting truss.',
+            reason: 'Consolidate secondary lounge acoustic act; focus sound gear on main dance stage.',
           },
           {
             category: 'buffer',
-            categoryLabel: 'Contingency Reserve',
-            oldAllocated: bufferItem?.allocated || 80000,
-            newAllocated: Math.max(0, (bufferItem?.allocated || 80000) - bufferCut),
+            categoryLabel: 'Contingency Buffer Reserve',
+            oldAllocated: bufferItem?.allocated || 50000,
+            newAllocated: Math.max(0, (bufferItem?.allocated || 50000) - bufferCut),
             diff: -bufferCut,
-            reason: 'Tighten contingency reserve from 10% to 5.5% as core contracts are now signed.',
+            reason: 'Release discretionary buffer allocation to lock in immediate target savings.',
           },
         ],
         newVendors: [],
         timelineModifications: [
           {
             id: 'rtm-cut-1',
-            title: 'Repurpose Ceremony Stage Arches for Reception Photo Booth',
+            title: 'Consolidate Stage Lighting Tech Briefing',
             action: 'modify',
-            detail: 'Decor crew relocates arch during the 45-minute cocktail gap.',
-            horizonOrDayOf: 'Day-Of (20:00)',
+            detail: 'Merge lighting and sound pre-production checks into single 45-min master briefing.',
+            horizonOrDayOf: 'Day-Of (14:00)',
           },
         ],
         netBudgetImpact: -targetCut,
         guestCountImpact: 0,
-        summaryRationale: `Budget optimization successfully saved ₹${targetCut.toLocaleString('en-IN')} (15%) by targeting non-experiential redundancies while retaining all primary food, photography, and venue contracts.`,
+        summaryRationale: `Precision austerity: Captured 15% net reduction (-${targetCut.toLocaleString('en-IN')}) across decor, auxiliary entertainment, and contingency buffer while keeping core guest dining and ceremonies completely intact.`,
       };
     }
 
     case 'monsoon_warning': {
-      const tentCost = Math.round(currentTotal * 0.08);
-      const generatorCost = Math.round(currentTotal * 0.03);
-
-      return {
-        scenarioTitle: 'Monsoon Alert: Weather-Proof Indoor/Tent Backup',
-        scenarioDescription: 'Impending rain radar triggers immediate outdoor perimeter hardening with waterproof German hanger structures and waterproof cable covers.',
-        budgetAdjustments: [
-          {
-            category: 'venue',
-            categoryLabel: 'Venue Structures & Weather Shielding',
-            oldAllocated: state.budgetItems.find((b) => b.category === 'venue')?.allocated || 400000,
-            newAllocated: (state.budgetItems.find((b) => b.category === 'venue')?.allocated || 400000) + tentCost,
-            diff: tentCost,
-            reason: 'High-tension German Hanger waterproof marquee canopy with wooden elevated sub-flooring.',
-          },
-          {
-            category: 'logistics',
-            categoryLabel: 'Power & Electrical Safeguards',
-            oldAllocated: state.budgetItems.find((b) => b.category === 'logistics')?.allocated || 50000,
-            newAllocated: (state.budgetItems.find((b) => b.category === 'logistics')?.allocated || 50000) + generatorCost,
-            diff: generatorCost,
-            reason: 'IP65 waterproof cable channels and backup diesel generator on standby.',
-          },
-        ],
-        newVendors: [
-          {
-            id: `rv-rain-1`,
-            name: 'Apex German Hanger Structures & Flooring',
-            category: 'venue',
-            estimatedCost: tentCost,
-            justification: 'Waterproof pagoda marquee + wooden floor decking to prevent muddy lawn conditions.',
-          },
-          {
-            id: `rv-rain-2`,
-            name: 'SilentPower 125kVA Backup Generator (GenSet)',
-            category: 'logistics',
-            estimatedCost: generatorCost,
-            justification: 'Dual redundant power feed to guarantee audio/lights during thunderstorm grid trips.',
-          },
-        ],
-        timelineModifications: [
-          {
-            id: 'rtm-rain-1',
-            title: 'Waterproof Structure Handover & Rain Leak Inspection',
-            action: 'add',
-            detail: 'Inspect seams, drainage slope, and electrical ground pins 5h prior to guest arrival.',
-            horizonOrDayOf: 'Day-Of (11:00)',
-          },
-          {
-            id: 'rtm-rain-2',
-            title: 'Relocate Cocktail Reception to Covered Veranda',
-            action: 'shift',
-            detail: 'Shift welcome drinks from open lawn to covered arcade zone.',
-            horizonOrDayOf: 'Day-Of (18:00)',
-          },
-        ],
-        netBudgetImpact: tentCost + generatorCost,
-        guestCountImpact: 0,
-        summaryRationale: 'Zero-disruption guarantee: Shields event from heavy downpours with reinforced German Hanger tenting and silent generator backup while preserving guest comfort.',
-      };
+      return buildMonsoonScenario(state, currentTotal);
     }
 
     case 'inflation_spike_20':
     default: {
-      const cateringIncrease = Math.round(cateringAllocated * 0.20);
-      const bufferItem = state.budgetItems.find((b) => b.category === 'buffer');
-      const bufferAbsorption = Math.min(bufferItem?.allocated || cateringIncrease, cateringIncrease);
-      const remainingDeficit = cateringIncrease - bufferAbsorption;
-
-      return {
-        scenarioTitle: 'Inflation Spike: Food & Beverage (+20%)',
-        scenarioDescription: 'Raw ingredient commodity surge increases caterer procurement quotes by 20%. Reallocating internal contingency reserves.',
-        budgetAdjustments: [
-          {
-            category: 'catering',
-            categoryLabel: 'Catering Procurement Surcharge',
-            oldAllocated: cateringAllocated,
-            newAllocated: cateringAllocated + cateringIncrease,
-            diff: cateringIncrease,
-            reason: '20% wholesale dairy, meat, and fresh floral surge passed down from food suppliers.',
-          },
-          {
-            category: 'buffer',
-            categoryLabel: 'Buffer Offset Absorption',
-            oldAllocated: bufferItem?.allocated || cateringIncrease,
-            newAllocated: Math.max(0, (bufferItem?.allocated || cateringIncrease) - bufferAbsorption),
-            diff: -bufferAbsorption,
-            reason: 'Deploy emergency buffer reserve to cover ₹' + bufferAbsorption.toLocaleString('en-IN') + ' of catering cost hike.',
-          },
-        ],
-        newVendors: [],
-        timelineModifications: [
-          {
-            id: 'rtm-inf-1',
-            title: 'Conduct Caterer Menu Optimization Audit',
-            action: 'add',
-            detail: 'Substitute 3 off-season imported desserts with artisanal local seasonal sweets to temper cost spike.',
-            horizonOrDayOf: '1_week_out',
-          },
-        ],
-        netBudgetImpact: remainingDeficit,
-        guestCountImpact: 0,
-        summaryRationale: customPrompt
-          ? `Custom scenario simulated: Handled prompt '${customPrompt}' by rebalancing emergency reserves and capping culinary variances.`
-          : `Absorbed ₹${bufferAbsorption.toLocaleString('en-IN')} of inflation hike from buffer reserves, limiting net budget variance to ₹${remainingDeficit.toLocaleString('en-IN')}.`,
-      };
+      return buildInflationScenario(state, cateringAllocated, customPrompt);
     }
   }
 }

@@ -6,23 +6,10 @@ import { sanitizeInput } from '../../utils/sanitizer';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { useFocusTrap } from '../../hooks';
-import {
-  ShieldCheck,
-  X,
-  Lock,
-  Eye,
-  Zap,
-  RotateCcw,
-  Keyboard,
-} from 'lucide-react';
+import { ShieldCheck, X, Lock, Eye, Zap, RotateCcw, Keyboard } from 'lucide-react';
 
 export const AuditDrawer: React.FC = () => {
-  const {
-    isAuditDrawerOpen,
-    setAuditDrawerOpen,
-    resetToFactoryDefaults,
-    announcerMessage,
-  } = useWorkspace();
+  const { isAuditDrawerOpen, setAuditDrawerOpen, resetToFactoryDefaults, announcerMessage } = useWorkspace();
 
   const [xssInput, setXssInput] = useState('<script>alert("pwned")</script><b>Wedding VIP</b><iframe src="evil.com"></iframe>');
   const [sanitizedOutput, setSanitizedOutput] = useState('');
@@ -86,15 +73,15 @@ export const AuditDrawer: React.FC = () => {
 
             <div className="grid grid-cols-3 gap-2 text-[11px]">
               <div className="p-2.5 rounded bg-stone-50 dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800">
-                <div className="text-stone-400">Schema Validation</div>
+                <div className="text-stone-600 dark:text-zinc-400">Schema Validation</div>
                 <div className="font-mono font-bold text-stone-800 dark:text-zinc-200">Zod v3.23 (Active)</div>
               </div>
               <div className="p-2.5 rounded bg-stone-50 dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800">
-                <div className="text-stone-400">Rate Limiter</div>
+                <div className="text-stone-600 dark:text-zinc-400">Rate Limiter</div>
                 <div className="font-mono font-bold text-emerald-600">10 req/min (Active)</div>
               </div>
               <div className="p-2.5 rounded bg-stone-50 dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800">
-                <div className="text-stone-400">Key Protection</div>
+                <div className="text-stone-600 dark:text-zinc-400">Key Protection</div>
                 <div className="font-mono font-bold text-stone-700 dark:text-zinc-300 truncate">
                   {aiStatus.maskedKey}
                 </div>
@@ -180,13 +167,13 @@ export const AuditDrawer: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-2 text-[11px]">
               <div className="p-2.5 rounded bg-stone-50 dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800">
-                <div className="text-stone-400">LocalStorage Footprint</div>
+                <div className="text-stone-600 dark:text-zinc-400">LocalStorage Footprint</div>
                 <div className="font-mono font-bold text-stone-800 dark:text-zinc-200">
                   {(storageBytes / 1024).toFixed(1)} KB (v1 Sync)
                 </div>
               </div>
               <div className="p-2.5 rounded bg-stone-50 dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800">
-                <div className="text-stone-400">Calculation Engine</div>
+                <div className="text-stone-600 dark:text-zinc-400">Calculation Engine</div>
                 <div className="font-mono font-bold text-emerald-600">Memoized React 18+</div>
               </div>
             </div>
