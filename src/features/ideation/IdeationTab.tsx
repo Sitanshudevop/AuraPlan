@@ -4,6 +4,7 @@ import { ThemeIdea } from '../../types/ideation';
 import { ThemeConceptCard } from './ThemeConceptCard';
 import { PersonalizedActivitiesView, PersonalizedActivity } from './PersonalizedActivitiesView';
 import { generateThemeIdea } from '../../services/geminiService';
+import { getLocalThemeIdea } from '../../services/deterministicFallback';
 import { Button } from '../../components/ui/Button';
 import { logger } from '../../utils/logger';
 import { Sparkles, RefreshCw, Loader2 } from 'lucide-react';
@@ -19,7 +20,9 @@ export const IdeationTab: React.FC = () => {
     announce,
   } = useWorkspace();
 
-  const [idea, setIdea] = useState<ThemeIdea | null>(null);
+  const [idea, setIdea] = useState<ThemeIdea | null>(() =>
+    getLocalThemeIdea(state.event.type, state.event.culturalPreferences)
+  );
   const [loading, setLoading] = useState(false);
   const [vibePrompt, setVibePrompt] = useState(state.event.culturalPreferences || '');
 
@@ -36,7 +39,8 @@ export const IdeationTab: React.FC = () => {
   };
 
   useEffect(() => {
-    loadTheme(state.event.culturalPreferences);
+    setVibePrompt(state.event.culturalPreferences || '');
+    setIdea(getLocalThemeIdea(state.event.type, state.event.culturalPreferences));
   }, [state.event.type, state.event.id]);
 
   const handleAddToPlan = (
@@ -143,7 +147,7 @@ export const IdeationTab: React.FC = () => {
       </div>
 
       {/* Render AI Concept Card */}
-      {loading ? (
+      {loading && !idea ? (
         <div className="py-20 flex flex-col items-center justify-center space-y-3">
           <Loader2 className="w-7 h-7 animate-spin text-stone-800 dark:text-zinc-200" />
           <p className="text-xs font-mono text-stone-500">
@@ -151,11 +155,23 @@ export const IdeationTab: React.FC = () => {
           </p>
         </div>
       ) : idea ? (
-        <ThemeConceptCard
-          idea={idea}
-          currency={currency}
-          onAddToPlan={handleAddToPlan}
-        />
+        <div className="relative">
+          {loading && (
+            <div className="absolute inset-0 bg-stone-50/60 dark:bg-zinc-950/60 backdrop-blur-[1px] flex items-center justify-center rounded-2xl z-10">
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800 rounded-full shadow-sm">
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-500" />
+                <span className="text-xs font-medium text-stone-700 dark:text-zinc-300">
+                  Refreshing theme concepts...
+                </span>
+              </div>
+            </div>
+          )}
+          <ThemeConceptCard
+            idea={idea}
+            currency={currency}
+            onAddToPlan={handleAddToPlan}
+          />
+        </div>
       ) : null}
 
       {/* Curated Experiential Moments & Activities */}

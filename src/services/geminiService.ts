@@ -10,6 +10,8 @@ import { sanitizeText, aiRateLimiter, maskApiKey } from '../utils/security';
 
 let lastCallTime = 0;
 const DEBOUNCE_MS = 600;
+const themeCache = new Map<string, ThemeIdea>();
+const vendorVetCache = new Map<string, VendorVetQuestions>();
 
 async function rateLimitDebounce(): Promise<void> {
   const now = Date.now();
@@ -45,10 +47,17 @@ export async function generateThemeIdea(
 ): Promise<ThemeIdea> {
   await rateLimitDebounce();
   const cleanVibe = sanitizeText(vibePreference);
+  const cacheKey = `${eventType}:${cleanVibe.toLowerCase().trim()}`;
+  if (themeCache.has(cacheKey)) {
+    return themeCache.get(cacheKey)!;
+  }
+
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
   if (import.meta.env.MODE === 'test' || !apiKey || !aiRateLimiter.checkRateLimit().allowed) {
-    return getLocalThemeIdea(eventType, cleanVibe);
+    const fallback = getLocalThemeIdea(eventType, cleanVibe);
+    themeCache.set(cacheKey, fallback);
+    return fallback;
   }
 
   try {
@@ -64,9 +73,10 @@ export async function generateThemeIdea(
       "activities": [{"id": "ea-1", "title": string, "description": string, "estimatedCost": number, "timelineTask": string, "durationMinutes": number}]
     }`;
 
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`, {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(4500),
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: { responseMimeType: 'application/json' },
@@ -77,9 +87,13 @@ export async function generateThemeIdea(
     const data = await res.json();
     const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
     const parsed = JSON.parse(rawText);
-    return themeIdeaSchema.parse(parsed) as ThemeIdea;
+    const validated = themeIdeaSchema.parse(parsed) as ThemeIdea;
+    themeCache.set(cacheKey, validated);
+    return validated;
   } catch {
-    return getLocalThemeIdea(eventType, cleanVibe);
+    const fallback = getLocalThemeIdea(eventType, cleanVibe);
+    themeCache.set(cacheKey, fallback);
+    return fallback;
   }
 }
 
@@ -91,17 +105,25 @@ export async function generateVendorVet(
   await rateLimitDebounce();
   const cleanName = sanitizeText(vendorName);
   const cleanCat = sanitizeText(category);
+  const cacheKey = `${cleanName}:${cleanCat}:${contractedPrice}`;
+  if (vendorVetCache.has(cacheKey)) {
+    return vendorVetCache.get(cacheKey)!;
+  }
+
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
   if (import.meta.env.MODE === 'test' || !apiKey || !aiRateLimiter.checkRateLimit().allowed) {
-    return getLocalVendorVet(cleanName, cleanCat, contractedPrice);
+    const fallback = getLocalVendorVet(cleanName, cleanCat, contractedPrice);
+    vendorVetCache.set(cacheKey, fallback);
+    return fallback;
   }
 
   try {
     const prompt = `Generate vendor vetting & negotiation scripts for vendor "${cleanName}" in category "${cleanCat}" with budget target ₹${contractedPrice}. Return ONLY JSON with keys: whatsappOutreachScript, emailOutreachScript, vettingQuestions (array of 5), hiddenCostRedFlags (array of 4).`;
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`, {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(4500),
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: { responseMimeType: 'application/json' },
@@ -111,9 +133,13 @@ export async function generateVendorVet(
     const data = await res.json();
     const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
     const parsed = JSON.parse(rawText);
-    return vendorVetSchema.parse(parsed) as VendorVetQuestions;
+    const validated = vendorVetSchema.parse(parsed) as VendorVetQuestions;
+    vendorVetCache.set(cacheKey, validated);
+    return validated;
   } catch {
-    return getLocalVendorVet(cleanName, cleanCat, contractedPrice);
+    const fallback = getLocalVendorVet(cleanName, cleanCat, contractedPrice);
+    vendorVetCache.set(cacheKey, fallback);
+    return fallback;
   }
 }
 
@@ -132,9 +158,10 @@ export async function generateRippleScenario(
 
   try {
     const prompt = `Simulate ripple effect for event "${state.event.name}" (Guests: ${state.event.guestCount}, Budget: ${state.event.targetBudget}). Scenario: "${cleanPrompt}". Return JSON schema matching rippleDiffResult with scenarioTitle, scenarioDescription, budgetAdjustments, newVendors, timelineModifications, netBudgetImpact, guestCountImpact, summaryRationale.`;
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`, {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(4500),
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: { responseMimeType: 'application/json' },
