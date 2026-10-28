@@ -4,8 +4,9 @@ import { useFocusTrap } from '../../hooks';
 import {
   askPlanningAssistant, MODALITY_PROMPT_CHIPS, AssistantMessage, AssistantAction,
 } from '../../services/planningAssistantService';
+import { isGeminiKeyConfigured, setCustomApiKey, removeCustomApiKey } from '../../services/geminiService';
 import { Button } from '../../components/ui/Button';
-import { Bot, X, Send, Sparkles, Loader2, Check, CalendarPlus, Wallet } from 'lucide-react';
+import { Bot, X, Send, Sparkles, Loader2, Check, CalendarPlus, Wallet, Key } from 'lucide-react';
 import { executeAssistantAction } from './assistantActionHandler';
 import { FormattedAssistantMessage } from './FormattedAssistantMessage';
 
@@ -17,6 +18,26 @@ export const PlanningAssistantDrawer: React.FC = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [executedLabels, setExecutedLabels] = useState<Set<string>>(new Set());
+  const [showKeyInput, setShowKeyInput] = useState(false);
+  const [customKey, setCustomKey] = useState('');
+  const [hasKey, setHasKey] = useState(() => isGeminiKeyConfigured());
+
+  const handleSaveKey = () => {
+    if (customKey.trim()) {
+      setCustomApiKey(customKey.trim());
+      setHasKey(true);
+      setShowKeyInput(false);
+      setCustomKey('');
+      announce('Gemini API key saved in browser');
+    }
+  };
+
+  const handleClearKey = () => {
+    removeCustomApiKey();
+    setHasKey(isGeminiKeyConfigured());
+    setShowKeyInput(false);
+    announce('Custom Gemini API key cleared');
+  };
 
   const [messages, setMessages] = useState<AssistantMessage[]>([
     {
@@ -92,14 +113,47 @@ export const PlanningAssistantDrawer: React.FC = () => {
               </p>
             </div>
           </div>
-          <button
-            onClick={() => setAssistantOpen(false)}
-            className="p-1 text-stone-400 hover:text-stone-700 dark:hover:text-zinc-200 rounded-md"
-            aria-label="Close assistant"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowKeyInput((v) => !v)}
+              className="text-[10px] font-mono px-2 py-0.5 rounded-full border border-stone-200 dark:border-zinc-700 bg-stone-100 dark:bg-zinc-800 text-stone-600 dark:text-zinc-300 hover:border-indigo-400 transition-colors flex items-center gap-1.5"
+              title="Configure Gemini API Key"
+              aria-label="Toggle Gemini API Key settings"
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${hasKey ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+              {hasKey ? 'Gemini Live' : 'Smart Engine'}
+            </button>
+            <button
+              onClick={() => setAssistantOpen(false)}
+              className="p-1 text-stone-400 hover:text-stone-700 dark:hover:text-zinc-200 rounded-md"
+              aria-label="Close assistant"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
+
+        {/* Optional Custom API Key Bar */}
+        {showKeyInput && (
+          <div className="p-2.5 bg-stone-100 dark:bg-zinc-850 border-b border-stone-200 dark:border-zinc-800 flex items-center gap-2 text-xs">
+            <Key className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+            <input
+              type="password"
+              placeholder="Paste Gemini API Key (AQ... or AIza...)"
+              value={customKey}
+              onChange={(e) => setCustomKey(e.target.value)}
+              className="flex-1 text-xs px-2.5 py-1 bg-white dark:bg-zinc-900 border border-stone-200 dark:border-zinc-700 rounded text-stone-800 dark:text-zinc-100 focus:outline-none"
+            />
+            <Button size="sm" variant="primary" onClick={handleSaveKey} disabled={!customKey.trim()}>
+              Save
+            </Button>
+            {hasKey && (
+              <Button size="sm" variant="ghost" onClick={handleClearKey}>
+                Reset
+              </Button>
+            )}
+          </div>
+        )}
 
         {/* Quick Chips */}
         <div className="p-3 bg-stone-50 dark:bg-zinc-900/60 border-b border-stone-200 dark:border-zinc-800 space-y-1.5">

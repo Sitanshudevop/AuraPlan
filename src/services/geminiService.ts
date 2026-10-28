@@ -22,13 +22,39 @@ async function rateLimitDebounce(): Promise<void> {
   lastCallTime = Date.now();
 }
 
+export function getActiveApiKey(): string | undefined {
+  if (typeof window !== 'undefined') {
+    const custom = localStorage.getItem('auraplan_custom_gemini_key');
+    if (custom && custom.trim().length > 5) {
+      return custom.trim();
+    }
+  }
+  const envKey = import.meta.env.VITE_GEMINI_API_KEY;
+  if (typeof envKey === 'string' && envKey.trim().length > 5 && envKey !== 'YOUR_GEMINI_API_KEY') {
+    return envKey.trim();
+  }
+  return undefined;
+}
+
+export function setCustomApiKey(key: string): void {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('auraplan_custom_gemini_key', key.trim());
+  }
+}
+
+export function removeCustomApiKey(): void {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('auraplan_custom_gemini_key');
+  }
+}
+
 export function isGeminiKeyConfigured(): boolean {
-  const key = import.meta.env.VITE_GEMINI_API_KEY;
+  const key = getActiveApiKey();
   return typeof key === 'string' && key.length > 5;
 }
 
 export function getSafeMaskedKey(): string {
-  const key = import.meta.env.VITE_GEMINI_API_KEY;
+  const key = getActiveApiKey();
   return maskApiKey(key);
 }
 
@@ -36,7 +62,7 @@ export function getAiEngineStatus(): { isConfigured: boolean; label: string; mas
   const configured = isGeminiKeyConfigured();
   return {
     isConfigured: configured,
-    label: configured ? 'Gemini 3.8 Flash (Active)' : 'AuraPlan Deterministic Intelligence Engine (Active)',
+    label: configured ? 'Gemini Flash 3.5 (Active)' : 'AuraPlan Deterministic Intelligence Engine (Active)',
     maskedKey: getSafeMaskedKey(),
   };
 }
@@ -52,7 +78,7 @@ export async function generateThemeIdea(
     return themeCache.get(cacheKey)!;
   }
 
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const apiKey = getActiveApiKey();
 
   if (import.meta.env.MODE === 'test' || !apiKey || !aiRateLimiter.checkRateLimit().allowed) {
     const fallback = getLocalThemeIdea(eventType, cleanVibe);
@@ -110,7 +136,7 @@ export async function generateVendorVet(
     return vendorVetCache.get(cacheKey)!;
   }
 
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const apiKey = getActiveApiKey();
 
   if (import.meta.env.MODE === 'test' || !apiKey || !aiRateLimiter.checkRateLimit().allowed) {
     const fallback = getLocalVendorVet(cleanName, cleanCat, contractedPrice);
@@ -150,7 +176,7 @@ export async function generateRippleScenario(
 ): Promise<RippleDiffResult> {
   await rateLimitDebounce();
   const cleanPrompt = customPrompt ? sanitizeText(customPrompt) : undefined;
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const apiKey = getActiveApiKey();
 
   if (import.meta.env.MODE === 'test' || !apiKey || presetId !== 'custom' || !aiRateLimiter.checkRateLimit().allowed) {
     return calculateDeterministicRipple(presetId, state, cleanPrompt);
