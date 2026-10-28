@@ -82,7 +82,8 @@ describe('Services, Storage & Formatters Unit Tests', () => {
   describe('Formatters Utilities', () => {
     it('formats currency in INR and USD correctly', () => {
       expect(formatCurrency(150000, 'INR')).toBe('₹1,50,000');
-      expect(formatCurrency(2500, 'USD')).toBe('$2,500');
+      expect(formatCurrency(2500, 'USD', 'USD')).toBe('$2,500');
+      expect(formatCurrency(83500, 'USD')).toBe('$1,000');
       expect(formatCurrency(0, 'INR')).toBe('₹0');
     });
 

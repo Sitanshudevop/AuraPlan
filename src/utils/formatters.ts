@@ -4,13 +4,28 @@ export const USD_TO_INR_RATE = 83.5;
 
 /**
  * Formats a numeric currency value in either INR (Lakhs/Crores style) or USD.
+ * When converting from INR to USD, applies the accurate market exchange rate (1 USD = ₹83.50).
  */
-export function formatCurrency(amount: number, currency: Currency): string {
-  const rounded = Math.round(amount);
-  if (currency === 'INR') {
-    return '₹' + rounded.toLocaleString('en-IN');
+export function formatCurrency(
+  amount: number,
+  currency: Currency = 'INR',
+  fromCurrency: Currency = 'INR'
+): string {
+  let val = amount;
+  if (fromCurrency === 'INR' && currency === 'USD') {
+    val = amount / USD_TO_INR_RATE;
+  } else if (fromCurrency === 'USD' && currency === 'INR') {
+    val = amount * USD_TO_INR_RATE;
   }
-  return '$' + rounded.toLocaleString('en-US');
+
+  if (currency === 'INR') {
+    return '₹' + Math.round(val).toLocaleString('en-IN');
+  }
+
+  if (val > 0 && val < 10 && val % 1 !== 0) {
+    return '$' + val.toFixed(2);
+  }
+  return '$' + Math.round(val).toLocaleString('en-US');
 }
 
 /**

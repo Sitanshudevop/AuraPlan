@@ -152,7 +152,8 @@ describe('Budget Calculations & Financial Math', () => {
 
     it('formats currency with tabular figures in both INR and USD', () => {
       expect(formatCurrency(1850000, 'INR')).toBe('₹18,50,000');
-      expect(formatCurrency(25000, 'USD')).toBe('$25,000');
+      expect(formatCurrency(25000, 'USD', 'USD')).toBe('$25,000');
+      expect(formatCurrency(83500, 'USD')).toBe('$1,000');
       expect(convertCurrency(83500, 'INR', 'USD')).toBe(1000);
       expect(convertCurrency(1000, 'USD', 'INR')).toBe(83500);
     });

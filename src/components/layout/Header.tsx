@@ -101,7 +101,7 @@ export const Header: React.FC = () => {
         <button
           onClick={() => setCurrency(currency === 'INR' ? 'USD' : 'INR')}
           className="flex items-center gap-1 px-2.5 py-1 text-xs font-mono font-medium rounded-lg bg-stone-100 hover:bg-stone-200 dark:bg-zinc-800/80 dark:hover:bg-zinc-700 text-stone-700 dark:text-zinc-300 border border-stone-200 dark:border-zinc-700/80 transition-colors"
-          title="Toggle Currency (₹ INR / $ USD)"
+          title={`Toggle Currency (${currency === 'INR' ? '₹ INR -> $ USD @ ₹83.50/$' : '$ USD -> ₹ INR'})`}
           aria-label="Toggle currency between INR and USD"
         >
           {currency === 'INR' ? (
@@ -113,6 +113,9 @@ export const Header: React.FC = () => {
             <>
               <DollarSign className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>USD</span>
+              <span className="text-[10px] text-stone-400 dark:text-zinc-500 font-sans hidden md:inline">
+                (₹83.5/$)
+              </span>
             </>
           )}
         </button>
