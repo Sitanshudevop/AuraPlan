@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { RipplePresetId, RippleDiffResult } from '../../types/ripple';
 import { generateRippleScenario } from '../../services/geminiService';
@@ -20,7 +20,8 @@ export const RippleSimulatorDrawer: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [diffResult, setDiffResult] = useState<RippleDiffResult | null>(null);
 
-  const drawerRef = useFocusTrap<HTMLDivElement>(isCopilotOpen, () => setCopilotOpen(false));
+  const handleClose = useCallback(() => setCopilotOpen(false), [setCopilotOpen]);
+  const drawerRef = useFocusTrap<HTMLDivElement>(isCopilotOpen, handleClose);
 
   const runSimulation = async (presetId: RipplePresetId) => {
     setSelectedPreset(presetId);

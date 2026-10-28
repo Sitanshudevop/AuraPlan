@@ -11,6 +11,8 @@ export function useFocusTrap<T extends HTMLElement = HTMLDivElement>(
 ) {
   const containerRef = useRef<T>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
+  const onEscapeRef = useRef(onEscape);
+  onEscapeRef.current = onEscape;
 
   useEffect(() => {
     if (!isActive) return;
@@ -27,18 +29,23 @@ export function useFocusTrap<T extends HTMLElement = HTMLDivElement>(
     const getFocusableElements = () =>
       Array.from(container.querySelectorAll<HTMLElement>(focusableSelector));
 
-    // Focus the first interactive element or the container itself
-    const elements = getFocusableElements();
-    if (elements.length > 0) {
-      elements[0].focus();
-    } else {
-      container.focus();
+    // Focus initial element ONLY if focus is not already inside the container
+    if (!container.contains(document.activeElement)) {
+      const elements = getFocusableElements();
+      const autoFocusEl = elements.find((el) => el.hasAttribute('autofocus'));
+      if (autoFocusEl) {
+        autoFocusEl.focus();
+      } else if (elements.length > 0) {
+        elements[0].focus();
+      } else {
+        container.focus();
+      }
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && onEscape) {
+      if (e.key === 'Escape' && onEscapeRef.current) {
         e.stopPropagation();
-        onEscape();
+        onEscapeRef.current();
         return;
       }
 
@@ -80,8 +87,7 @@ export function useFocusTrap<T extends HTMLElement = HTMLDivElement>(
         previousActiveElement.current.focus();
       }
     };
-  }, [isActive, onEscape]);
+  }, [isActive]);
 
   return containerRef;
 }
-

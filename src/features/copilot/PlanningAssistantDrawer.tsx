@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { useFocusTrap } from '../../hooks';
 import {
@@ -27,7 +27,8 @@ export const PlanningAssistantDrawer: React.FC = () => {
     },
   ]);
 
-  const drawerRef = useFocusTrap<HTMLDivElement>(isAssistantOpen, () => setAssistantOpen(false));
+  const handleClose = useCallback(() => setAssistantOpen(false), [setAssistantOpen]);
+  const drawerRef = useFocusTrap<HTMLDivElement>(isAssistantOpen, handleClose);
   if (!isAssistantOpen) return null;
 
   const quickChips = MODALITY_PROMPT_CHIPS[state.event.type] || MODALITY_PROMPT_CHIPS.wedding;
@@ -177,6 +178,7 @@ export const PlanningAssistantDrawer: React.FC = () => {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask anything (e.g. Weather contingency, buffer times, catering)..."
               className="flex-1 text-xs px-3 py-2 bg-white dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md focus:outline-none dark:text-white"
+              autoFocus
             />
             <Button type="submit" variant="primary" size="sm" disabled={!input.trim() || loading} icon={loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}>
               Send

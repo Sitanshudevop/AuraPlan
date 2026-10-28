@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { getAiEngineStatus } from '../../services/geminiService';
 import { getStorageUsageBytes } from '../../utils/storage';
@@ -15,7 +15,8 @@ export const AuditDrawer: React.FC = () => {
   const [sanitizedOutput, setSanitizedOutput] = useState('');
   const [testRun, setTestRun] = useState(false);
 
-  const drawerRef = useFocusTrap<HTMLDivElement>(isAuditDrawerOpen, () => setAuditDrawerOpen(false));
+  const handleClose = useCallback(() => setAuditDrawerOpen(false), [setAuditDrawerOpen]);
+  const drawerRef = useFocusTrap<HTMLDivElement>(isAuditDrawerOpen, handleClose);
 
   if (!isAuditDrawerOpen) return null;
 
