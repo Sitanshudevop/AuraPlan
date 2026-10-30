@@ -97,3 +97,4 @@ export const RippleDiffSummary: React.FC<RippleDiffSummaryProps> = ({
     </div>
   );
 };
+

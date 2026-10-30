@@ -176,12 +176,12 @@ The project executes across six targeted, non-breaking milestones designed to el
 
 | Milestone | Code Name | Primary Focus | Key Deliverables | Audit Parameter | Target Metric |
 |---|---|---|---|---|---|
-| **M1** | Code Quality & Modularization | Refactor oversized components & prune unused vars | Extract subcomponents for `PlanningAssistantDrawer`, `AddVendorModal`, `RippleSimulatorDrawer`, and 12 other files; prune 3 unused variables in `AssistantHeader.tsx` and `RippleSimulatorDrawer.tsx`. | Code Quality | 100% files $\le 180$ lines (hard cap $< 250$ lines); 0 TS errors, 0 ESLint warnings. |
-| **M2** | Efficiency & Memoization | Render boundaries & card/row memoization | Fix `VendorKanbanCard` comparator; memoize `VendorQuoteTableRow` and `GuestTableRow`; stabilize `VendorsTab` callbacks; optimize `VendorKanban` stage grouping; memoize `Modal.tsx`. | Efficiency & Performance | Zero unnecessary re-renders on unrelated state changes; 300ms persistence invariant intact. |
-| **M3** | Accessibility & Micro-Copy | WCAG 2.1 AA typography & landmarks | Elevate 26 sub-12px micro-copy locations to 12px `text-xs text-stone-500 dark:text-[#8B8B93]`; provide contrast proofs (4.86:1 light / 5.43:1+ dark) and 0px layout shift proof; add `<section>` landmarks; attach `useFocusTrap` to `CommandPalette`. | Accessibility | 100% compliance with WCAG 2.1 AA contrast $\ge 4.5:1$; 0 sub-12px elements; 0 layout shifts. |
-| **M4** | Problem Statement Alignment | Interactive Counter-Offer Tactic Simulator | Add `VendorCounterOfferSimulator.tsx` (<= 100 lines) within `VendorNegotiationModal.tsx` featuring 4 negotiation postures, dynamic price recalculation, and live outreach script injection. | Problem Statement Alignment | 100/100 domain alignment; zero schema modifications; 100% existing test compatibility. |
-| **M5** | Testing & Verification Expansion | Vitest test suite additions | Author 3 comprehensive test suites: `kanbanDnDAndAdvancement.test.tsx` (7 tests), `vendorComparisonAndNegotiation.test.tsx` (6 tests), `errorBoundariesAndFallbacks.test.tsx` (6 tests). | Testing & Verification | 135 passing tests (0 failures); line coverage elevated from 82.03% to $> 90.5\%$. |
-| **M6** | Precision Audit Gate & Attestation | Final verification & validation | Execute automated verification matrix: TypeScript check, ESLint check, line count audit, Vitest coverage report, security grep verification, and anti-AI design audit. | Audit Attestation | 100/100 across all 6 parameters; publication-grade audit report. |
+| **M1** | Code Quality & Modularization | Refactor oversized components & preserve compiler hygiene | Extract subcomponents for `PlanningAssistantDrawer`, `AddVendorModal`, `RippleSimulatorDrawer`, and 12 other files; strictly preserve `eventName` in `AssistantHeader.tsx` (rendered on line 29); maintain 0 TS errors, 0 ESLint warnings (`strict: true`, `noUnusedLocals: true`, `noUnusedParameters: true`). | Code Quality | 100% files $\le 180$ lines (hard cap $< 250$ lines); 0 TS errors, 0 ESLint warnings. |
+| **M2** | Efficiency & Memoization | Render boundaries & card/row memoization | Fix `VendorKanbanCard` comparator; memoize `VendorQuoteTableRow` (including `onDeleteVendor` equality) and `GuestTableRow`; stabilize `VendorsTab` callbacks; optimize `VendorKanban` stage grouping; memoize `Modal.tsx`. | Efficiency & Performance | Zero unnecessary re-renders on unrelated state changes; 300ms persistence invariant intact. |
+| **M3** | Accessibility & Micro-Copy | WCAG 2.1 AA typography & landmarks | Elevate all 55 sub-12px micro-copy locations across 24 files to 12px `text-xs text-stone-500 dark:text-[#8B8B93]`; provide mathematical contrast proofs ($\ge 4.5:1$ in both light and dark modes, repairing `TaxAndCateringCalc.tsx` to 5.53:1) and empirical 0px layout shift proof; add `<section>` landmarks; attach `useFocusTrap` to `CommandPalette`. | Accessibility | 100% compliance with WCAG 2.1 AA contrast $\ge 4.5:1$; 0 sub-12px elements; 0 layout shifts. |
+| **M4** | Problem Statement Alignment | Interactive Counter-Offer Tactic Simulator | Add `VendorCounterOfferSimulator.tsx` ($\le 100$ lines) within `VendorNegotiationModal.tsx` featuring 4 commercial negotiation postures (Balanced 10%, Aggressive 15%, Scope Trade 8%, Payment Terms 5%), dynamic price recalculation, live script generation, typed callbacks (`onSelectTactic`, `onApplyTargetPrice`), and backward-compatible re-export in `VendorCounterOfferTactic.tsx`. | Problem Statement Alignment | 100/100 domain alignment; zero schema modifications; 100% existing test compatibility. |
+| **M5** | Testing & Verification Expansion | Vitest test suite additions | Author/harmonize 3 comprehensive test suites: `kanbanDnDAndAdvancement.test.tsx` (7 tests), `vendorComparisonAndNegotiation.test.tsx` (6 tests), and `errorBoundariesAndFallbacks.test.tsx` (augmented to 11 tests); line coverage elevated from verified baseline 83.43% (18 test files, 125 tests) to $> 90.5\%$. | Testing & Verification | 100% tests pass (135+ tests, 0 failures); line coverage elevated from 83.43% to $> 90.5\%$. |
+| **M6** | Precision Audit Gate & Attestation | Final verification & validation | Execute automated verification matrix: TypeScript check (0 errors), ESLint check (0 errors/warnings), line count audit ($\le 180$ lines), Vitest coverage report ($> 90.5\%$), security grep verification (0 unsafe DOM injections), and anti-AI design audit. | Audit Attestation | 100/100 across all 6 parameters; publication-grade audit report. |
 
 ---
 
@@ -276,6 +276,15 @@ export interface AssistantResponse {
 ### 5.3 Extracted Subcomponent Prop Contracts (M1 & M4)
 ```typescript
 // Vendor Counter-Offer Simulator (M4)
+export interface CommercialPosture {
+  id: 'balanced' | 'aggressive' | 'scope_trade' | 'payment_terms';
+  title: string;
+  discountPercent: number;
+  badgeLabel: string;
+  leverageAngle: string;
+  tradeOff: string;
+}
+
 export interface VendorCounterOfferSimulatorProps {
   vendorName: string;
   category: BudgetCategory;
@@ -284,6 +293,9 @@ export interface VendorCounterOfferSimulatorProps {
   onSelectTactic?: (tacticId: string, targetPrice: number, savings: number) => void;
   onApplyTargetPrice?: (targetPrice: number) => void;
 }
+
+// Backward-compatible alias export in src/features/vendors/VendorCounterOfferTactic.tsx:
+// export { VendorCounterOfferSimulator as VendorCounterOfferTactic } from './VendorCounterOfferSimulator';
 
 // Vendor Commercial Fields (M1)
 export interface VendorCommercialFieldsProps {
@@ -328,18 +340,22 @@ To ensure uncompromising engineering quality, every change is validated against 
 ```bash
 # 1. Full Vitest Test Suite Execution
 cmd.exe /c "npm test"
-# Requirement: 100% tests pass (135/135 tests), 0 failures.
+# Verified Baseline: 18 test files passed (18/18), 125 tests passed (125/125), 0 failures.
+# Requirement: 100% tests pass (expanding to 135+ tests upon M5 completion).
 
 # 2. Vitest Line & Branch Coverage Gate
 cmd.exe /c "npm run test:coverage"
-# Requirement: Statement & line coverage > 90.0%, 0 uncovered critical paths.
+# Verified Baseline: 83.43% line coverage (3,120 / 3,740 executed lines).
+# Requirement: Statement & line coverage > 90.0% across expanded denominator (3,840 lines).
 
 # 3. TypeScript Strict Compiler Validation
 cmd.exe /c "npx tsc --noEmit"
-# Requirement: Exit code 0, 0 type errors, noUnusedLocals clean.
+# Verified Baseline: Exit code 0, 0 type errors, noUnusedLocals / noUnusedParameters clean.
+# Requirement: Exit code 0, zero type errors.
 
 # 4. ESLint Code Quality Inspection
 cmd.exe /c "npm run lint"
+# Verified Baseline: Exit code 0, 0 warnings, 0 errors.
 # Requirement: Exit code 0, 0 warnings, 0 errors.
 
 # 5. File Line Count Compliance Audit
@@ -348,6 +364,7 @@ powershell -Command "Get-ChildItem -Path src -Include *.ts,*.tsx -Recurse | Wher
 
 # 6. Security Injection Grep Audit
 powershell -Command "Select-String -Path src/**/*.ts,src/**/*.tsx -Pattern 'dangerouslySetInnerHTML|eval\(|document\.write' -AllMatches"
+# Verified Baseline: Zero matches.
 # Requirement: Zero matches.
 ```
 

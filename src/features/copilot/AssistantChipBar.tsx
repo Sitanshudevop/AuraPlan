@@ -63,3 +63,4 @@ export const AssistantChipBar: React.FC<AssistantChipBarProps> = ({
     </>
   );
 };
+
