@@ -4,8 +4,53 @@
  */
 
 /**
+ * Removes dangerous tags (<script>, <iframe>, <object>, <embed>) and their enclosed contents.
+ *
+ * @param text - Raw input string
+ * @returns Cleaned string without executable containers
+ */
+export function stripTagsWithContent(text: string): string {
+  return text
+    .replace(/<(script|iframe|object|embed)[^>]*>([\s\S]*?)<\/\1>/gi, '')
+    .replace(/<(script|iframe|object|embed)[^>]*>/gi, '');
+}
+
+/**
+ * Strips inline event handler attributes (e.g., onerror=, onclick=, onload=).
+ *
+ * @param text - Raw input string
+ * @returns Cleaned string without inline JS handlers
+ */
+export function stripInlineEventHandlers(text: string): string {
+  return text.replace(/\s*on\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+}
+
+/**
+ * Strips dangerous pseudo-protocol URI schemes (javascript:, vbscript:, data:).
+ *
+ * @param text - Raw input string
+ * @returns Cleaned string without script-executable URLs
+ */
+export function stripScriptProtocols(text: string): string {
+  return text.replace(/(javascript|vbscript|data)\s*:\s*[^\s"'>]*/gi, '');
+}
+
+/**
+ * Strips any remaining standard HTML tags.
+ *
+ * @param text - Raw input string
+ * @returns Pure text stripped of all HTML markup
+ */
+export function stripHtmlTags(text: string): string {
+  return text.replace(/<[^>]+>/g, '');
+}
+
+/**
  * Strips all HTML tags, javascript: URIs, inline event handlers (e.g. onerror, onclick),
- * and script/iframe injection vectors.
+ * and script/iframe injection vectors using a multi-pass evasion-resistant loop.
+ *
+ * @param input - Raw user input string
+ * @returns Sanitized safe text
  */
 export function sanitizeText(input: string): string {
   if (!input || typeof input !== 'string') return '';
@@ -19,34 +64,24 @@ export function sanitizeText(input: string): string {
     previous = clean;
     passes++;
 
-    // Remove script, iframe, object, embed tags and their contents
-    clean = clean.replace(/<(script|iframe|object|embed)[^>]*>([\s\S]*?)<\/\1>/gi, '');
-
-    // Remove self-closing or lone script-like tags
-    clean = clean.replace(/<(script|iframe|object|embed)[^>]*>/gi, '');
-
-    // Remove inline event handlers (e.g. onerror=, onclick=, onload=)
-    clean = clean.replace(/on\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
-
-    // Remove javascript:, vbscript:, and data: URL schemes
-    clean = clean.replace(/(javascript|vbscript|data)\s*:\s*[^\s"'>]*/gi, '');
-
-    // Strip all remaining HTML tags
-    clean = clean.replace(/<[^>]+>/g, '');
+    clean = stripTagsWithContent(clean);
+    clean = stripInlineEventHandlers(clean);
+    clean = stripScriptProtocols(clean);
+    clean = stripHtmlTags(clean);
   }
 
   return clean.trim();
 }
 
 /**
+ * Primary alias for input sanitization across forms and schemas.
+ */
+export const sanitizeInput = sanitizeText;
+
+/**
  * Keys blocked to defend against prototype pollution attacks
  */
 const FORBIDDEN_OBJECT_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
-
-/**
- * Alias for backward compatibility across modules
- */
-export const sanitizeInput = sanitizeText;
 
 /**
  * Sanitizes an object deeply by applying sanitizeText to all string properties,

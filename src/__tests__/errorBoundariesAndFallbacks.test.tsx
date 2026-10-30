@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { generateCustomPlan, generateRippleScenario } from '../services/geminiService';
 import { getLocalVendorVet, getLocalThemeIdea } from '../services/deterministicFallback';
-import { sanitizeInput } from '../utils/sanitizer';
+import { sanitizeInput } from '../utils/security';
 import { workspaceReducer } from '../context/workspaceReducer';
 import { EventWorkspaceState } from '../types/state';
 

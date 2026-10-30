@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { getAiEngineStatus } from '../../services/geminiService';
 import { getStorageUsageBytes } from '../../utils/storage';
-import { sanitizeInput } from '../../utils/sanitizer';
+import { sanitizeInput } from '../../utils/security';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { useFocusTrap } from '../../hooks';

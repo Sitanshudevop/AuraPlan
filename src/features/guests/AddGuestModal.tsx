@@ -3,7 +3,7 @@ import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
 import { Select, SelectOption } from '../../components/ui/Select';
 import { Guest, GuestGroup, DietaryTag, RsvpStatus, ZoneCapacity } from '../../types/guest';
-import { sanitizeInput } from '../../utils/sanitizer';
+import { sanitizeInput } from '../../utils/security';
 
 export interface AddGuestModalProps {
   isOpen: boolean;

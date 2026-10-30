@@ -3,6 +3,10 @@ import {
   sanitizeText,
   sanitizeInput,
   sanitizeObject,
+  stripTagsWithContent,
+  stripInlineEventHandlers,
+  stripScriptProtocols,
+  stripHtmlTags,
   aiRateLimiter,
   maskApiKey,
   CSP_POLICY_DIRECTIVES,
@@ -165,6 +169,31 @@ describe('Security Suite, XSS Sanitization & Zod Schemas', () => {
       expect(clean.metadata.note).toBe('Important Details');
       expect(clean.tags[0]).toBe('Bold');
       expect(clean.tags[1]).toBe('Tag2');
+    });
+
+    it('guarantees 100% parity between sanitizeInput and sanitizeText across all edge cases', () => {
+      const edgeCases = [
+        '<script>alert("xss")</script>Hello World',
+        '<img src=x onerror=alert(1)>Event Hall',
+        'javascript:doEvil()',
+        '<iframe src="https://evil.com"></iframe>Notes',
+        'Nested <script><script>alert(1)</script></script>Payload',
+        'Normal clean text without markup 12345',
+        '',
+        '   padded string with spaces   ',
+        '<a href="vbscript:msgbox(1)">Click here</a>',
+      ];
+
+      for (const input of edgeCases) {
+        expect(sanitizeInput(input)).toBe(sanitizeText(input));
+      }
+    });
+
+    it('verifies individual named security helpers execute with precision', () => {
+      expect(stripTagsWithContent('<script>bad()</script>good')).toBe('good');
+      expect(stripInlineEventHandlers('<div onclick="bad()" onerror="worse()">text</div>')).toBe('<div>text</div>');
+      expect(stripScriptProtocols('javascript:alert(1)')).toBe('');
+      expect(stripHtmlTags('<b>Bold</b> <i>Italic</i>')).toBe('Bold Italic');
     });
 
     it('automatically sanitizes string fields when parsing through Zod schemas', () => {

@@ -3,7 +3,7 @@ import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
 import { Select, SelectOption } from '../../components/ui/Select';
 import { MacroTask, TimelineHorizon, Priority } from '../../types/timeline';
-import { sanitizeInput } from '../../utils/sanitizer';
+import { sanitizeInput } from '../../utils/security';
 
 interface AddMacroTaskModalProps {
   isOpen: boolean;

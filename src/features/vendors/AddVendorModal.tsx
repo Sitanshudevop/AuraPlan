@@ -5,7 +5,7 @@ import { Select, SelectOption } from '../../components/ui/Select';
 import { Vendor, VendorStatus } from '../../types/vendor';
 import { BudgetCategory } from '../../types/budget';
 import { Currency } from '../../types/event';
-import { sanitizeInput } from '../../utils/sanitizer';
+import { sanitizeInput } from '../../utils/security';
 import { VendorContactFields } from './VendorContactFields';
 
 interface AddVendorModalProps {

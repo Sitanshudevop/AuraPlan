@@ -4,7 +4,7 @@ import { Button } from '../../components/ui/Button';
 import { Select, SelectOption } from '../../components/ui/Select';
 import { BudgetItem, BudgetCategory } from '../../types/budget';
 import { Currency } from '../../types/event';
-import { sanitizeInput } from '../../utils/sanitizer';
+import { sanitizeInput } from '../../utils/security';
 
 interface AddBudgetItemModalProps {
   isOpen: boolean;

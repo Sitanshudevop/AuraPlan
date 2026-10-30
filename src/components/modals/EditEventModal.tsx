@@ -4,7 +4,7 @@ import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
 import { Select, SelectOption } from '../ui/Select';
 import { EventType, EventSetting } from '../../types/event';
-import { sanitizeInput } from '../../utils/sanitizer';
+import { sanitizeInput } from '../../utils/security';
 
 const typeOptions: SelectOption[] = [
   { value: 'wedding', label: 'Wedding celebration' },

@@ -5,7 +5,7 @@ import { Button } from '../ui/Button';
 import { EventType, EventSetting } from '../../types/event';
 import { generateCustomPlan } from '../../services/geminiService';
 import { Loader2 } from 'lucide-react';
-import { sanitizeInput } from '../../utils/sanitizer';
+import { sanitizeInput } from '../../utils/security';
 import { logger } from '../../utils/logger';
 import { EventModalFormFields } from './EventModalFormFields';
 
