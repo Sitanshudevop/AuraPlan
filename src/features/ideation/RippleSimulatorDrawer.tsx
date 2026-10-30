@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { RipplePresetId, RippleDiffResult } from '../../types/ripple';
 import { generateRippleScenario } from '../../services/geminiService';
@@ -11,15 +12,7 @@ import { X, RotateCcw, Check, Loader2 } from 'lucide-react';
 import { PRESET_SCENARIOS } from './ripplePresetScenarios';
 
 export const RippleSimulatorDrawer: React.FC = () => {
-  const {
-    isCopilotOpen,
-    setCopilotOpen,
-    state,
-    currency,
-    applyRipple,
-    undoLastRipple,
-    canUndo,
-  } = useWorkspace();
+  const { isCopilotOpen, setCopilotOpen, state, currency, applyRipple, undoLastRipple, canUndo } = useWorkspace();
 
   const [selectedPreset, setSelectedPreset] = useState<RipplePresetId>('guest_surge_25');
   const [customPrompt, setCustomPrompt] = useState('');
@@ -61,9 +54,9 @@ export const RippleSimulatorDrawer: React.FC = () => {
 
   if (!isCopilotOpen) return null;
 
-  return (
+  const content = (
     <div
-      className="fixed inset-0 z-50 overflow-hidden bg-black/80 backdrop-blur-md flex justify-end"
+      className="fixed inset-0 z-[100] overflow-hidden bg-black/80 backdrop-blur-md flex justify-end"
       onClick={handleClose}
     >
       <div
@@ -246,4 +239,6 @@ export const RippleSimulatorDrawer: React.FC = () => {
       </div>
     </div>
   );
+
+  return typeof document !== 'undefined' ? createPortal(content, document.body) : content;
 };

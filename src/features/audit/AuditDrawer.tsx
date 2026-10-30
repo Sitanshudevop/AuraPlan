@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { getAiEngineStatus } from '../../services/geminiService';
 import { getStorageUsageBytes } from '../../utils/storage';
@@ -29,9 +30,9 @@ export const AuditDrawer: React.FC = () => {
     setTestRun(true);
   };
 
-  return (
+  const content = (
     <div
-      className="fixed inset-0 z-50 overflow-hidden bg-black/80 backdrop-blur-md flex justify-end"
+      className="fixed inset-0 z-[100] overflow-hidden bg-black/80 backdrop-blur-md flex justify-end"
       onClick={handleClose}
     >
       <div
@@ -195,4 +196,6 @@ export const AuditDrawer: React.FC = () => {
       </div>
     </div>
   );
+
+  return typeof document !== 'undefined' ? createPortal(content, document.body) : content;
 };

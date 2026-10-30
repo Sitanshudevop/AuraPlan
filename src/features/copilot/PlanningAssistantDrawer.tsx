@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { useFocusTrap } from '../../hooks';
 import {
@@ -91,9 +92,11 @@ export const PlanningAssistantDrawer: React.FC = () => {
     setExecutedLabels((prev) => new Set(prev).add(action.label));
   };
 
-  return (
+  if (!isAssistantOpen) return null;
+
+  const content = (
     <div
-      className="fixed inset-0 z-50 overflow-hidden bg-black/80 backdrop-blur-md flex justify-end"
+      className="fixed inset-0 z-[100] overflow-hidden bg-black/80 backdrop-blur-md flex justify-end"
       onClick={handleClose}
     >
       <div
@@ -228,4 +231,6 @@ export const PlanningAssistantDrawer: React.FC = () => {
       </div>
     </div>
   );
+
+  return typeof document !== 'undefined' ? createPortal(content, document.body) : content;
 };

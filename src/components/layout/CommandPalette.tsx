@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { Search, Briefcase, CheckCircle } from 'lucide-react';
 import { buildBasePaletteItems, PaletteItem } from './commandPaletteItems';
@@ -109,9 +110,9 @@ export const CommandPalette: React.FC = () => {
 
   if (!isCommandPaletteOpen) return null;
 
-  return (
+  const content = (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-20 p-4 bg-black/80 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-[100] flex items-start justify-center pt-20 p-4 bg-black/80 backdrop-blur-md animate-fade-in"
       onClick={() => setCommandPaletteOpen(false)}
       role="dialog"
       aria-modal="true"
@@ -186,4 +187,6 @@ export const CommandPalette: React.FC = () => {
       </div>
     </div>
   );
+
+  return typeof document !== 'undefined' ? createPortal(content, document.body) : content;
 };
