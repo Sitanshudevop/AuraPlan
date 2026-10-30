@@ -1,4 +1,5 @@
 import React from 'react';
+import { dynamicWidthStyle } from '../../utils/styleHelpers';
 
 export interface StatItem {
   label: string;
@@ -36,7 +37,7 @@ export const StatStrip: React.FC<StatStripProps> = ({ stats, className = '' }) =
               <div className="w-full bg-stone-100 dark:bg-white/[0.08] h-1 rounded-full overflow-hidden my-1">
                 <div
                   className="bg-[#6E79F5] h-full rounded-full transition-all duration-300"
-                  style={{ width: `${Math.min(100, Math.max(0, stat.progress))}%` }}
+                  style={dynamicWidthStyle(stat.progress)}
                 />
               </div>
             )}

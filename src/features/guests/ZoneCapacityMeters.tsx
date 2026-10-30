@@ -2,6 +2,7 @@ import React from 'react';
 import { ZoneCapacity } from '../../types/guest';
 import { Card } from '../../components/ui/Card';
 import { StatusDot } from '../../components/ui/StatusDot';
+import { dynamicWidthStyle } from '../../utils/styleHelpers';
 
 interface ZoneCapacityMetersProps {
   zones: ZoneCapacity[];
@@ -44,7 +45,7 @@ export const ZoneCapacityMeters: React.FC<ZoneCapacityMetersProps> = ({ zones })
                   className={`h-full rounded-full transition-all duration-150 ${
                     isOver ? 'bg-rose-500' : pct > 85 ? 'bg-amber-500' : 'bg-accent'
                   }`}
-                  style={{ width: `${pct}%` }}
+                  style={dynamicWidthStyle(pct)}
                 />
               </div>
             </div>

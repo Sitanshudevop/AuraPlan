@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { Guest, DietaryTag } from '../../types/guest';
 import { Card } from '../../components/ui/Card';
+import { dynamicWidthStyle } from '../../utils/styleHelpers';
 
 interface DietarySummaryBarProps {
   guests: Guest[];
@@ -73,7 +74,7 @@ export const DietarySummaryBar: React.FC<DietarySummaryBarProps> = ({ guests }) 
           return (
             <div
               key={tag}
-              style={{ width: `${pct}%` }}
+              style={dynamicWidthStyle(pct)}
               className={`${dietaryColors[tag]} h-full transition-all duration-150`}
               title={`${dietaryLabels[tag]}: ${count} (${pct.toFixed(0)}%)`}
             />

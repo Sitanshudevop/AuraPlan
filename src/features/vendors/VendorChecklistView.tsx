@@ -4,6 +4,7 @@ import { EventType, Currency } from '../../types/event';
 import { StatusDot } from '../../components/ui/StatusDot';
 import { MODALITY_CHECKLISTS, ChecklistRequirement } from '../../data/modalityChecklists';
 import { ChecklistItemCard } from './ChecklistItemCard';
+import { dynamicWidthStyle } from '../../utils/styleHelpers';
 
 interface Props {
   vendors: Vendor[];
@@ -85,11 +86,11 @@ export const VendorChecklistView: React.FC<Props> = ({
         <div className="w-full bg-stone-100 dark:bg-white/[0.08] h-1 rounded-full overflow-hidden flex">
           <div
             className="bg-[#6E79F5] h-full transition-all duration-300"
-            style={{ width: `${contractedPct}%` }}
+            style={dynamicWidthStyle(contractedPct)}
           />
           <div
             className="bg-amber-400 h-full transition-all duration-300"
-            style={{ width: `${sourcedPct}%` }}
+            style={dynamicWidthStyle(sourcedPct)}
           />
         </div>
 

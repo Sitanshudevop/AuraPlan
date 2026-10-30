@@ -1,6 +1,7 @@
 import React from 'react';
 import { ColorSwatch } from '../../types/ideation';
 import { Check } from 'lucide-react';
+import { dynamicBgColorStyle } from '../../utils/styleHelpers';
 
 interface ThemePaletteTabProps {
   colors: ColorSwatch[];
@@ -28,7 +29,7 @@ export const ThemePaletteTab: React.FC<ThemePaletteTabProps> = ({
           >
             <div
               className="w-7 h-7 rounded-md border border-black/10 dark:border-white/10 shrink-0 flex items-center justify-center"
-              style={{ backgroundColor: color.hex }}
+              style={dynamicBgColorStyle(color.hex)}
             >
               {copiedHex === color.hex && <Check className="w-3.5 h-3.5 text-white drop-shadow-xs" />}
             </div>
