@@ -47,3 +47,4 @@ export const AssistantChatInput: React.FC<AssistantChatInputProps> = ({
     </div>
   );
 };
+

@@ -56,3 +56,4 @@ export type WorkspaceAction = RootAction;
 export function assertNever(x: never): never {
   throw new Error(`Unexpected object in exhaustive check: ${JSON.stringify(x)}`);
 }
+

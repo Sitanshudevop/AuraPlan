@@ -134,3 +134,4 @@ export const EVENT_SETTING_LABELS: Record<EventSettingKey, string> = {
   [EVENT_SETTINGS.OUTDOOR]: 'Outdoor',
   [EVENT_SETTINGS.HYBRID]: 'Hybrid (Indoor/Outdoor)',
 };
+

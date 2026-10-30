@@ -59,3 +59,4 @@ export const VendorKanbanColumn: React.FC<VendorKanbanColumnProps> = ({
     </div>
   );
 };
+

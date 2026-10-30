@@ -120,3 +120,4 @@ export const zoneCapacitySchema = z.object({
   assignedCount: z.number().nonnegative(),
   type: z.enum(['table', 'zone', 'lounge']),
 });
+

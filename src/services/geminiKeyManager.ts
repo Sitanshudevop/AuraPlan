@@ -57,3 +57,4 @@ export function getAiEngineStatus(): { isConfigured: boolean; label: string; mas
     maskedKey: getSafeMaskedKey(),
   };
 }
+

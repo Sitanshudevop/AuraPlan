@@ -45,3 +45,4 @@ export function useBudgetTotals(
     };
   }, [budgetItems, targetBudget, includeTaxInTotals, taxRatePercent]);
 }
+

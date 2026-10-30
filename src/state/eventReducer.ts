@@ -12,3 +12,4 @@ export function eventReducer(state: EventData, action: EventAction): EventData {
       return state;
   }
 }
+

@@ -24,3 +24,4 @@ export async function callGeminiJson<T>(
   const parsed = JSON.parse(rawText);
   return schema.parse(parsed);
 }
+

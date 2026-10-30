@@ -68,3 +68,4 @@ export function useAddActivityForm({ onAddActivity, onClose }: UseAddActivityFor
     handleSubmit,
   };
 }
+

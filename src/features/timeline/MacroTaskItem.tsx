@@ -67,3 +67,4 @@ export const MacroTaskItem: React.FC<MacroTaskItemProps> = ({ task, onToggle, on
     </div>
   );
 };
+

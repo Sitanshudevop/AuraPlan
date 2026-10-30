@@ -20,3 +20,4 @@ export function dynamicBgColorStyle(hexColor: string): CSSProperties {
     backgroundColor: hexColor,
   };
 }
+

@@ -23,3 +23,4 @@ describe('styleHelpers Unit Tests', () => {
     expect(dynamicBgColorStyle('rgb(0, 0, 0)')).toEqual({ backgroundColor: 'rgb(0, 0, 0)' });
   });
 });
+

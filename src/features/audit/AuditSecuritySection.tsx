@@ -74,3 +74,4 @@ export const AuditSecuritySection: React.FC<AuditSecuritySectionProps> = ({ mask
     </div>
   );
 };
+

@@ -71,3 +71,4 @@ export const HorizonAccordionSection: React.FC<HorizonAccordionSectionProps> = (
     </div>
   );
 };
+

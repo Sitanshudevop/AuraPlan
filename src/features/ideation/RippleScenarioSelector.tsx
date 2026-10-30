@@ -63,3 +63,4 @@ export const RippleScenarioSelector: React.FC<RippleScenarioSelectorProps> = ({
     </div>
   );
 };
+

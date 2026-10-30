@@ -90,3 +90,4 @@ export const EventBasicInfoFields: React.FC<EventBasicInfoFieldsProps> = ({
     </>
   );
 };
+

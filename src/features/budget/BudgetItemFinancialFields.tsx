@@ -110,3 +110,4 @@ export const BudgetItemFinancialFields: React.FC<BudgetItemFinancialFieldsProps>
     </>
   );
 };
+

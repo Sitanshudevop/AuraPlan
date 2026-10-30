@@ -80,3 +80,4 @@ export function getFallbackResponse(query: string, event: EventData, timeStr: st
     ],
   };
 }
+

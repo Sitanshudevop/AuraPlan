@@ -42,3 +42,4 @@ export const VendorCategoryFilterBar: React.FC<VendorCategoryFilterBarProps> = (
     </div>
   );
 };
+
