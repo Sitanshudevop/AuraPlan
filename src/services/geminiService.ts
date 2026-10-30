@@ -29,7 +29,8 @@ export function getActiveApiKey(): string | undefined {
       return custom.trim();
     }
   }
-  const envKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const metaEnv = import.meta.env as unknown as Record<string, string | undefined>;
+  const envKey = metaEnv.VITE_GEMINI_API_KEY || metaEnv.GEMINI_API_KEY;
   if (typeof envKey === 'string' && envKey.trim().length > 5 && envKey !== 'YOUR_GEMINI_API_KEY') {
     return envKey.trim();
   }
@@ -102,7 +103,7 @@ export async function generateThemeIdea(
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      signal: AbortSignal.timeout(4500),
+      signal: AbortSignal.timeout(8500),
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: { responseMimeType: 'application/json' },
@@ -149,7 +150,7 @@ export async function generateVendorVet(
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      signal: AbortSignal.timeout(4500),
+      signal: AbortSignal.timeout(8500),
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: { responseMimeType: 'application/json' },
@@ -187,7 +188,7 @@ export async function generateRippleScenario(
     const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      signal: AbortSignal.timeout(4500),
+      signal: AbortSignal.timeout(8500),
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: { responseMimeType: 'application/json' },

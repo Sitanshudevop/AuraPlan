@@ -67,7 +67,7 @@ export async function askPlanningAssistant(
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        signal: AbortSignal.timeout(4500),
+        signal: AbortSignal.timeout(8500),
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: { responseMimeType: 'application/json' },
