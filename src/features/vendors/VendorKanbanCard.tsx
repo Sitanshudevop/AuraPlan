@@ -15,7 +15,7 @@ interface VendorKanbanCardProps {
   onOpenNegotiation: (vendor: Vendor) => void;
 }
 
-export const VendorKanbanCard: React.FC<VendorKanbanCardProps> = ({
+const VendorKanbanCardComponent: React.FC<VendorKanbanCardProps> = ({
   vendor,
   currency,
   nextStatus,
@@ -152,7 +152,7 @@ export const VendorKanbanCard: React.FC<VendorKanbanCardProps> = ({
           <span className="text-stone-300 dark:text-zinc-600">·</span>
           <div className="flex items-center gap-1 shrink-0">
             <StatusDot status={isContracted ? 'confirmed' : 'pending'} size="xs" />
-            <span className="text-[11px] text-stone-500 dark:text-[#8B8B93]">
+            <span className="text-xs text-stone-500 dark:text-[#8B8B93]">
               {isContracted ? 'Contracted' : 'Quote'}
             </span>
           </div>
@@ -163,7 +163,7 @@ export const VendorKanbanCard: React.FC<VendorKanbanCardProps> = ({
           <button
             type="button"
             onClick={handleAdvance}
-            className="opacity-0 group-hover:opacity-100 focus:opacity-100 text-[11px] text-stone-500 dark:text-[#8B8B93] hover:text-[#6E79F5] dark:hover:text-[#6E79F5] flex items-center gap-0.5 transition-opacity px-1 py-0.5 rounded hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
+            className="opacity-0 group-hover:opacity-100 focus:opacity-100 text-xs text-stone-500 dark:text-[#8B8B93] hover:text-[#6E79F5] dark:hover:text-[#6E79F5] flex items-center gap-0.5 transition-opacity px-1 py-0.5 rounded hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
             title={`Advance to ${nextStatusTitle || nextStatus}`}
           >
             <span>Next</span>
@@ -174,3 +174,15 @@ export const VendorKanbanCard: React.FC<VendorKanbanCardProps> = ({
     </div>
   );
 };
+
+export const VendorKanbanCard = React.memo(
+  VendorKanbanCardComponent,
+  (prev, next) =>
+    prev.vendor.id === next.vendor.id &&
+    prev.vendor.status === next.vendor.status &&
+    prev.vendor.contractedPrice === next.vendor.contractedPrice &&
+    prev.vendor.estimatedPrice === next.vendor.estimatedPrice &&
+    prev.vendor.rating === next.vendor.rating &&
+    prev.currency === next.currency &&
+    prev.nextStatus === next.nextStatus
+);

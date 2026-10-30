@@ -198,7 +198,7 @@ export const BudgetTab: React.FC = () => {
                 <td className="py-3.5 px-4 text-right text-emerald-600 dark:text-emerald-400">{formatCurrency(totals.paid, currency)}</td>
               </tr>
               {state.includeTaxInTotals && (
-                <tr className="border-t border-stone-200/60 dark:border-white/[0.04] text-[11px] text-stone-500 dark:text-[#8B8B93]">
+                <tr className="border-t border-stone-200/60 dark:border-white/[0.04] text-xs text-stone-500 dark:text-[#8B8B93]">
                   <td className="py-2.5 px-4">Statutory tax estimate ({state.taxRatePercent}%)</td>
                   <td className="py-2.5 px-4">—</td>
                   <td className="py-2.5 px-4 text-right">+{formatCurrency(totals.taxAmount, currency)}</td>

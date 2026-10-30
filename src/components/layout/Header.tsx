@@ -88,7 +88,7 @@ export const Header: React.FC = () => {
             <span className="hidden sm:inline">Search workspace...</span>
             <span className="sm:hidden">Search...</span>
           </div>
-          <span className="hidden sm:inline text-[11px] text-stone-400 dark:text-zinc-500 font-sans">
+          <span className="hidden sm:inline text-xs text-stone-400 dark:text-zinc-500 font-sans">
             ⌘K
           </span>
         </button>

@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Vendor, VendorVetQuestions } from '../../types/vendor';
+import { Currency } from '../../types/event';
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
 import { generateVendorVet } from '../../services/geminiService';
 import { logger } from '../../utils/logger';
 import { Copy, Check, MessageSquare, Mail, AlertCircle, HelpCircle, Loader2 } from 'lucide-react';
+import { VendorCounterOfferTactic } from './VendorCounterOfferTactic';
 
 interface VendorNegotiationModalProps {
   vendor: Vendor | null;
+  currency?: Currency;
   onClose: () => void;
 }
 
 export const VendorNegotiationModal: React.FC<VendorNegotiationModalProps> = ({
   vendor,
+  currency = 'INR',
   onClose,
 }) => {
   const [data, setData] = useState<VendorVetQuestions | null>(null);
@@ -56,7 +60,15 @@ export const VendorNegotiationModal: React.FC<VendorNegotiationModalProps> = ({
           </p>
         </div>
       ) : data ? (
-        <div className="space-y-5 text-xs max-h-[70vh] overflow-y-auto pr-1">
+        <div className="space-y-4 text-xs max-h-[70vh] overflow-y-auto pr-1">
+          {/* Tactical Counter-Offer & Concession Builder */}
+          <VendorCounterOfferTactic
+            vendorName={vendor.name}
+            category={vendor.category}
+            quotedPrice={vendor.estimatedPrice || vendor.contractedPrice}
+            currency={currency}
+          />
+
           {/* WhatsApp Script */}
           <div className="p-3.5 bg-stone-50 dark:bg-zinc-900/60 rounded-lg border border-stone-200 dark:border-zinc-800 space-y-2">
             <div className="flex items-center justify-between">

@@ -136,6 +136,7 @@ export const VendorsTab: React.FC = () => {
       {activeNegotiatingVendor && (
         <VendorNegotiationModal
           vendor={activeNegotiatingVendor}
+          currency={currency}
           onClose={() => setActiveNegotiatingVendor(null)}
         />
       )}

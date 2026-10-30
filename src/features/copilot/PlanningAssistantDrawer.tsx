@@ -2,20 +2,17 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { useFocusTrap } from '../../hooks';
-import {
-  askPlanningAssistant, MODALITY_PROMPT_CHIPS, AssistantMessage, AssistantAction,
-} from '../../services/planningAssistantService';
+import { askPlanningAssistant, MODALITY_PROMPT_CHIPS, AssistantMessage, AssistantAction } from '../../services/planningAssistantService';
 import { isGeminiKeyConfigured, setCustomApiKey, removeCustomApiKey } from '../../services/geminiService';
 import { Button } from '../../components/ui/Button';
-import { StatusDot } from '../../components/ui/StatusDot';
-import { X, Send, Loader2, Check, CalendarPlus, Wallet, Key } from 'lucide-react';
+import { Send, Loader2, Check, CalendarPlus, Wallet } from 'lucide-react';
 import { executeAssistantAction } from './assistantActionHandler';
 import { FormattedAssistantMessage } from './FormattedAssistantMessage';
+import { AssistantChipBar } from './AssistantChipBar';
+import { AssistantHeader } from './AssistantHeader';
 
 export const PlanningAssistantDrawer: React.FC = () => {
-  const {
-    state, isAssistantOpen, setAssistantOpen, addMacroTask, addBudgetItem, addVendor, announce,
-  } = useWorkspace();
+  const { state, isAssistantOpen, setAssistantOpen, addMacroTask, addBudgetItem, addVendor, announce } = useWorkspace();
 
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -107,59 +104,25 @@ export const PlanningAssistantDrawer: React.FC = () => {
         onClick={(e) => e.stopPropagation()}
         className="w-full max-w-lg bg-[#FAF9F6] dark:bg-[#111113] text-[#111113] dark:text-[#EDEDEF] border-l border-stone-200/80 dark:border-white/[0.08] h-full flex flex-col shadow-2xl animate-in slide-in-from-right duration-150"
       >
-        <div className="h-14 px-5 border-b border-stone-200/80 dark:border-white/[0.08] bg-[#FAF9F6] dark:bg-[#111113] flex items-center justify-between shrink-0">
-          <div>
-            <h3 id="assistant-drawer-title" className="font-semibold text-sm text-[#111113] dark:text-[#EDEDEF]">
-              AuraPlan AI Planning Assistant
-            </h3>
-            <p className="text-xs text-stone-500 dark:text-[#8B8B93] capitalize">
-              {state.event.type} mode · {state.event.guestCount} guests
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowKeyInput((v) => !v)}
-              className="text-xs font-mono px-2 py-1 rounded-md border border-stone-200/80 dark:border-white/[0.08] bg-stone-100 dark:bg-white/[0.04] text-stone-600 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF] transition-colors flex items-center gap-1.5"
-              aria-label="Toggle Gemini API Key settings"
-            >
-              <StatusDot status={hasKey ? 'confirmed' : 'pending'} />
-              <span>{hasKey ? 'Gemini live' : 'Deterministic'}</span>
-            </button>
-            <button onClick={handleClose} className="p-1.5 text-stone-400 hover:text-stone-700 dark:hover:text-[#EDEDEF] rounded-md transition-colors" aria-label="Close assistant">
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+        <AssistantHeader
+          eventName={state.event.name}
+          eventType={state.event.type}
+          guestCount={state.event.guestCount}
+          hasKey={hasKey}
+          onToggleKeyInput={() => setShowKeyInput((v) => !v)}
+          onClose={handleClose}
+        />
 
-        {showKeyInput && (
-          <div className="p-3 bg-stone-100/80 dark:bg-[#161618] border-b border-stone-200/80 dark:border-white/[0.08] flex items-center gap-2 text-xs">
-            <Key className="w-3.5 h-3.5 text-stone-400 shrink-0" />
-            <input
-              type="password"
-              placeholder="Paste Gemini API key..."
-              value={customKey}
-              onChange={(e) => setCustomKey(e.target.value)}
-              className="flex-1 text-xs px-2.5 py-1.5 bg-white dark:bg-[#111113] border border-stone-200/80 dark:border-white/[0.08] rounded-md text-[#111113] dark:text-[#EDEDEF] focus:outline-none focus:ring-1 focus:ring-accent"
-            />
-            <Button size="sm" variant="primary" onClick={handleSaveKey} disabled={!customKey.trim()}>Save</Button>
-            {hasKey && <Button size="sm" variant="ghost" onClick={handleClearKey}>Reset</Button>}
-          </div>
-        )}
-
-        <div className="p-4 border-b border-stone-200/80 dark:border-white/[0.08] bg-stone-50/50 dark:bg-white/[0.01] space-y-2 shrink-0">
-          <span className="text-xs font-medium text-stone-500 dark:text-[#8B8B93] block">Suggested prompts</span>
-          <div className="flex flex-wrap gap-1.5">
-            {quickChips.map((chip, idx) => (
-              <button
-                key={idx}
-                onClick={() => handleSend(chip)}
-                className="text-xs px-2.5 py-1 bg-white dark:bg-white/[0.04] hover:bg-stone-100 dark:hover:bg-white/[0.08] border border-stone-200/80 dark:border-white/[0.08] rounded-md text-stone-800 dark:text-[#EDEDEF] transition-colors text-left shadow-2xs"
-              >
-                {chip}
-              </button>
-            ))}
-          </div>
-        </div>
+        <AssistantChipBar
+          showKeyInput={showKeyInput}
+          customKey={customKey}
+          setCustomKey={setCustomKey}
+          handleSaveKey={handleSaveKey}
+          handleClearKey={handleClearKey}
+          hasKey={hasKey}
+          quickChips={quickChips}
+          onSelectChip={handleSend}
+        />
 
         <div className="p-4 space-y-3 flex-1 overflow-y-auto text-xs scrollbar-thin">
           {messages.map((m) => (
@@ -174,17 +137,12 @@ export const PlanningAssistantDrawer: React.FC = () => {
                 <FormattedAssistantMessage content={m.content} isUser={m.role === 'user'} />
                 {m.suggestedActions && m.suggestedActions.length > 0 && (
                   <div className="pt-2 border-t border-stone-100 dark:border-white/[0.06] space-y-1.5">
-                    <span className="text-[11px] font-medium text-stone-500 dark:text-[#8B8B93] block">Plan actions:</span>
+                    <span className="text-xs font-medium text-stone-500 dark:text-[#8B8B93] block">Plan actions:</span>
                     <div className="flex flex-wrap gap-1.5">
                       {m.suggestedActions.map((act, i) => {
                         const isDone = executedLabels.has(act.label);
                         return (
-                          <Button
-                            key={i}
-                            variant="secondary"
-                            size="xs"
-                            onClick={() => handleExecuteAction(act)}
-                            disabled={isDone}
+                          <Button key={i} variant="secondary" size="xs" onClick={() => handleExecuteAction(act)} disabled={isDone}
                             icon={isDone ? <Check className="w-3 h-3 text-emerald-500" /> : act.type === 'add_task' ? <CalendarPlus className="w-3 h-3 text-stone-400" /> : <Wallet className="w-3 h-3 text-stone-400" />}
                           >
                             {isDone ? 'Applied to Plan ✓' : act.label}
