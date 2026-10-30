@@ -42,6 +42,7 @@ describe('Domain Slice Hooks & Selectors', () => {
 
     act(() => {
       result.current.addVendor({
+        id: 'v-test-1',
         name: 'Test Vendor Co',
         category: 'catering',
         status: 'shortlisted',
@@ -86,6 +87,7 @@ describe('Domain Slice Hooks & Selectors', () => {
     const initialGuestCount = result.current.guests.length;
     act(() => {
       result.current.addGuest({
+        id: 'g-test-1',
         name: 'Pooja Sharma',
         group: 'vip',
         rsvp: 'confirmed',

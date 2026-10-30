@@ -6,7 +6,7 @@
 [![React 18](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![CI](https://github.com/Sitanshudevop/AuraPlan/actions/workflows/ci.yml/badge.svg)](https://github.com/Sitanshudevop/AuraPlan/actions)
-[![Vitest](https://img.shields.io/badge/Vitest-176%2F176_Passing-6E9F18?logo=vitest&logoColor=white)](https://vitest.dev/)
+[![Vitest](https://img.shields.io/badge/Vitest-177%2F177_Passing-6E9F18?logo=vitest&logoColor=white)](https://vitest.dev/)
 [![Accessibility](https://img.shields.io/badge/Accessibility-WCAG_2.1_AA-059669)](https://www.w3.org/WAI/WCAG21/quickref/)
 
 ---
@@ -29,7 +29,7 @@ Event management is fundamentally fragmented: organizers juggle spreadsheet budg
 | Pillar | Score | Implementation & Architecture Proof |
 | :--- | :---: | :--- |
 | **Code Quality** | **100/100** | Strict TypeScript (`strict: true`, zero `any`), modular directory architecture, pure helper decomposition, and strict `< 150` lines per file constraint across modules. |
-| **Testing** | **100/100** | Vitest + RTL test suite with **176/176 passing tests** across 25 suites spanning budget math, conflict resolution, ripple diffs, security schemas, and keyboard/preset navigation. |
+| **Testing** | **100/100** | Vitest + RTL test suite with **177/177 passing tests** across 26 suites spanning budget math, conflict resolution, ripple diffs, security schemas, and keyboard/preset navigation. |
 | **Security** | **100/100** | XSS sanitization with `sanitizeText` stripping `<script>`, `<iframe>`, `onerror=`, and `javascript:`; CSV formula injection neutralization; RFC 5545 escaping; strict HTTP security headers; 0 production vulnerabilities. |
 | **Efficiency** | **100/100** | Zero-lag code splitting via `React.lazy` + `<Suspense>`, memoized totals (`useMemo`), progressive roster windowing, debounced state updates, and versioned `localStorage` sync. |
 | **Accessibility** | **100/100** | WCAG 2.1 AA certified: 4.5:1+ contrast ratios, semantic landmarks (`header`, `nav`, `main`, `aside`), skip link (`#main-content`), minimum 44px touch targets on mobile viewports, and `aria-live="polite"` announcers. |
@@ -49,7 +49,7 @@ auraplan/
 │   ├── data/           # 3 Zero-Latency Judge Demo Presets
 │   ├── features/       # Modular tabs: dashboard, budget, timeline, vendors, ideation, guests, audit
 │   ├── components/ui/  # Reusable atomic UI: Card, Button, Modal, Badge, Toast, Skeleton
-│   └── __tests__/      # 25 comprehensive Vitest + React Testing Library suites (176 tests)
+│   └── __tests__/      # 26 comprehensive Vitest + React Testing Library suites (177 tests)
 ```
 
 - **Frontend Core**: React 18.3, TypeScript 5.6 (Strict Mode), Vite 5.4.
@@ -122,7 +122,7 @@ npm run dev
 Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ### Running Test Suite
-Execute the 176 automated Vitest unit and integration tests:
+Execute the 177 automated Vitest unit and integration tests:
 ```bash
 npm run test
 # Or run with flag

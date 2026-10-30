@@ -43,7 +43,7 @@ describe('Feature Form Hooks & Input Sanitization', () => {
     const onClose = vi.fn();
 
     const { result } = renderHook(() =>
-      useAddMacroTaskForm({ onAddTask, onClose })
+      useAddMacroTaskForm({ onAddTask, onClose, defaultDate: '2026-12-15' })
     );
 
     act(() => {
@@ -71,7 +71,7 @@ describe('Feature Form Hooks & Input Sanitization', () => {
     const onClose = vi.fn();
 
     const { result } = renderHook(() =>
-      useAddBudgetItemForm({ onAddBudgetItem, onClose })
+      useAddBudgetItemForm({ onAddBudgetItem, onClose, remainingBudget: 100000 })
     );
 
     act(() => {
