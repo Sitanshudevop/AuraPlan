@@ -31,7 +31,7 @@ export const AuditDrawer: React.FC = () => {
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-xs flex justify-end"
+      className="fixed inset-0 z-50 overflow-hidden bg-black/80 backdrop-blur-md flex justify-end"
       onClick={handleClose}
     >
       <div
