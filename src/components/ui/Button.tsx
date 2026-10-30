@@ -25,9 +25,9 @@ const variantClasses = {
 };
 
 const sizeClasses = {
-  xs: 'h-7 px-2 text-xs gap-1 rounded-md',
-  sm: 'h-8 px-2.5 text-xs font-medium gap-1.5 rounded-lg',
-  md: 'h-9 px-3.5 text-sm font-medium gap-2 rounded-lg',
+  xs: 'h-7 px-2 text-xs gap-1 rounded-md relative before:absolute before:-inset-2 md:before:hidden',
+  sm: 'h-8 px-2.5 text-xs font-medium gap-1.5 rounded-lg relative before:absolute before:-inset-1.5 md:before:hidden',
+  md: 'h-9 px-3.5 text-sm font-medium gap-2 rounded-lg relative before:absolute before:-inset-1 md:before:hidden',
   lg: 'h-10 px-4 text-sm font-medium gap-2 rounded-lg',
 };
 
