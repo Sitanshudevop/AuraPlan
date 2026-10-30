@@ -1,6 +1,19 @@
 import { MacroTask, DayOfActivity } from '../../types/timeline';
 import { EventData } from '../../types/event';
 
+/**
+ * Escapes characters for iCalendar (RFC 5545) text values.
+ * Backslashes, semicolons, commas, and newlines must be escaped.
+ */
+export function escapeIcsText(text: string | null | undefined): string {
+  if (!text) return '';
+  return String(text)
+    .replace(/\\/g, '\\\\')
+    .replace(/;/g, '\\;')
+    .replace(/,/g, '\\,')
+    .replace(/\r?\n/g, '\\n');
+}
+
 export function generateIcsCalendar(
   event: EventData,
   tasks: MacroTask[],
@@ -16,7 +29,7 @@ export function generateIcsCalendar(
     'PRODID:-//AuraPlan//Vow and Venue Calendar//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
-    `X-WR-CALNAME:${event.name} Timeline`,
+    `X-WR-CALNAME:${escapeIcsText(event.name)} Timeline`,
   ];
 
   // Add Day-Of Activities
@@ -30,9 +43,9 @@ export function generateIcsCalendar(
     ics.push(`DTSTAMP:${stamp}`);
     ics.push(`DTSTART:${dateFormatted}T${startFormatted}`);
     ics.push(`DTEND:${dateFormatted}T${endFormatted}`);
-    ics.push(`SUMMARY:${act.title}`);
-    ics.push(`LOCATION:${act.locationZone || event.city}`);
-    ics.push(`DESCRIPTION:POC: ${act.poc} | AuraPlan Run-of-Show`);
+    ics.push(`SUMMARY:${escapeIcsText(act.title)}`);
+    ics.push(`LOCATION:${escapeIcsText(act.locationZone || event.city)}`);
+    ics.push(`DESCRIPTION:${escapeIcsText(`POC: ${act.poc} | AuraPlan Run-of-Show`)}`);
     ics.push('STATUS:CONFIRMED');
     ics.push('END:VEVENT');
   });
@@ -44,8 +57,8 @@ export function generateIcsCalendar(
     ics.push(`UID:macro-${task.id}@auraplan.workspace`);
     ics.push(`DTSTAMP:${stamp}`);
     ics.push(`DTSTART;VALUE=DATE:${taskDate}`);
-    ics.push(`SUMMARY:[${task.priority.toUpperCase()}] ${task.title}`);
-    ics.push(`DESCRIPTION:Assignee: ${task.assignee} | Category: ${task.category}`);
+    ics.push(`SUMMARY:[${task.priority.toUpperCase()}] ${escapeIcsText(task.title)}`);
+    ics.push(`DESCRIPTION:${escapeIcsText(`Assignee: ${task.assignee} | Category: ${task.category}`)}`);
     ics.push('STATUS:CONFIRMED');
     ics.push('END:VEVENT');
   });
@@ -60,7 +73,7 @@ export function downloadIcsFile(event: EventData, tasks: MacroTask[], activities
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
   anchor.href = url;
-  anchor.download = `${event.name.toLowerCase().replace(/\s+/g, '-')}-schedule.ics`;
+  anchor.download = `${event.name.toLowerCase().replace(/[^a-z0-9_-]/g, '-')}-schedule.ics`;
   document.body.appendChild(anchor);
   anchor.click();
   document.body.removeChild(anchor);

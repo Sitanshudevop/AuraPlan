@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '../../components/ui/Button';
 import { BudgetItem } from '../../types/budget';
 import { Download, Printer, MoreHorizontal } from 'lucide-react';
+import { buildCsv } from '../../utils/csv';
 
 interface BudgetExportMenuProps {
   budgetItems: BudgetItem[];
@@ -26,20 +27,23 @@ export const BudgetExportMenu: React.FC<BudgetExportMenuProps> = ({ budgetItems,
     const headers = ['Category', 'Item Name', 'Allocated', 'Vendor Quote', 'Contracted', 'Paid', 'Locked'];
     const rows = budgetItems.map((b) => [
       b.category,
-      `"${b.name.replace(/"/g, '""')}"`,
+      b.name,
       b.allocated,
       b.vendorQuote,
       b.actualContracted,
       b.amountPaid,
-      b.isLocked ? 'Yes' : 'No',
+      b.isLocked,
     ]);
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const csvContent = buildCsv(headers, rows);
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.setAttribute('href', encodeURI(csvContent));
+    link.href = url;
     link.setAttribute('download', `${eventName.toLowerCase().replace(/\s+/g, '-')}-budget-ledger.csv`);
     document.body.appendChild(link);
     link.click();
     link.remove();
+    URL.revokeObjectURL(url);
   }, [budgetItems, eventName]);
 
   return (
@@ -80,4 +84,3 @@ export const BudgetExportMenu: React.FC<BudgetExportMenuProps> = ({ budgetItems,
     </div>
   );
 };
-
