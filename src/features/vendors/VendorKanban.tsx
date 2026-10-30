@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Vendor, VendorStatus } from '../../types/vendor';
 import { Currency } from '../../types/event';
-import { formatCurrency } from '../../utils/formatters';
-import { ArrowRight, Trash2, MapPin } from 'lucide-react';
+import { VendorKanbanCard } from './VendorKanbanCard';
+import { Select } from '../../components/ui/Select';
 
 interface VendorKanbanProps {
   vendors: Vendor[];
@@ -35,130 +35,136 @@ export const VendorKanban: React.FC<VendorKanbanProps> = ({
   onDeleteVendor,
   onOpenNegotiation,
 }) => {
+  const boardRef = useRef<HTMLDivElement>(null);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [mobileStage, setMobileStage] = useState<VendorStatus>('shortlisted');
+
+  const checkScroll = useCallback(() => {
+    const el = boardRef.current;
+    if (!el) return;
+    const hasMore = el.scrollLeft + el.clientWidth < el.scrollWidth - 12;
+    setCanScrollRight(hasMore);
+  }, []);
+
+  useEffect(() => {
+    checkScroll();
+    window.addEventListener('resize', checkScroll);
+    return () => window.removeEventListener('resize', checkScroll);
+  }, [checkScroll, vendors]);
+
+  const mobileOptions = columns.map((col) => ({
+    value: col.id,
+    label: `${col.title} (${vendors.filter((v) => v.status === col.id).length})`,
+  }));
+
+  const activeMobileVendors = vendors.filter((v) => v.status === mobileStage);
+  const nextMobileStatus = nextStatusMap[mobileStage];
+  const nextMobileTitle = columns.find((c) => c.id === nextMobileStatus)?.title;
+
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridAutoFlow: 'column',
-        gridAutoColumns: 'minmax(280px, 1fr)',
-        gap: '16px',
-        overflowX: 'auto',
-      }}
-      className="pb-4 no-scrollbar items-start"
-    >
-      {columns.map((col) => {
-        const colVendors = vendors.filter((v) => v.status === col.id);
-        return (
-          <div
-            key={col.id}
-            className="min-w-0 flex flex-col space-y-3 bg-stone-50/50 dark:bg-white/[0.02] p-3 rounded-xl border border-stone-200/80 dark:border-white/[0.08]"
-          >
-            {/* Sticky Column Header */}
-            <div className="sticky top-0 bg-stone-50/95 dark:bg-[#111113]/95 backdrop-blur-xs flex items-center justify-between pb-2 border-b border-stone-200/80 dark:border-white/[0.08] z-10">
-              <span className="text-xs font-medium text-stone-700 dark:text-[#EDEDEF]">
-                {col.title}
-              </span>
-              <span className="text-xs tabular-nums text-stone-400 dark:text-zinc-500">
-                {colVendors.length}
-              </span>
-            </div>
+    <div className="flex-1 min-h-0 min-w-0 flex flex-col">
+      {/* Mobile Stage Selector (< 640px / 390px) */}
+      <div className="sm:hidden mb-3 shrink-0">
+        <label htmlFor="kanban-stage-select" className="block text-xs font-medium text-stone-500 dark:text-[#8B8B93] mb-1">
+          Pipeline stage
+        </label>
+        <Select
+          options={mobileOptions}
+          value={mobileStage}
+          onChange={(val) => setMobileStage(val as VendorStatus)}
+          ariaLabel="Select pipeline stage"
+        />
+      </div>
 
-            {/* Column Cards */}
-            <div className="space-y-2.5">
-              {colVendors.length === 0 ? (
-                <div className="py-8 text-center text-xs text-stone-400 dark:text-zinc-500">
-                  No vendors
-                </div>
-              ) : (
-                colVendors.map((vendor) => {
-                  const nextStatus = nextStatusMap[vendor.status];
-                  return (
-                    <div
-                      key={vendor.id}
-                      className="p-3.5 bg-white dark:bg-[#161618] rounded-xl border border-stone-200/80 dark:border-white/[0.08] hover:border-stone-300 dark:hover:border-white/[0.14] transition-colors space-y-2 text-xs"
-                    >
-                      <div>
-                        <h4 className="font-medium text-[#111113] dark:text-[#EDEDEF] leading-snug">
-                          {vendor.name}
-                        </h4>
-                        <span className="text-[11px] text-stone-400 dark:text-zinc-500 capitalize">
-                          {vendor.category}
-                        </span>
-                      </div>
-
-                      <div className="tabular-nums">
-                        {vendor.contractedPrice > 0 ? (
-                          <div className="font-medium text-[#111113] dark:text-[#EDEDEF]">
-                            {formatCurrency(vendor.contractedPrice, currency)}
-                            <span className="text-[11px] text-emerald-600 dark:text-emerald-400 ml-1.5 font-normal">
-                              Contracted
-                            </span>
-                          </div>
-                        ) : (
-                          <div className="text-stone-500 dark:text-[#8B8B93]">
-                            Est. {formatCurrency(vendor.estimatedPrice, currency)}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="text-[11px] text-stone-400 dark:text-zinc-500 flex items-center gap-1 truncate">
-                        <MapPin className="w-3 h-3 stroke-[1.5] shrink-0" />
-                        <span className="truncate">{vendor.location}</span>
-                      </div>
-
-                      {/* Card Footer Actions */}
-                      <div className="pt-2 border-t border-stone-100 dark:border-white/[0.04] flex items-center justify-between gap-1">
-                        <button
-                          type="button"
-                          onClick={() => onOpenNegotiation(vendor)}
-                          className="text-xs text-[#6E79F5] hover:text-[#5D68E2] transition-colors font-normal"
-                        >
-                          Vet & negotiate
-                        </button>
-
-                        <div className="flex items-center gap-1.5">
-                          {onDeleteVendor && (
-                            <button
-                              type="button"
-                              onClick={() => onDeleteVendor(vendor.id)}
-                              className="p-1 text-stone-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
-                              aria-label={`Delete ${vendor.name}`}
-                              title="Delete vendor"
-                            >
-                              <Trash2 className="w-3.5 h-3.5 stroke-[1.5]" />
-                            </button>
-                          )}
-
-                          {nextStatus && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const newContracted =
-                                  nextStatus === 'contract_signed' && vendor.contractedPrice === 0
-                                    ? vendor.estimatedPrice
-                                    : vendor.contractedPrice;
-                                onUpdateVendor(vendor.id, {
-                                  status: nextStatus,
-                                  contractedPrice: newContracted,
-                                });
-                              }}
-                              className="inline-flex items-center gap-1 text-xs text-stone-600 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF] px-2 py-0.5 rounded-md hover:bg-stone-100 dark:hover:bg-white/[0.06] transition-colors"
-                              title={`Advance to ${columns.find((c) => c.id === nextStatus)?.title}`}
-                            >
-                              <span>Next</span>
-                              <ArrowRight className="w-3 h-3 stroke-[1.5]" />
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
+      {/* Mobile Column View (< 640px) */}
+      <div className="sm:hidden flex-1 min-h-0 overflow-y-auto space-y-2 pr-1 scrollbar-thin">
+        {activeMobileVendors.length === 0 ? (
+          <div className="py-12 text-center text-xs text-stone-400 dark:text-zinc-500">
+            No vendors in this stage
           </div>
-        );
-      })}
+        ) : (
+          activeMobileVendors.map((vendor) => (
+            <VendorKanbanCard
+              key={vendor.id}
+              vendor={vendor}
+              currency={currency}
+              nextStatus={nextMobileStatus}
+              nextStatusTitle={nextMobileTitle}
+              onUpdateVendor={onUpdateVendor}
+              onDeleteVendor={onDeleteVendor}
+              onOpenNegotiation={onOpenNegotiation}
+            />
+          ))
+        )}
+      </div>
+
+      {/* Desktop / Tablet Multi-Column Horizontal Board (>= 640px) */}
+      <div className="hidden sm:flex relative flex-1 min-h-0 min-w-0 flex-col">
+        <div
+          ref={boardRef}
+          onScroll={checkScroll}
+          className="flex-1 min-h-0 min-w-0 overflow-x-auto overflow-y-hidden scrollbar-thin snap-x snap-mandatory pb-3"
+          style={{
+            display: 'grid',
+            gridAutoFlow: 'column',
+            gridAutoColumns: 'minmax(280px, 1fr)',
+            gap: '16px',
+          }}
+        >
+          {columns.map((col) => {
+            const colVendors = vendors.filter((v) => v.status === col.id);
+            const nextStatus = nextStatusMap[col.id];
+            const nextTitle = columns.find((c) => c.id === nextStatus)?.title;
+
+            return (
+              <div
+                key={col.id}
+                className="h-full min-h-0 min-w-0 flex flex-col snap-start bg-stone-50/70 dark:bg-white/[0.02] p-2.5 rounded-xl border border-stone-200/80 dark:border-white/[0.08]"
+              >
+                {/* Sticky Column Header */}
+                <div className="shrink-0 flex items-center justify-between pb-2 border-b border-stone-200/80 dark:border-white/[0.08] mb-2 px-1">
+                  <span className="text-xs font-semibold text-[#111113] dark:text-[#EDEDEF]">
+                    {col.title}
+                  </span>
+                  <span className="text-[11px] tabular-nums text-stone-500 dark:text-[#8B8B93] bg-stone-200/60 dark:bg-white/[0.06] px-1.5 py-0.5 rounded-md font-medium">
+                    {colVendors.length}
+                  </span>
+                </div>
+
+                {/* Column Cards (Independently scrollable) */}
+                <div className="flex-1 min-h-0 overflow-y-auto space-y-2 pr-0.5 scrollbar-thin">
+                  {colVendors.length === 0 ? (
+                    <div className="py-8 text-center text-xs text-stone-400 dark:text-zinc-500">
+                      No vendors
+                    </div>
+                  ) : (
+                    colVendors.map((vendor) => (
+                      <VendorKanbanCard
+                        key={vendor.id}
+                        vendor={vendor}
+                        currency={currency}
+                        nextStatus={nextStatus}
+                        nextStatusTitle={nextTitle}
+                        onUpdateVendor={onUpdateVendor}
+                        onDeleteVendor={onDeleteVendor}
+                        onOpenNegotiation={onOpenNegotiation}
+                      />
+                    ))
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Subtle Right Edge Fade Indicator when more columns exist */}
+        {canScrollRight && (
+          <div
+            className="pointer-events-none absolute right-0 top-0 bottom-3 w-8 bg-gradient-to-l from-[#FAF9F6] dark:from-[#0B0B0C] to-transparent z-10 transition-opacity"
+            aria-hidden="true"
+          />
+        )}
+      </div>
     </div>
   );
 };

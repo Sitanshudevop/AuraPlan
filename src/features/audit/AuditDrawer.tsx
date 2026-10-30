@@ -30,13 +30,17 @@ export const AuditDrawer: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-black/50 backdrop-blur-xs flex justify-end">
+    <div
+      className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-xs flex justify-end"
+      onClick={handleClose}
+    >
       <div
         ref={drawerRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="audit-drawer-title"
-        className="w-full max-w-lg bg-surface border-l border-hairline h-full flex flex-col shadow-xl animate-in slide-in-from-right duration-150"
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-lg bg-[#FAF9F6] dark:bg-[#111113] text-[#111113] dark:text-[#EDEDEF] border-l border-stone-200/80 dark:border-white/[0.08] h-full flex flex-col shadow-2xl animate-in slide-in-from-right duration-150"
       >
         {/* Header */}
         <div className="h-14 px-5 border-b border-hairline flex items-center justify-between shrink-0">

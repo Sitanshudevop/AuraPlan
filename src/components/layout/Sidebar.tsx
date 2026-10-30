@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { ActiveTab } from '../../types/state';
 import { getDaysRemaining } from '../../utils/formatters';
@@ -26,6 +26,16 @@ export const Sidebar: React.FC = () => {
   const { state, activeTab, setActiveTab, setEditEventModalOpen } = useWorkspace();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 1024) {
+        setIsCollapsed(true);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const daysLeft = getDaysRemaining(state.event.date);
 
   const navItems: TabItem[] = [
@@ -41,8 +51,8 @@ export const Sidebar: React.FC = () => {
 
   return (
     <aside
-      className={`h-[calc(100vh-3.5rem)] sticky top-14 bg-[#FAF9F6] dark:bg-[#0B0B0C] border-r border-stone-200/80 dark:border-white/[0.08] transition-all duration-150 flex flex-col justify-between shrink-0 select-none ${
-        isCollapsed ? 'w-16' : 'w-[232px]'
+      className={`h-full bg-[#FAF9F6] dark:bg-[#0B0B0C] border-r border-stone-200/80 dark:border-white/[0.08] transition-all duration-150 flex flex-col justify-between shrink-0 select-none ${
+        isCollapsed ? 'w-16' : 'w-[248px]'
       }`}
       aria-label="Workspace Navigation"
     >
@@ -52,7 +62,10 @@ export const Sidebar: React.FC = () => {
           <div className="space-y-1.5">
             <div className="flex items-start justify-between gap-1.5">
               <div className="min-w-0 flex-1">
-                <h1 className="text-sm font-semibold tracking-tight truncate text-[#111113] dark:text-[#EDEDEF]" title={state.event.name}>
+                <h1
+                  className="text-sm font-semibold tracking-tight line-clamp-2 leading-snug text-[#111113] dark:text-[#EDEDEF]"
+                  title={state.event.name}
+                >
                   {state.event.name}
                 </h1>
                 <div className="text-xs text-stone-500 dark:text-[#8B8B93] mt-0.5 truncate">
@@ -105,7 +118,7 @@ export const Sidebar: React.FC = () => {
               </span>
               {!isCollapsed && (
                 <div className="flex items-center justify-between flex-1 min-w-0">
-                  <span className="truncate">{item.label}</span>
+                  <span className="text-[13.5px] whitespace-nowrap">{item.label}</span>
                   <kbd className="text-[10px] text-stone-400 dark:text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity">
                     {item.shortcut}
                   </kbd>

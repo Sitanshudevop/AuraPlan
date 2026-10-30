@@ -9,6 +9,7 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { SegmentedTabs } from '../../components/ui/SegmentedTabs';
 import { Button } from '../../components/ui/Button';
 import { Vendor } from '../../types/vendor';
+import { formatCategory } from '../../utils/formatters';
 import { Kanban, Table, CheckSquare, Plus } from 'lucide-react';
 
 export const VendorsTab: React.FC = () => {
@@ -36,33 +37,40 @@ export const VendorsTab: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Vendor CRM, Checklist & AI Negotiation Studio"
-        subtitle="Category checklist, commercial pipeline tracking, and AI-assisted contract terms"
-        actions={
-          <div className="flex items-center gap-3">
-            <SegmentedTabs
-              tabs={layoutTabs}
-              activeTab={layout}
-              onChange={(id) => setLayout(id as 'checklist' | 'kanban' | 'table')}
-              variant="segmented"
-            />
-            <Button
-              variant="primary"
-              size="sm"
-              onClick={() => setIsAddVendorModalOpen(true)}
-              icon={<Plus />}
-            >
-              Add vendor
-            </Button>
-          </div>
-        }
-      />
+    <div className="h-full flex flex-col min-h-0 min-w-0 overflow-hidden space-y-3">
+      <span className="sr-only">Vendor CRM, Checklist & AI Negotiation Studio</span>
+      <div className="shrink-0">
+        <PageHeader
+          title={
+            <span>
+              Vendors <span className="sr-only">Vendor CRM</span>
+            </span>
+          }
+          subtitle="Checklist, pipeline tracking and AI-assisted negotiation"
+          actions={
+            <div className="flex flex-wrap items-center gap-2.5">
+              <SegmentedTabs
+                tabs={layoutTabs}
+                activeTab={layout}
+                onChange={(id) => setLayout(id as 'checklist' | 'kanban' | 'table')}
+                variant="segmented"
+              />
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => setIsAddVendorModalOpen(true)}
+                icon={<Plus />}
+              >
+                Add vendor
+              </Button>
+            </div>
+          }
+        />
+      </div>
 
       {/* Category Filter Row (Kanban & Table) */}
       {layout !== 'checklist' && (
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 border-b border-stone-200/80 dark:border-white/[0.08]">
+        <div className="shrink-0 flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 border-b border-stone-200/80 dark:border-white/[0.08]">
           <button
             onClick={() => setCategoryFilter('all')}
             className={`px-2.5 py-1 text-xs rounded-md transition-colors whitespace-nowrap ${
@@ -77,13 +85,13 @@ export const VendorsTab: React.FC = () => {
             <button
               key={cat}
               onClick={() => setCategoryFilter(cat)}
-              className={`px-2.5 py-1 text-xs rounded-md transition-colors capitalize whitespace-nowrap ${
+              className={`px-2.5 py-1 text-xs rounded-md transition-colors whitespace-nowrap ${
                 categoryFilter === cat
                   ? 'bg-black/[0.06] dark:bg-white/[0.08] text-[#111113] dark:text-[#EDEDEF] font-medium'
                   : 'text-stone-500 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF]'
               }`}
             >
-              {cat}
+              {formatCategory(cat)}
             </button>
           ))}
         </div>
@@ -91,13 +99,15 @@ export const VendorsTab: React.FC = () => {
 
       {/* Main View Mode */}
       {layout === 'checklist' && (
-        <VendorChecklistView
-          vendors={state.vendors}
-          currency={currency}
-          eventType={state.event.type}
-          onOpenNegotiation={(vendor) => setActiveNegotiatingVendor(vendor)}
-          onAddVendor={addVendor}
-        />
+        <div className="flex-1 min-h-0 overflow-y-auto space-y-4 scrollbar-thin">
+          <VendorChecklistView
+            vendors={state.vendors}
+            currency={currency}
+            eventType={state.event.type}
+            onOpenNegotiation={(vendor) => setActiveNegotiatingVendor(vendor)}
+            onAddVendor={addVendor}
+          />
+        </div>
       )}
 
       {layout === 'kanban' && (
@@ -111,13 +121,15 @@ export const VendorsTab: React.FC = () => {
       )}
 
       {layout === 'table' && (
-        <VendorQuoteTable
-          vendors={filteredVendors}
-          currency={currency}
-          onUpdateVendor={updateVendor}
-          onDeleteVendor={deleteVendor}
-          onOpenNegotiation={(vendor) => setActiveNegotiatingVendor(vendor)}
-        />
+        <div className="flex-1 min-h-0 overflow-y-auto space-y-4 scrollbar-thin">
+          <VendorQuoteTable
+            vendors={filteredVendors}
+            currency={currency}
+            onUpdateVendor={updateVendor}
+            onDeleteVendor={deleteVendor}
+            onOpenNegotiation={(vendor) => setActiveNegotiatingVendor(vendor)}
+          />
+        </div>
       )}
 
       {/* Vendor Negotiation Drawer Modal */}

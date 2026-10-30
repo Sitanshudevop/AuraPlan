@@ -92,59 +92,65 @@ export const PlanningAssistantDrawer: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-black/50 backdrop-blur-xs flex justify-end">
+    <div
+      className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-xs flex justify-end"
+      onClick={handleClose}
+    >
       <div
         ref={drawerRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="assistant-drawer-title"
-        className="w-full max-w-lg bg-surface border-l border-hairline h-full flex flex-col shadow-xl animate-in slide-in-from-right duration-150"
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-lg bg-[#FAF9F6] dark:bg-[#111113] text-[#111113] dark:text-[#EDEDEF] border-l border-stone-200/80 dark:border-white/[0.08] h-full flex flex-col shadow-2xl animate-in slide-in-from-right duration-150"
       >
-        <div className="h-14 px-5 border-b border-hairline flex items-center justify-between shrink-0">
+        <div className="h-14 px-5 border-b border-stone-200/80 dark:border-white/[0.08] bg-[#FAF9F6] dark:bg-[#111113] flex items-center justify-between shrink-0">
           <div>
-            <h3 id="assistant-drawer-title" className="font-semibold text-sm text-[#18181B] dark:text-[#EDEDEF]">
+            <h3 id="assistant-drawer-title" className="font-semibold text-sm text-[#111113] dark:text-[#EDEDEF]">
               AuraPlan AI Planning Assistant
             </h3>
-            <p className="text-xs text-muted">{state.event.type} mode · {state.event.guestCount} guests</p>
+            <p className="text-xs text-stone-500 dark:text-[#8B8B93] capitalize">
+              {state.event.type} mode · {state.event.guestCount} guests
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowKeyInput((v) => !v)}
-              className="text-xs font-mono px-2 py-1 rounded-md border border-hairline bg-surface-raised text-muted hover:text-foreground transition-colors flex items-center gap-1.5"
+              className="text-xs font-mono px-2 py-1 rounded-md border border-stone-200/80 dark:border-white/[0.08] bg-stone-100 dark:bg-white/[0.04] text-stone-600 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF] transition-colors flex items-center gap-1.5"
               aria-label="Toggle Gemini API Key settings"
             >
               <StatusDot status={hasKey ? 'confirmed' : 'pending'} />
               <span>{hasKey ? 'Gemini live' : 'Deterministic'}</span>
             </button>
-            <button onClick={handleClose} className="p-1.5 text-muted hover:text-foreground rounded-md transition-colors" aria-label="Close assistant">
+            <button onClick={handleClose} className="p-1.5 text-stone-400 hover:text-stone-700 dark:hover:text-[#EDEDEF] rounded-md transition-colors" aria-label="Close assistant">
               <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
         {showKeyInput && (
-          <div className="p-3 bg-surface-raised border-b border-hairline flex items-center gap-2 text-xs">
-            <Key className="w-3.5 h-3.5 text-muted shrink-0" />
+          <div className="p-3 bg-stone-100/80 dark:bg-[#161618] border-b border-stone-200/80 dark:border-white/[0.08] flex items-center gap-2 text-xs">
+            <Key className="w-3.5 h-3.5 text-stone-400 shrink-0" />
             <input
               type="password"
               placeholder="Paste Gemini API key..."
               value={customKey}
               onChange={(e) => setCustomKey(e.target.value)}
-              className="flex-1 text-xs px-2.5 py-1.5 bg-surface border border-hairline rounded-md text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
+              className="flex-1 text-xs px-2.5 py-1.5 bg-white dark:bg-[#111113] border border-stone-200/80 dark:border-white/[0.08] rounded-md text-[#111113] dark:text-[#EDEDEF] focus:outline-none focus:ring-1 focus:ring-accent"
             />
             <Button size="sm" variant="primary" onClick={handleSaveKey} disabled={!customKey.trim()}>Save</Button>
             {hasKey && <Button size="sm" variant="ghost" onClick={handleClearKey}>Reset</Button>}
           </div>
         )}
 
-        <div className="p-4 border-b border-hairline space-y-2 shrink-0">
-          <span className="text-xs text-muted block">Suggested prompts</span>
+        <div className="p-4 border-b border-stone-200/80 dark:border-white/[0.08] bg-stone-50/50 dark:bg-white/[0.01] space-y-2 shrink-0">
+          <span className="text-xs font-medium text-stone-500 dark:text-[#8B8B93] block">Suggested prompts</span>
           <div className="flex flex-wrap gap-1.5">
             {quickChips.map((chip, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSend(chip)}
-                className="text-xs px-2.5 py-1 bg-surface-raised hover:bg-stone-200 dark:hover:bg-white/[0.08] border border-hairline rounded-md text-foreground transition-colors text-left"
+                className="text-xs px-2.5 py-1 bg-white dark:bg-white/[0.04] hover:bg-stone-100 dark:hover:bg-white/[0.08] border border-stone-200/80 dark:border-white/[0.08] rounded-md text-stone-800 dark:text-[#EDEDEF] transition-colors text-left shadow-2xs"
               >
                 {chip}
               </button>
@@ -152,14 +158,20 @@ export const PlanningAssistantDrawer: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-4 space-y-3 flex-1 overflow-y-auto text-xs">
+        <div className="p-4 space-y-3 flex-1 overflow-y-auto text-xs scrollbar-thin">
           {messages.map((m) => (
             <div key={m.id} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
-              <div className={`max-w-[85%] p-3 rounded-lg space-y-2 ${m.role === 'user' ? 'bg-foreground text-background font-medium' : 'bg-surface-raised text-foreground border border-hairline'}`}>
+              <div
+                className={`max-w-[88%] p-3.5 rounded-xl space-y-2.5 ${
+                  m.role === 'user'
+                    ? 'bg-[#18181B] dark:bg-white text-white dark:text-[#111113] font-medium shadow-xs'
+                    : 'bg-white dark:bg-[#161618] text-[#111113] dark:text-[#EDEDEF] border border-stone-200/80 dark:border-white/[0.08] shadow-xs'
+                }`}
+              >
                 <FormattedAssistantMessage content={m.content} isUser={m.role === 'user'} />
                 {m.suggestedActions && m.suggestedActions.length > 0 && (
-                  <div className="pt-2 border-t border-hairline space-y-1.5">
-                    <span className="text-xs text-muted block">Plan actions:</span>
+                  <div className="pt-2 border-t border-stone-100 dark:border-white/[0.06] space-y-1.5">
+                    <span className="text-[11px] font-medium text-stone-500 dark:text-[#8B8B93] block">Plan actions:</span>
                     <div className="flex flex-wrap gap-1.5">
                       {m.suggestedActions.map((act, i) => {
                         const isDone = executedLabels.has(act.label);
@@ -170,7 +182,7 @@ export const PlanningAssistantDrawer: React.FC = () => {
                             size="xs"
                             onClick={() => handleExecuteAction(act)}
                             disabled={isDone}
-                            icon={isDone ? <Check className="w-3 h-3 text-emerald-500" /> : act.type === 'add_task' ? <CalendarPlus className="w-3 h-3 text-muted" /> : <Wallet className="w-3 h-3 text-muted" />}
+                            icon={isDone ? <Check className="w-3 h-3 text-emerald-500" /> : act.type === 'add_task' ? <CalendarPlus className="w-3 h-3 text-stone-400" /> : <Wallet className="w-3 h-3 text-stone-400" />}
                           >
                             {isDone ? 'Applied to Plan ✓' : act.label}
                           </Button>
@@ -180,19 +192,19 @@ export const PlanningAssistantDrawer: React.FC = () => {
                   </div>
                 )}
               </div>
-              <span className="text-[11px] text-muted mt-1 tabular-nums px-1">{m.timestamp}</span>
+              <span className="text-[10px] text-stone-400 dark:text-zinc-500 mt-1 tabular-nums px-1">{m.timestamp}</span>
             </div>
           ))}
 
           {loading && (
-            <div className="flex items-center gap-2 p-2.5 bg-surface-raised border border-hairline rounded-md text-xs text-muted w-fit">
-              <Loader2 className="w-3.5 h-3.5 animate-spin text-accent" />
+            <div className="flex items-center gap-2 p-2.5 bg-white dark:bg-[#161618] border border-stone-200/80 dark:border-white/[0.08] rounded-lg text-xs text-stone-500 dark:text-[#8B8B93] w-fit shadow-xs">
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-[#6E79F5]" />
               <span>Generating response...</span>
             </div>
           )}
         </div>
 
-        <div className="p-3 border-t border-hairline bg-surface shrink-0">
+        <div className="p-3 border-t border-stone-200/80 dark:border-white/[0.08] bg-[#FAF9F6] dark:bg-[#111113] shrink-0">
           <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex items-center gap-2">
             <input
               ref={inputRef}
@@ -200,7 +212,7 @@ export const PlanningAssistantDrawer: React.FC = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask anything (e.g. weather contingency, buffer times)..."
-              className="flex-1 text-xs px-3 py-2 bg-surface-raised border border-hairline rounded-md focus:outline-none focus:ring-1 focus:ring-accent text-foreground placeholder:text-muted"
+              className="flex-1 text-xs px-3 py-2 bg-white dark:bg-[#161618] border border-stone-200/80 dark:border-white/[0.08] rounded-md focus:outline-none focus:ring-1 focus:ring-[#6E79F5] text-[#111113] dark:text-[#EDEDEF] placeholder:text-stone-400 dark:placeholder:text-zinc-500"
             />
             <Button
               type="submit"

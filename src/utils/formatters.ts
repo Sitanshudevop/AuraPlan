@@ -72,3 +72,19 @@ export function formatDate(dateStr: string): string {
     return dateStr;
   }
 }
+
+export const CATEGORY_DISPLAY_MAP: Record<string, string> = {
+  venue: 'Venue',
+  catering: 'Catering',
+  decor: 'Decor & Styling',
+  av_photo: 'AV & Photo',
+  entertainment: 'Entertainment',
+  logistics: 'Logistics & Permits',
+  buffer: 'Contingency Buffer',
+};
+
+export function formatCategory(cat: string): string {
+  const key = cat.toLowerCase().trim();
+  if (CATEGORY_DISPLAY_MAP[key]) return CATEGORY_DISPLAY_MAP[key];
+  return cat.charAt(0).toUpperCase() + cat.slice(1).replace(/_/g, ' ');
+}

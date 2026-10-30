@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Vendor } from '../../types/vendor';
 import { EventType, Currency } from '../../types/event';
-import { formatCurrency } from '../../utils/formatters';
+import { formatCurrency, formatCategory } from '../../utils/formatters';
 import { Button } from '../../components/ui/Button';
 import { StatusDot } from '../../components/ui/StatusDot';
 import { MODALITY_CHECKLISTS, ChecklistRequirement } from '../../data/modalityChecklists';
@@ -102,8 +102,8 @@ export const VendorChecklistView: React.FC<Props> = ({
                 <h4 className="text-sm font-medium text-[#111113] dark:text-[#EDEDEF] leading-snug">
                   {req.roleTitle}
                 </h4>
-                <div className="text-[11px] text-stone-400 dark:text-zinc-500 capitalize mt-0.5">
-                  {req.category} · {req.priority}
+                <div className="text-[11px] text-stone-400 dark:text-zinc-500 mt-0.5">
+                  {formatCategory(req.category)} · {req.priority}
                 </div>
               </div>
               <StatusDot

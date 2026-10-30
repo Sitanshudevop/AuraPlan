@@ -43,10 +43,19 @@ const EditEventModal = lazy(() =>
 
 const MainWorkspaceContent: React.FC = () => {
   const { activeTab } = useWorkspace();
+  const isVendors = activeTab === 'vendors';
 
   return (
-    <div className="flex-1 flex flex-col min-w-0">
-      <main id="main-content" className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1200px] w-full mx-auto space-y-8" tabIndex={-1}>
+    <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
+      <main
+        id="main-content"
+        className={`flex-1 w-full min-h-0 min-w-0 ${
+          isVendors
+            ? 'p-4 sm:p-5 lg:p-6 max-w-none flex flex-col overflow-hidden'
+            : 'p-4 sm:p-6 lg:p-8 max-w-[1200px] mx-auto overflow-y-auto overflow-x-hidden space-y-8'
+        }`}
+        tabIndex={-1}
+      >
         <Suspense fallback={<TabSkeleton />}>
           {activeTab === 'dashboard' && <DashboardTab />}
           {activeTab === 'budget' && <BudgetTab />}
@@ -71,10 +80,10 @@ export const App: React.FC = () => {
         Skip to main workspace
       </a>
 
-      <div className="min-h-screen bg-[#FAF9F6] text-[#111113] dark:bg-[#0B0B0C] dark:text-[#EDEDEF] flex flex-col font-sans transition-colors duration-150">
+      <div className="h-screen h-[100dvh] max-h-[100dvh] bg-[#FAF9F6] text-[#111113] dark:bg-[#0B0B0C] dark:text-[#EDEDEF] flex flex-col font-sans transition-colors duration-150 overflow-hidden">
         <Header />
 
-        <div className="flex-1 flex">
+        <div className="flex-1 flex min-h-0 min-w-0 overflow-hidden">
           <Sidebar />
           <MainWorkspaceContent />
         </div>

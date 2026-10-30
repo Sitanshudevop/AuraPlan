@@ -8,22 +8,23 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Design System Palette (Linear / Stripe / Vercel Aesthetic)
+        // Design System Palette Tokens
+        surface: {
+          DEFAULT: 'var(--color-surface)',
+          raised: 'var(--color-surface-raised)',
+        },
+        'surface-raised': 'var(--color-surface-raised)',
+        hairline: 'var(--color-hairline)',
+        muted: 'var(--color-text-muted)',
+        foreground: 'var(--color-text)',
+        background: 'var(--color-bg)',
         bg: {
+          DEFAULT: 'var(--color-bg)',
           light: '#FAF9F6',
           dark: '#0B0B0C',
         },
-        surface: {
-          light: '#FFFFFF',
-          dark: '#111113',
-          'raised-light': '#F3F3F5',
-          'raised-dark': '#161618',
-        },
-        hairline: {
-          light: 'rgba(0,0,0,0.08)',
-          dark: 'rgba(255,255,255,0.08)',
-        },
         txt: {
+          DEFAULT: 'var(--color-text)',
           light: '#111113',
           dark: '#EDEDEF',
           'muted-light': '#6E6E77',

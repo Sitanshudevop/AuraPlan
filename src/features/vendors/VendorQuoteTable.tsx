@@ -2,7 +2,7 @@ import React from 'react';
 import { Vendor } from '../../types/vendor';
 import { Currency } from '../../types/event';
 import { StatusDot } from '../../components/ui/StatusDot';
-import { formatCurrency } from '../../utils/formatters';
+import { formatCurrency, formatCategory } from '../../utils/formatters';
 import { Trash2 } from 'lucide-react';
 
 interface VendorQuoteTableProps {
@@ -60,8 +60,8 @@ export const VendorQuoteTable: React.FC<VendorQuoteTableProps> = ({
                   <div className="font-medium text-[#111113] dark:text-[#EDEDEF]">
                     {vendor.name}
                   </div>
-                  <div className="text-[11px] text-stone-400 dark:text-zinc-500 capitalize">
-                    {vendor.category} · {vendor.location}
+                  <div className="text-[11px] text-stone-400 dark:text-zinc-500">
+                    {formatCategory(vendor.category)} · {vendor.location}
                   </div>
                 </td>
 
