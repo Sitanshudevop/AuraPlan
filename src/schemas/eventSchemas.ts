@@ -64,6 +64,6 @@ export const eventWorkspaceStateSchema = z.object({
 export const persistedStateSchema = z.object({
   version: z.literal(1),
   activePresetId: z.string(),
-  states: z.record(eventWorkspaceStateSchema),
+  states: z.record(z.string(), eventWorkspaceStateSchema),
   theme: z.enum(['light', 'dark']),
 });
