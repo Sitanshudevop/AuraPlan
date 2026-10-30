@@ -37,6 +37,9 @@ const PlanningAssistantDrawer = lazy(() =>
 const NewEventModal = lazy(() =>
   import('./components/modals/NewEventModal').then((m) => ({ default: m.NewEventModal }))
 );
+const EditEventModal = lazy(() =>
+  import('./components/modals/EditEventModal').then((m) => ({ default: m.EditEventModal }))
+);
 
 const MainWorkspaceContent: React.FC = () => {
   const { activeTab } = useWorkspace();
@@ -83,6 +86,7 @@ export const App: React.FC = () => {
           <PlanningAssistantDrawer />
           <AuditDrawer />
           <NewEventModal />
+          <EditEventModal />
         </Suspense>
         <Toast />
       </div>

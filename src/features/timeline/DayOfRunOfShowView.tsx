@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
+import { AddActivityModal } from './AddActivityModal';
 import { detectScheduleConflicts, sortActivitiesChronologically } from './ConflictDetector';
 import {
   Clock,
@@ -9,10 +10,13 @@ import {
   User,
   AlertTriangle,
   RotateCw,
+  Plus,
+  Trash2,
 } from 'lucide-react';
 
 export const DayOfRunOfShowView: React.FC = () => {
-  const { state, shiftActivity30m } = useWorkspace();
+  const { state, shiftActivity30m, addDayOfActivity, deleteDayOfActivity } = useWorkspace();
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const sortedActivities = useMemo(() => {
     return sortActivitiesChronologically(state.dayOfActivities);
@@ -75,7 +79,7 @@ export const DayOfRunOfShowView: React.FC = () => {
 
       {/* Chronological Table of Activities */}
       <Card className="p-0 overflow-hidden">
-        <div className="p-4 border-b border-stone-200 dark:border-zinc-800 flex items-center justify-between">
+        <div className="p-4 border-b border-stone-200 dark:border-zinc-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div>
             <h3 className="text-sm font-semibold text-[#18181B] dark:text-[#FAFAFA]">
               Minute-by-Minute Run-of-Show
@@ -84,9 +88,19 @@ export const DayOfRunOfShowView: React.FC = () => {
               Synchronized cues for coordinators, vendors, and production crew
             </p>
           </div>
-          <span className="text-xs font-mono tabular-nums text-stone-400">
-            {sortedActivities.length} Scheduled Events
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-mono tabular-nums text-stone-400">
+              {sortedActivities.length} Scheduled Events
+            </span>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => setIsAddModalOpen(true)}
+              icon={<Plus className="w-3.5 h-3.5" />}
+            >
+              Add Activity
+            </Button>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -148,16 +162,27 @@ export const DayOfRunOfShowView: React.FC = () => {
                     </td>
 
                     <td className="py-3 px-3 text-right">
-                      {hasConflict && (
-                        <Button
-                          variant="danger"
-                          size="xs"
-                          onClick={() => shiftActivity30m(act.id)}
-                          title="Shift activity by 30 mins to resolve overlap"
+                      <div className="flex items-center justify-end gap-1.5">
+                        {hasConflict && (
+                          <Button
+                            variant="danger"
+                            size="xs"
+                            onClick={() => shiftActivity30m(act.id)}
+                            title="Shift activity by 30 mins to resolve overlap"
+                          >
+                            Shift +30m
+                          </Button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => deleteDayOfActivity(act.id)}
+                          className="p-1 text-stone-400 hover:text-rose-600 dark:hover:text-rose-400 rounded hover:bg-stone-100 dark:hover:bg-zinc-800 transition-colors"
+                          aria-label={`Delete activity ${act.title}`}
+                          title="Delete activity"
                         >
-                          Shift +30m
-                        </Button>
-                      )}
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -166,6 +191,13 @@ export const DayOfRunOfShowView: React.FC = () => {
           </table>
         </div>
       </Card>
+
+      {/* Add Day-Of Activity Modal */}
+      <AddActivityModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAddActivity={addDayOfActivity}
+      />
     </div>
   );
 };

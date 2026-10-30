@@ -3,12 +3,13 @@ import { Vendor } from '../../types/vendor';
 import { Currency } from '../../types/event';
 import { Badge } from '../../components/ui/Badge';
 import { formatCurrency } from '../../utils/formatters';
-import { Star, Sparkles } from 'lucide-react';
+import { Star, Sparkles, Trash2 } from 'lucide-react';
 
 interface VendorQuoteTableProps {
   vendors: Vendor[];
   currency: Currency;
   onUpdateVendor: (id: string, partial: Partial<Vendor>) => void;
+  onDeleteVendor?: (id: string) => void;
   onOpenNegotiation: (vendor: Vendor) => void;
 }
 
@@ -16,6 +17,7 @@ export const VendorQuoteTable: React.FC<VendorQuoteTableProps> = ({
   vendors,
   currency,
   onOpenNegotiation,
+  onDeleteVendor,
 }) => {
   const getStatusVariant = (status: string) => {
     switch (status) {
@@ -109,13 +111,27 @@ export const VendorQuoteTable: React.FC<VendorQuoteTableProps> = ({
               </td>
 
               <td className="py-3 px-3 text-right">
-                <button
-                  onClick={() => onOpenNegotiation(vendor)}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-[11px] font-medium bg-stone-100 hover:bg-stone-200 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400 dark:hover:bg-indigo-900/50 transition-colors"
-                >
-                  <Sparkles className="w-3 h-3" />
-                  <span>Negotiation Studio</span>
-                </button>
+                <div className="flex items-center justify-end gap-1.5">
+                  <button
+                    onClick={() => onOpenNegotiation(vendor)}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-[11px] font-medium bg-stone-100 hover:bg-stone-200 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400 dark:hover:bg-indigo-900/50 transition-colors"
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    <span>Negotiation Studio</span>
+                  </button>
+
+                  {onDeleteVendor && (
+                    <button
+                      type="button"
+                      onClick={() => onDeleteVendor(vendor.id)}
+                      className="p-1 text-stone-400 hover:text-rose-600 dark:hover:text-rose-400 rounded hover:bg-stone-100 dark:hover:bg-zinc-800 transition-colors"
+                      aria-label={`Delete vendor ${vendor.name}`}
+                      title="Delete vendor"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
               </td>
             </tr>
           ))

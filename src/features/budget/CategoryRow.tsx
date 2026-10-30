@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { BudgetItem, BudgetCategory } from '../../types/budget';
 import { Currency } from '../../types/event';
 import { formatCurrency } from '../../utils/formatters';
-import { Lock, Unlock, AlertTriangle, ChevronDown, ChevronRight, FileText } from 'lucide-react';
+import { Lock, Unlock, AlertTriangle, ChevronDown, ChevronRight, FileText, Trash2 } from 'lucide-react';
 
 interface CategoryRowProps {
   item: BudgetItem;
   totalBudget: number;
   currency: Currency;
   onUpdate: (partial: Partial<BudgetItem>) => void;
+  onDelete?: () => void;
 }
 
 const categoryLabels: Record<BudgetCategory, string> = {
@@ -26,6 +27,7 @@ const CategoryRowComponent: React.FC<CategoryRowProps> = ({
   totalBudget,
   currency,
   onUpdate,
+  onDelete,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const isOverAllocated = item.actualContracted > item.allocated;
@@ -155,6 +157,45 @@ const CategoryRowComponent: React.FC<CategoryRowProps> = ({
                   <span>{item.isLocked ? 'Protected from 1-click rebalance' : 'Eligible for auto-allocation'}</span>
                 </div>
               </div>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 mt-2 border-t border-stone-200/80 dark:border-zinc-800">
+              <div className="flex flex-wrap items-center gap-3">
+                <label className="flex items-center gap-1.5 text-[11px] text-stone-600 dark:text-zinc-400">
+                  <span>Contracted ({currency === 'INR' ? '₹' : '$'}):</span>
+                  <input
+                    type="number"
+                    min="0"
+                    step="500"
+                    value={item.actualContracted}
+                    onChange={(e) => onUpdate({ actualContracted: Number(e.target.value) })}
+                    className="w-24 px-2 py-0.5 bg-white dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded font-mono text-xs dark:text-white"
+                  />
+                </label>
+                <label className="flex items-center gap-1.5 text-[11px] text-stone-600 dark:text-zinc-400">
+                  <span>Paid ({currency === 'INR' ? '₹' : '$'}):</span>
+                  <input
+                    type="number"
+                    min="0"
+                    step="500"
+                    value={item.amountPaid}
+                    onChange={(e) => onUpdate({ amountPaid: Number(e.target.value) })}
+                    className="w-24 px-2 py-0.5 bg-white dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded font-mono text-xs dark:text-white"
+                  />
+                </label>
+              </div>
+
+              {onDelete && (
+                <button
+                  type="button"
+                  onClick={onDelete}
+                  className="flex items-center gap-1 text-[11px] font-medium text-rose-600 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-300 px-2 py-1 rounded hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+                  aria-label={`Delete ${item.name} from budget`}
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Remove Line Item</span>
+                </button>
+              )}
             </div>
           </td>
         </tr>

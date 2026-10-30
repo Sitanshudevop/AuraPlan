@@ -3,7 +3,9 @@ import { useWorkspace } from '../../context/WorkspaceContext';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { TimelineHorizon, Priority } from '../../types/timeline';
-import { CheckCircle2, Circle, Clock, User, ChevronDown, ChevronRight, Filter } from 'lucide-react';
+import { AddMacroTaskModal } from './AddMacroTaskModal';
+import { Button } from '../../components/ui/Button';
+import { CheckCircle2, Circle, Clock, User, ChevronDown, ChevronRight, Filter, Plus, Trash2 } from 'lucide-react';
 
 const horizonLabels: Record<TimelineHorizon, string> = {
   '6_months': '6+ Months Out — Architectural Milestones',
@@ -22,8 +24,9 @@ const horizonsOrder: TimelineHorizon[] = [
 ];
 
 export const MacroCountdownView: React.FC = () => {
-  const { state, updateMacroTask } = useWorkspace();
+  const { state, updateMacroTask, addMacroTask, deleteMacroTask } = useWorkspace();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   
   // Track open/collapsed state for horizons
   const [collapsedHorizons, setCollapsedHorizons] = useState<Record<string, boolean>>({
@@ -83,8 +86,18 @@ export const MacroCountdownView: React.FC = () => {
           </select>
         </div>
 
-        <div className="text-xs text-stone-500 dark:text-zinc-400 font-mono tabular-nums">
-          {filteredTasks.filter((t) => t.completed).length} / {filteredTasks.length} Completed
+        <div className="flex items-center gap-2">
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => setIsAddModalOpen(true)}
+            icon={<Plus className="w-3.5 h-3.5" />}
+          >
+            Add Milestone
+          </Button>
+          <div className="text-xs text-stone-500 dark:text-zinc-400 font-mono tabular-nums">
+            {filteredTasks.filter((t) => t.completed).length} / {filteredTasks.length} Completed
+          </div>
         </div>
       </div>
 
@@ -185,6 +198,15 @@ export const MacroCountdownView: React.FC = () => {
                           <Badge variant={getPriorityVariant(task.priority)} size="sm">
                             {task.priority.toUpperCase()}
                           </Badge>
+                          <button
+                            type="button"
+                            onClick={() => deleteMacroTask(task.id)}
+                            className="p-1 text-stone-400 hover:text-rose-600 dark:hover:text-rose-400 rounded hover:bg-stone-100 dark:hover:bg-zinc-800 transition-colors"
+                            aria-label={`Delete task ${task.title}`}
+                            title="Delete task"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
                         </div>
                       </div>
                     ))}
@@ -195,6 +217,14 @@ export const MacroCountdownView: React.FC = () => {
           })}
         </div>
       )}
+
+      {/* Add Milestone Task Modal */}
+      <AddMacroTaskModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAddTask={addMacroTask}
+        defaultDate={state.event.date}
+      />
     </div>
   );
 };

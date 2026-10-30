@@ -14,6 +14,7 @@ import {
   ChevronRight,
   Clock,
   MapPin,
+  Pencil,
 } from 'lucide-react';
 
 interface TabItem {
@@ -24,7 +25,7 @@ interface TabItem {
 }
 
 export const Sidebar: React.FC = () => {
-  const { state, activeTab, setActiveTab } = useWorkspace();
+  const { state, activeTab, setActiveTab, setEditEventModalOpen } = useWorkspace();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const daysLeft = getDaysRemaining(state.event.date);
@@ -64,14 +65,24 @@ export const Sidebar: React.FC = () => {
                 <span>{daysLeft}d left</span>
               </div>
             </div>
-            <div>
-              <h1 className="font-semibold text-xs tracking-tight truncate text-[#18181B] dark:text-[#FAFAFA]" title={state.event.name}>
-                {state.event.name}
-              </h1>
-              <div className="flex items-center gap-1.5 text-[11px] text-stone-500 dark:text-zinc-400 mt-1 truncate">
-                <MapPin className="w-3 h-3 shrink-0 text-stone-400" />
-                <span className="truncate">{state.event.city}</span>
+            <div className="flex items-start justify-between gap-1">
+              <div className="min-w-0 flex-1">
+                <h1 className="font-semibold text-xs tracking-tight truncate text-[#18181B] dark:text-[#FAFAFA]" title={state.event.name}>
+                  {state.event.name}
+                </h1>
+                <div className="flex items-center gap-1.5 text-[11px] text-stone-500 dark:text-zinc-400 mt-1 truncate">
+                  <MapPin className="w-3 h-3 shrink-0 text-stone-400" />
+                  <span className="truncate">{state.event.city}</span>
+                </div>
               </div>
+              <button
+                onClick={() => setEditEventModalOpen(true)}
+                className="p-1 rounded text-stone-400 hover:text-stone-700 dark:hover:text-zinc-200 hover:bg-stone-100 dark:hover:bg-zinc-800 transition-colors shrink-0"
+                title="Edit Event Details"
+                aria-label="Edit event details"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+              </button>
             </div>
           </div>
         ) : (

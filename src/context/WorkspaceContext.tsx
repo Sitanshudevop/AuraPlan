@@ -30,6 +30,7 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [isCopilotOpen, setCopilotOpen] = useState(false);
   const [isAssistantOpen, setAssistantOpen] = useState(false);
   const [isNewEventModalOpen, setNewEventModalOpen] = useState(false);
+  const [isEditEventModalOpen, setEditEventModalOpen] = useState(false);
   const [announcerMessage, setAnnouncerMessage] = useState('');
 
   const [state, dispatch] = useReducer(workspaceReducer, initialData);
@@ -123,6 +124,30 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     announce('Guest removed');
   }, [state, pushHistory, announce]);
 
+  const deleteBudgetItem = useCallback((id: string) => {
+    pushHistory(state);
+    dispatch({ type: 'DELETE_BUDGET_ITEM', payload: { id } });
+    announce('Budget item removed');
+  }, [state, pushHistory, announce]);
+
+  const deleteVendor = useCallback((id: string) => {
+    pushHistory(state);
+    dispatch({ type: 'DELETE_VENDOR', payload: { id } });
+    announce('Vendor removed');
+  }, [state, pushHistory, announce]);
+
+  const deleteMacroTask = useCallback((id: string) => {
+    pushHistory(state);
+    dispatch({ type: 'DELETE_TASK', payload: { id } });
+    announce('Task removed');
+  }, [state, pushHistory, announce]);
+
+  const deleteDayOfActivity = useCallback((id: string) => {
+    pushHistory(state);
+    dispatch({ type: 'DELETE_ACTIVITY', payload: { id } });
+    announce('Activity removed');
+  }, [state, pushHistory, announce]);
+
   const applyRipple = useCallback((diff: RippleDiffResult) => {
     pushHistory(state);
     dispatch({ type: 'APPLY_RIPPLE', payload: diff });
@@ -151,7 +176,7 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const closeAllOverlays = useCallback(() => {
     setCommandPaletteOpen(false); setAuditDrawerOpen(false); setCopilotOpen(false);
-    setAssistantOpen(false); setNewEventModalOpen(false);
+    setAssistantOpen(false); setNewEventModalOpen(false); setEditEventModalOpen(false);
   }, []);
 
   const toggleCommandPalette = useCallback(() => setCommandPaletteOpen((p) => !p), []);
@@ -166,20 +191,25 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const value = useMemo(
     () => ({
       state, activePresetId, activeTab, currency, isDark, canUndo: history.length > 0,
-      isCommandPaletteOpen, isAuditDrawerOpen, isCopilotOpen, isAssistantOpen, isNewEventModalOpen, announcerMessage,
+      isCommandPaletteOpen, isAuditDrawerOpen, isCopilotOpen, isAssistantOpen, isNewEventModalOpen,
+      isEditEventModalOpen, announcerMessage,
       setActiveTab, setCurrency, toggleDarkMode, switchPreset, setCustomState, updateEvent,
-      updateBudgetItem, autoBalanceBudget, addBudgetItem, updateVendor, addVendor, updateMacroTask,
-      addMacroTask, updateDayOfActivity, addDayOfActivity, shiftActivity30m, updateGuest, addGuest,
-      deleteGuest, applyRipple, undoLastRipple, resetToFactoryDefaults, toggleTax, setTaxRate,
-      setCommandPaletteOpen, setAuditDrawerOpen, setCopilotOpen, setAssistantOpen, setNewEventModalOpen, announce,
+      updateBudgetItem, autoBalanceBudget, addBudgetItem, deleteBudgetItem, updateVendor, addVendor, deleteVendor,
+      updateMacroTask, addMacroTask, deleteMacroTask, updateDayOfActivity, addDayOfActivity, deleteDayOfActivity,
+      shiftActivity30m, updateGuest, addGuest, deleteGuest, applyRipple, undoLastRipple,
+      resetToFactoryDefaults, toggleTax, setTaxRate, setCommandPaletteOpen, setAuditDrawerOpen,
+      setCopilotOpen, setAssistantOpen, setNewEventModalOpen, setEditEventModalOpen, announce,
     }),
     [
       state, activePresetId, activeTab, currency, isDark, history.length,
-      isCommandPaletteOpen, isAuditDrawerOpen, isCopilotOpen, isAssistantOpen, isNewEventModalOpen, announcerMessage,
+      isCommandPaletteOpen, isAuditDrawerOpen, isCopilotOpen, isAssistantOpen, isNewEventModalOpen,
+      isEditEventModalOpen, announcerMessage,
       setActiveTab, setCurrency, toggleDarkMode, switchPreset, setCustomState, updateEvent,
-      updateBudgetItem, autoBalanceBudget, addBudgetItem, updateVendor, addVendor, updateMacroTask,
-      addMacroTask, updateDayOfActivity, addDayOfActivity, shiftActivity30m, updateGuest, addGuest,
-      deleteGuest, applyRipple, undoLastRipple, resetToFactoryDefaults, toggleTax, setTaxRate, announce,
+      updateBudgetItem, autoBalanceBudget, addBudgetItem, deleteBudgetItem, updateVendor, addVendor, deleteVendor,
+      updateMacroTask, addMacroTask, deleteMacroTask, updateDayOfActivity, addDayOfActivity, deleteDayOfActivity,
+      shiftActivity30m, updateGuest, addGuest, deleteGuest, applyRipple, undoLastRipple,
+      resetToFactoryDefaults, toggleTax, setTaxRate, setCommandPaletteOpen, setAuditDrawerOpen,
+      setCopilotOpen, setAssistantOpen, setNewEventModalOpen, setEditEventModalOpen, announce,
     ]
   );
 

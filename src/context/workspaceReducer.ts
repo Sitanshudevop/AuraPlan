@@ -12,12 +12,16 @@ export type WorkspaceAction =
   | { type: 'UPDATE_BUDGET_ITEM'; payload: { id: string; partial: Partial<BudgetItem> } }
   | { type: 'AUTO_BALANCE_BUDGET' }
   | { type: 'ADD_BUDGET_ITEM'; payload: BudgetItem }
+  | { type: 'DELETE_BUDGET_ITEM'; payload: { id: string } }
   | { type: 'UPDATE_VENDOR'; payload: { id: string; partial: Partial<Vendor> } }
   | { type: 'ADD_VENDOR'; payload: Vendor }
+  | { type: 'DELETE_VENDOR'; payload: { id: string } }
   | { type: 'UPDATE_TASK'; payload: { id: string; partial: Partial<MacroTask> } }
   | { type: 'ADD_TASK'; payload: MacroTask }
+  | { type: 'DELETE_TASK'; payload: { id: string } }
   | { type: 'UPDATE_ACTIVITY'; payload: { id: string; partial: Partial<DayOfActivity> } }
   | { type: 'ADD_ACTIVITY'; payload: DayOfActivity }
+  | { type: 'DELETE_ACTIVITY'; payload: { id: string } }
   | { type: 'SHIFT_ACTIVITY_30M'; payload: { id: string } }
   | { type: 'UPDATE_GUEST'; payload: { id: string; partial: Partial<Guest> } }
   | { type: 'ADD_GUEST'; payload: Guest }
@@ -61,6 +65,9 @@ export function workspaceReducer(state: EventWorkspaceState, action: WorkspaceAc
     case 'ADD_BUDGET_ITEM':
       return { ...state, budgetItems: [...state.budgetItems, action.payload] };
 
+    case 'DELETE_BUDGET_ITEM':
+      return { ...state, budgetItems: state.budgetItems.filter((b) => b.id !== action.payload.id) };
+
     case 'UPDATE_VENDOR': {
       const updatedVendors = state.vendors.map((v) =>
         v.id === action.payload.id ? { ...v, ...action.payload.partial } : v
@@ -88,6 +95,11 @@ export function workspaceReducer(state: EventWorkspaceState, action: WorkspaceAc
     case 'ADD_VENDOR':
       return { ...state, vendors: [...state.vendors, action.payload] };
 
+    case 'DELETE_VENDOR': {
+      const remainingVendors = state.vendors.filter((v) => v.id !== action.payload.id);
+      return { ...state, vendors: remainingVendors };
+    }
+
     case 'UPDATE_TASK': {
       const macroTasks = state.macroTasks.map((t) =>
         t.id === action.payload.id ? { ...t, ...action.payload.partial } : t
@@ -98,6 +110,9 @@ export function workspaceReducer(state: EventWorkspaceState, action: WorkspaceAc
     case 'ADD_TASK':
       return { ...state, macroTasks: [...state.macroTasks, action.payload] };
 
+    case 'DELETE_TASK':
+      return { ...state, macroTasks: state.macroTasks.filter((t) => t.id !== action.payload.id) };
+
     case 'UPDATE_ACTIVITY': {
       const dayOfActivities = state.dayOfActivities.map((a) =>
         a.id === action.payload.id ? { ...a, ...action.payload.partial } : a
@@ -107,6 +122,9 @@ export function workspaceReducer(state: EventWorkspaceState, action: WorkspaceAc
 
     case 'ADD_ACTIVITY':
       return { ...state, dayOfActivities: [...state.dayOfActivities, action.payload] };
+
+    case 'DELETE_ACTIVITY':
+      return { ...state, dayOfActivities: state.dayOfActivities.filter((a) => a.id !== action.payload.id) };
 
     case 'SHIFT_ACTIVITY_30M': {
       const dayOfActivities = state.dayOfActivities.map((a) => {

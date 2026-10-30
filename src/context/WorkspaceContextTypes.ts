@@ -38,6 +38,12 @@ export interface WorkspaceContextType {
   updateGuest: (id: string, partial: Partial<Guest>) => void;
   addGuest: (guest: Guest) => void;
   deleteGuest: (id: string) => void;
+  deleteBudgetItem: (id: string) => void;
+  deleteVendor: (id: string) => void;
+  deleteMacroTask: (id: string) => void;
+  deleteDayOfActivity: (id: string) => void;
+  isEditEventModalOpen: boolean;
+  setEditEventModalOpen: (open: boolean) => void;
   applyRipple: (diff: RippleDiffResult) => void;
   undoLastRipple: () => void;
   resetToFactoryDefaults: () => void;

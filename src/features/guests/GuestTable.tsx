@@ -94,11 +94,18 @@ export const GuestTable: React.FC<GuestTableProps> = ({
                   <div className="font-semibold text-stone-900 dark:text-white">
                     {guest.name}
                   </div>
-                  {guest.plusOnes > 0 && (
-                    <div className="text-[10px] text-stone-600 dark:text-zinc-400 font-mono tabular-nums">
-                      +{guest.plusOnes} guest cover
-                    </div>
-                  )}
+                  <label className="flex items-center gap-1 text-[10px] text-stone-500 dark:text-zinc-400 mt-0.5">
+                    <span>Plus-ones:</span>
+                    <input
+                      type="number"
+                      min="0"
+                      max="10"
+                      value={guest.plusOnes}
+                      onChange={(e) => onUpdateGuest(guest.id, { plusOnes: Math.max(0, Number(e.target.value)) })}
+                      className="w-12 px-1 py-0.5 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded font-mono text-xs dark:text-white"
+                      aria-label={`Plus-ones for ${guest.name}`}
+                    />
+                  </label>
                 </td>
 
                 <td className="py-3 px-3">

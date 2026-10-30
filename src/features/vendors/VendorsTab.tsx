@@ -4,14 +4,17 @@ import { VendorKanban } from './VendorKanban';
 import { VendorQuoteTable } from './VendorQuoteTable';
 import { VendorChecklistView } from './VendorChecklistView';
 import { VendorNegotiationModal } from './VendorNegotiationModal';
+import { AddVendorModal } from './AddVendorModal';
+import { Button } from '../../components/ui/Button';
 import { Vendor } from '../../types/vendor';
-import { Kanban, Table, CheckSquare } from 'lucide-react';
+import { Kanban, Table, CheckSquare, Plus } from 'lucide-react';
 
 export const VendorsTab: React.FC = () => {
-  const { state, currency, updateVendor, addVendor } = useWorkspace();
+  const { state, currency, updateVendor, addVendor, deleteVendor } = useWorkspace();
   const [layout, setLayout] = useState<'kanban' | 'table' | 'checklist'>('checklist');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [activeNegotiatingVendor, setActiveNegotiatingVendor] = useState<Vendor | null>(null);
+  const [isAddVendorModalOpen, setIsAddVendorModalOpen] = useState(false);
 
   const categories = useMemo(
     () => Array.from(new Set(state.vendors.map((v) => v.category))),
@@ -38,6 +41,15 @@ export const VendorsTab: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => setIsAddVendorModalOpen(true)}
+            icon={<Plus className="w-3.5 h-3.5" />}
+          >
+            Add Vendor
+          </Button>
+
           {/* Tri-Layout Switcher */}
           <div className="flex items-center p-1 bg-stone-100 dark:bg-zinc-800 rounded-lg border border-stone-200 dark:border-zinc-700">
             <button
@@ -120,6 +132,7 @@ export const VendorsTab: React.FC = () => {
           vendors={filteredVendors}
           currency={currency}
           onUpdateVendor={updateVendor}
+          onDeleteVendor={deleteVendor}
           onOpenNegotiation={(vendor) => setActiveNegotiatingVendor(vendor)}
         />
       ) : (
@@ -127,6 +140,7 @@ export const VendorsTab: React.FC = () => {
           vendors={filteredVendors}
           currency={currency}
           onUpdateVendor={updateVendor}
+          onDeleteVendor={deleteVendor}
           onOpenNegotiation={(vendor) => setActiveNegotiatingVendor(vendor)}
         />
       )}
@@ -135,6 +149,14 @@ export const VendorsTab: React.FC = () => {
       <VendorNegotiationModal
         vendor={activeNegotiatingVendor}
         onClose={() => setActiveNegotiatingVendor(null)}
+      />
+
+      {/* Add Custom Vendor Modal */}
+      <AddVendorModal
+        isOpen={isAddVendorModalOpen}
+        onClose={() => setIsAddVendorModalOpen(false)}
+        onAddVendor={addVendor}
+        currency={currency}
       />
     </div>
   );

@@ -9,11 +9,13 @@ import { Button } from '../../components/ui/Button';
 import { formatCurrency } from '../../utils/formatters';
 import { calculateGstTax } from './budgetMath';
 import { exportBudgetToCsv } from './budgetExport';
-import { RotateCcw, Download, Printer, AlertTriangle, ChevronDown } from 'lucide-react';
+import { AddBudgetItemModal } from './AddBudgetItemModal';
+import { RotateCcw, Download, Printer, AlertTriangle, ChevronDown, Plus } from 'lucide-react';
 
 export const BudgetTab: React.FC = () => {
-  const { state, currency, updateBudgetItem, autoBalanceBudget } = useWorkspace();
+  const { state, currency, updateBudgetItem, addBudgetItem, deleteBudgetItem, autoBalanceBudget } = useWorkspace();
 
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
   const exportMenuRef = useRef<HTMLDivElement>(null);
 
@@ -79,10 +81,19 @@ export const BudgetTab: React.FC = () => {
           <Button
             variant="primary"
             size="sm"
-            onClick={autoBalanceBudget}
-            icon={<RotateCcw className="w-3.5 h-3.5 text-amber-400" />}
+            onClick={() => setIsAddModalOpen(true)}
+            icon={<Plus className="w-3.5 h-3.5" />}
           >
-            Auto-Balance 100%
+            Add Line Item
+          </Button>
+
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={autoBalanceBudget}
+            icon={<RotateCcw className="w-3.5 h-3.5 text-amber-500" />}
+          >
+            Auto-Balance
           </Button>
 
           {/* Export Dropdown */}
@@ -161,6 +172,7 @@ export const BudgetTab: React.FC = () => {
                   totalBudget={state.event.targetBudget}
                   currency={currency}
                   onUpdate={(partial) => updateBudgetItem(item.id, partial)}
+                  onDelete={() => deleteBudgetItem(item.id)}
                 />
               ))}
             </tbody>
@@ -200,6 +212,15 @@ export const BudgetTab: React.FC = () => {
 
       {/* Payment Milestone Tracker */}
       <MilestoneTracker />
+
+      {/* Add Custom Budget Item Modal */}
+      <AddBudgetItemModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAddBudgetItem={addBudgetItem}
+        currency={currency}
+        remainingBudget={totals.remainingBudget}
+      />
     </div>
   );
 };

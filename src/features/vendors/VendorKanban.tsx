@@ -2,12 +2,13 @@ import React from 'react';
 import { Vendor, VendorStatus } from '../../types/vendor';
 import { Currency } from '../../types/event';
 import { formatCurrency } from '../../utils/formatters';
-import { Star, MapPin, Sparkles, ArrowRight } from 'lucide-react';
+import { Star, MapPin, Sparkles, ArrowRight, Trash2 } from 'lucide-react';
 
 interface VendorKanbanProps {
   vendors: Vendor[];
   currency: Currency;
   onUpdateVendor: (id: string, partial: Partial<Vendor>) => void;
+  onDeleteVendor?: (id: string) => void;
   onOpenNegotiation: (vendor: Vendor) => void;
 }
 
@@ -31,6 +32,7 @@ export const VendorKanban: React.FC<VendorKanbanProps> = ({
   vendors,
   currency,
   onUpdateVendor,
+  onDeleteVendor,
   onOpenNegotiation,
 }) => {
   return (
@@ -112,25 +114,39 @@ export const VendorKanban: React.FC<VendorKanbanProps> = ({
                         <span>Vet & Negotiate</span>
                       </button>
 
-                      {nextStatus && (
-                        <button
-                          onClick={() => {
-                            const newContracted =
-                              nextStatus === 'contract_signed' && vendor.contractedPrice === 0
-                                ? vendor.estimatedPrice
-                                : vendor.contractedPrice;
-                            onUpdateVendor(vendor.id, {
-                              status: nextStatus,
-                              contractedPrice: newContracted,
-                            });
-                          }}
-                          className="flex items-center gap-0.5 text-[10px] font-medium text-stone-500 hover:text-stone-900 dark:hover:text-white px-1.5 py-0.5 rounded bg-stone-100 dark:bg-zinc-800"
-                          title={`Move to ${columns.find((c) => c.id === nextStatus)?.title}`}
-                        >
-                          <span>Next</span>
-                          <ArrowRight className="w-2.5 h-2.5" />
-                        </button>
-                      )}
+                      <div className="flex items-center gap-1">
+                        {onDeleteVendor && (
+                          <button
+                            type="button"
+                            onClick={() => onDeleteVendor(vendor.id)}
+                            className="p-1 text-stone-400 hover:text-rose-600 dark:hover:text-rose-400 rounded hover:bg-stone-100 dark:hover:bg-zinc-800 transition-colors"
+                            aria-label={`Delete ${vendor.name}`}
+                            title="Delete vendor"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        )}
+
+                        {nextStatus && (
+                          <button
+                            onClick={() => {
+                              const newContracted =
+                                nextStatus === 'contract_signed' && vendor.contractedPrice === 0
+                                  ? vendor.estimatedPrice
+                                  : vendor.contractedPrice;
+                              onUpdateVendor(vendor.id, {
+                                status: nextStatus,
+                                contractedPrice: newContracted,
+                              });
+                            }}
+                            className="flex items-center gap-0.5 text-[10px] font-medium text-stone-500 hover:text-stone-900 dark:hover:text-white px-1.5 py-0.5 rounded bg-stone-100 dark:bg-zinc-800"
+                            title={`Move to ${columns.find((c) => c.id === nextStatus)?.title}`}
+                          >
+                            <span>Next</span>
+                            <ArrowRight className="w-2.5 h-2.5" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
