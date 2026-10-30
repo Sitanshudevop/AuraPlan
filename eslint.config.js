@@ -3,7 +3,14 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'node_modules/**', 'vite.config.ts', 'tailwind.config.js', 'postcss.config.js'],
+    ignores: [
+      'dist/**',
+      'node_modules/**',
+      '.agents/**',
+      'vite.config.ts',
+      'tailwind.config.js',
+      'postcss.config.js',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -16,7 +23,7 @@ export default tseslint.config(
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
       'no-console': ['warn', { allow: ['warn', 'error', 'info', 'debug'] }],
+      'complexity': ['warn', 12],
     },
   }
 );
-
