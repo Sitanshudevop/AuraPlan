@@ -7,8 +7,8 @@ import { Button } from '../../components/ui/Button';
 import { logger } from '../../utils/logger';
 import { useFocusTrap } from '../../hooks';
 import { X, RotateCcw, Check, Loader2 } from 'lucide-react';
-import { PRESET_SCENARIOS } from './ripplePresetScenarios';
 import { RippleDiffSummary } from './RippleDiffSummary';
+import { RippleScenarioSelector } from './RippleScenarioSelector';
 
 export const RippleSimulatorDrawer: React.FC = () => {
   const { isCopilotOpen, setCopilotOpen, state, currency, applyRipple, undoLastRipple, canUndo } = useWorkspace();
@@ -85,48 +85,13 @@ export const RippleSimulatorDrawer: React.FC = () => {
 
         {/* Content */}
         <div className="p-5 space-y-4 flex-1 overflow-y-auto text-xs">
-          <div>
-            <span className="text-xs text-muted block mb-2 font-medium">
-              Stress scenarios
-            </span>
-            <div className="grid grid-cols-2 gap-2">
-              {PRESET_SCENARIOS.map((p) => {
-                const isSelected = selectedPreset === p.id;
-                return (
-                  <button
-                    key={p.id}
-                    onClick={() => runSimulation(p.id)}
-                    className={`flex items-center gap-2 p-2.5 rounded-lg border text-left text-xs transition-colors ${
-                      isSelected
-                        ? 'bg-accent/10 border-accent text-foreground font-medium'
-                        : 'border-hairline bg-surface-raised hover:bg-stone-200 dark:hover:bg-white/[0.04] text-muted'
-                    }`}
-                  >
-                    <span className="shrink-0">{p.icon}</span>
-                    <span className="truncate">{p.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="flex gap-2">
-            <input
-              type="text"
-              placeholder="Or custom prompt (e.g. surprise VIP arrival)..."
-              value={customPrompt}
-              onChange={(e) => setCustomPrompt(e.target.value)}
-              className="flex-1 text-xs px-3 py-2 bg-surface-raised border border-hairline rounded-md text-foreground focus:outline-none focus:ring-1 focus:ring-accent placeholder:text-muted"
-            />
-            <Button
-              variant="secondary"
-              size="sm"
-              disabled={!customPrompt.trim()}
-              onClick={() => runSimulation('custom')}
-            >
-              Simulate
-            </Button>
-          </div>
+          <RippleScenarioSelector
+            selectedPreset={selectedPreset}
+            onSelectPreset={runSimulation}
+            customPrompt={customPrompt}
+            onCustomPromptChange={setCustomPrompt}
+            onSimulateCustom={() => runSimulation('custom')}
+          />
 
           {loading ? (
             <div className="py-16 flex flex-col items-center justify-center space-y-3">

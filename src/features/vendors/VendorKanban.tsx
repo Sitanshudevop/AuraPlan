@@ -3,6 +3,7 @@ import { Vendor, VendorStatus } from '../../types/vendor';
 import { Currency } from '../../types/event';
 import { VendorKanbanCard } from './VendorKanbanCard';
 import { Select } from '../../components/ui/Select';
+import { VendorKanbanColumn } from './VendorKanbanColumn';
 
 interface VendorKanbanProps {
   vendors: Vendor[];
@@ -12,7 +13,7 @@ interface VendorKanbanProps {
   onOpenNegotiation: (vendor: Vendor) => void;
 }
 
-const columns: { id: VendorStatus; title: string }[] = [
+export const KANBAN_COLUMNS: { id: VendorStatus; title: string }[] = [
   { id: 'shortlisted', title: 'Shortlisted' },
   { id: 'contacted', title: 'Contacted' },
   { id: 'quote_received', title: 'Quote Received' },
@@ -20,7 +21,7 @@ const columns: { id: VendorStatus; title: string }[] = [
   { id: 'paid', title: 'Paid in Full' },
 ];
 
-const nextStatusMap: Record<VendorStatus, VendorStatus | null> = {
+export const NEXT_STATUS_MAP: Record<VendorStatus, VendorStatus | null> = {
   shortlisted: 'contacted',
   contacted: 'quote_received',
   quote_received: 'contract_signed',
@@ -52,14 +53,14 @@ export const VendorKanban: React.FC<VendorKanbanProps> = ({
     return () => window.removeEventListener('resize', checkScroll);
   }, [checkScroll, vendors]);
 
-  const mobileOptions = columns.map((col) => ({
+  const mobileOptions = KANBAN_COLUMNS.map((col) => ({
     value: col.id,
     label: `${col.title} (${vendors.filter((v) => v.status === col.id).length})`,
   }));
 
   const activeMobileVendors = vendors.filter((v) => v.status === mobileStage);
-  const nextMobileStatus = nextStatusMap[mobileStage];
-  const nextMobileTitle = columns.find((c) => c.id === nextMobileStatus)?.title;
+  const nextMobileStatus = NEXT_STATUS_MAP[mobileStage];
+  const nextMobileTitle = KANBAN_COLUMNS.find((c) => c.id === nextMobileStatus)?.title;
 
   return (
     <div className="flex-1 min-h-0 min-w-0 flex flex-col">
@@ -103,56 +104,26 @@ export const VendorKanban: React.FC<VendorKanbanProps> = ({
         <div
           ref={boardRef}
           onScroll={checkScroll}
-          className="flex-1 min-h-0 min-w-0 overflow-x-auto overflow-y-hidden scrollbar-thin snap-x snap-mandatory pb-3"
-          style={{
-            display: 'grid',
-            gridAutoFlow: 'column',
-            gridAutoColumns: 'minmax(280px, 1fr)',
-            gap: '16px',
-          }}
+          className="grid grid-flow-col auto-cols-[minmax(280px,1fr)] gap-4 flex-1 min-h-0 min-w-0 overflow-x-auto overflow-y-hidden scrollbar-thin snap-x snap-mandatory pb-3"
         >
-          {columns.map((col) => {
+          {KANBAN_COLUMNS.map((col) => {
             const colVendors = vendors.filter((v) => v.status === col.id);
-            const nextStatus = nextStatusMap[col.id];
-            const nextTitle = columns.find((c) => c.id === nextStatus)?.title;
+            const nextStatus = NEXT_STATUS_MAP[col.id];
+            const nextTitle = KANBAN_COLUMNS.find((c) => c.id === nextStatus)?.title;
 
             return (
-              <div
+              <VendorKanbanColumn
                 key={col.id}
-                className="h-full min-h-0 min-w-0 flex flex-col snap-start bg-stone-50/70 dark:bg-white/[0.02] p-2.5 rounded-xl border border-stone-200/80 dark:border-white/[0.08]"
-              >
-                {/* Sticky Column Header */}
-                <div className="shrink-0 flex items-center justify-between pb-2 border-b border-stone-200/80 dark:border-white/[0.08] mb-2 px-1">
-                  <span className="text-xs font-semibold text-[#111113] dark:text-[#EDEDEF]">
-                    {col.title}
-                  </span>
-                  <span className="text-[11px] tabular-nums text-stone-500 dark:text-[#8B8B93] bg-stone-200/60 dark:bg-white/[0.06] px-1.5 py-0.5 rounded-md font-medium">
-                    {colVendors.length}
-                  </span>
-                </div>
-
-                {/* Column Cards (Independently scrollable) */}
-                <div className="flex-1 min-h-0 overflow-y-auto space-y-2 pr-0.5 scrollbar-thin">
-                  {colVendors.length === 0 ? (
-                    <div className="py-8 text-center text-xs text-stone-400 dark:text-zinc-500">
-                      No vendors
-                    </div>
-                  ) : (
-                    colVendors.map((vendor) => (
-                      <VendorKanbanCard
-                        key={vendor.id}
-                        vendor={vendor}
-                        currency={currency}
-                        nextStatus={nextStatus}
-                        nextStatusTitle={nextTitle}
-                        onUpdateVendor={onUpdateVendor}
-                        onDeleteVendor={onDeleteVendor}
-                        onOpenNegotiation={onOpenNegotiation}
-                      />
-                    ))
-                  )}
-                </div>
-              </div>
+                id={col.id}
+                title={col.title}
+                vendors={colVendors}
+                currency={currency}
+                nextStatus={nextStatus}
+                nextTitle={nextTitle}
+                onUpdateVendor={onUpdateVendor}
+                onDeleteVendor={onDeleteVendor}
+                onOpenNegotiation={onOpenNegotiation}
+              />
             );
           })}
         </div>

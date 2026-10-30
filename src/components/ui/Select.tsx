@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useId } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
+import { useSelectKeyboard } from './useSelectKeyboard';
 
 export interface SelectOption {
   value: string;
@@ -30,7 +31,6 @@ export const Select: React.FC<SelectProps> = ({
   disabled = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [focusedIndex, setFocusedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
   const listboxRef = useRef<HTMLUListElement>(null);
   const selectId = useId();
@@ -49,38 +49,13 @@ export const Select: React.FC<SelectProps> = ({
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, [isOpen]);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (disabled) return;
-    if (e.key === 'Escape') {
-      setIsOpen(false);
-      return;
-    }
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      if (!isOpen) {
-        setIsOpen(true);
-        setFocusedIndex(0);
-      } else {
-        setFocusedIndex((prev) => (prev < options.length - 1 ? prev + 1 : 0));
-      }
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      if (!isOpen) {
-        setIsOpen(true);
-        setFocusedIndex(options.length - 1);
-      } else {
-        setFocusedIndex((prev) => (prev > 0 ? prev - 1 : options.length - 1));
-      }
-    } else if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      if (isOpen && focusedIndex >= 0 && options[focusedIndex]) {
-        onChange(options[focusedIndex].value);
-        setIsOpen(false);
-      } else {
-        setIsOpen(!isOpen);
-      }
-    }
-  };
+  const { focusedIndex, setFocusedIndex, handleKeyDown } = useSelectKeyboard({
+    options,
+    isOpen,
+    setIsOpen,
+    onChange,
+    disabled,
+  });
 
   const getTriggerStyles = () => {
     if (variant === 'compact') {
@@ -89,7 +64,6 @@ export const Select: React.FC<SelectProps> = ({
     if (variant === 'ghost') {
       return 'w-full inline-flex items-center justify-between gap-2 px-2.5 py-1.5 text-xs text-stone-700 dark:text-[#EDEDEF] hover:bg-stone-100 dark:hover:bg-white/[0.04] rounded-lg transition-colors border border-transparent';
     }
-    // Default 'input' variant
     return 'w-full inline-flex items-center justify-between gap-2 px-3 py-2 text-xs text-stone-800 dark:text-[#EDEDEF] bg-white dark:bg-[#111113] border border-stone-200 dark:border-white/[0.08] hover:border-stone-300 dark:hover:border-white/[0.14] rounded-lg transition-colors';
   };
 
@@ -135,12 +109,13 @@ export const Select: React.FC<SelectProps> = ({
                   setIsOpen(false);
                 }}
                 onMouseEnter={() => setFocusedIndex(idx)}
-                className={`flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md cursor-pointer transition-colors ${isSelected
+                className={`flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md cursor-pointer transition-colors ${
+                  isSelected
                     ? 'bg-[#6E79F5]/10 text-[#5D68E2] dark:text-[#6E79F5] font-medium'
                     : isFocused
                       ? 'bg-stone-100 dark:bg-white/[0.06] text-stone-900 dark:text-[#EDEDEF]'
                       : 'text-stone-700 dark:text-[#8B8B93]'
-                  }`}
+                }`}
               >
                 <div className="flex items-center gap-2 min-w-0">
                   {option.dotColor && (

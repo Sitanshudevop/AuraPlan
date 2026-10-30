@@ -4,12 +4,11 @@ import { useWorkspace } from '../../context/WorkspaceContext';
 import { useFocusTrap } from '../../hooks';
 import { askPlanningAssistant, MODALITY_PROMPT_CHIPS, AssistantMessage, AssistantAction } from '../../services/planningAssistantService';
 import { isGeminiKeyConfigured, setCustomApiKey, removeCustomApiKey } from '../../services/geminiService';
-import { Button } from '../../components/ui/Button';
-import { Send, Loader2, Check, CalendarPlus, Wallet } from 'lucide-react';
 import { executeAssistantAction } from './assistantActionHandler';
-import { FormattedAssistantMessage } from './FormattedAssistantMessage';
 import { AssistantChipBar } from './AssistantChipBar';
 import { AssistantHeader } from './AssistantHeader';
+import { AssistantMessageList } from './AssistantMessageList';
+import { AssistantChatInput } from './AssistantChatInput';
 
 export const PlanningAssistantDrawer: React.FC = () => {
   const { state, isAssistantOpen, setAssistantOpen, addMacroTask, addBudgetItem, addVendor, announce } = useWorkspace();
@@ -89,8 +88,6 @@ export const PlanningAssistantDrawer: React.FC = () => {
     setExecutedLabels((prev) => new Set(prev).add(action.label));
   };
 
-  if (!isAssistantOpen) return null;
-
   const content = (
     <div
       className="fixed inset-0 z-[100] overflow-hidden bg-black/80 backdrop-blur-md flex justify-end"
@@ -124,68 +121,20 @@ export const PlanningAssistantDrawer: React.FC = () => {
           onSelectChip={handleSend}
         />
 
-        <div className="p-4 space-y-3 flex-1 overflow-y-auto text-xs scrollbar-thin">
-          {messages.map((m) => (
-            <div key={m.id} className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}>
-              <div
-                className={`max-w-[88%] p-3.5 rounded-xl space-y-2.5 ${
-                  m.role === 'user'
-                    ? 'bg-[#18181B] dark:bg-white text-white dark:text-[#111113] font-medium shadow-xs'
-                    : 'bg-white dark:bg-[#161618] text-[#111113] dark:text-[#EDEDEF] border border-stone-200/80 dark:border-white/[0.08] shadow-xs'
-                }`}
-              >
-                <FormattedAssistantMessage content={m.content} isUser={m.role === 'user'} />
-                {m.suggestedActions && m.suggestedActions.length > 0 && (
-                  <div className="pt-2 border-t border-stone-100 dark:border-white/[0.06] space-y-1.5">
-                    <span className="text-xs font-medium text-stone-500 dark:text-[#8B8B93] block">Plan actions:</span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {m.suggestedActions.map((act, i) => {
-                        const isDone = executedLabels.has(act.label);
-                        return (
-                          <Button key={i} variant="secondary" size="xs" onClick={() => handleExecuteAction(act)} disabled={isDone}
-                            icon={isDone ? <Check className="w-3 h-3 text-emerald-500" /> : act.type === 'add_task' ? <CalendarPlus className="w-3 h-3 text-stone-400" /> : <Wallet className="w-3 h-3 text-stone-400" />}
-                          >
-                            {isDone ? 'Applied to Plan ✓' : act.label}
-                          </Button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-              <span className="text-[10px] text-stone-400 dark:text-zinc-500 mt-1 tabular-nums px-1">{m.timestamp}</span>
-            </div>
-          ))}
+        <AssistantMessageList
+          messages={messages}
+          executedLabels={executedLabels}
+          onExecuteAction={handleExecuteAction}
+          loading={loading}
+        />
 
-          {loading && (
-            <div className="flex items-center gap-2 p-2.5 bg-white dark:bg-[#161618] border border-stone-200/80 dark:border-white/[0.08] rounded-lg text-xs text-stone-500 dark:text-[#8B8B93] w-fit shadow-xs">
-              <Loader2 className="w-3.5 h-3.5 animate-spin text-[#6E79F5]" />
-              <span>Generating response...</span>
-            </div>
-          )}
-        </div>
-
-        <div className="p-3 border-t border-stone-200/80 dark:border-white/[0.08] bg-[#FAF9F6] dark:bg-[#111113] shrink-0">
-          <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="flex items-center gap-2">
-            <input
-              ref={inputRef}
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask anything (e.g. weather contingency, buffer times)..."
-              className="flex-1 text-xs px-3 py-2 bg-white dark:bg-[#161618] border border-stone-200/80 dark:border-white/[0.08] rounded-md focus:outline-none focus:ring-1 focus:ring-[#6E79F5] text-[#111113] dark:text-[#EDEDEF] placeholder:text-stone-400 dark:placeholder:text-zinc-500"
-            />
-            <Button
-              type="submit"
-              variant="primary"
-              size="sm"
-              disabled={!input.trim() || loading}
-              icon={loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-            >
-              Send
-            </Button>
-          </form>
-        </div>
+        <AssistantChatInput
+          input={input}
+          setInput={setInput}
+          loading={loading}
+          onSend={handleSend}
+          inputRef={inputRef}
+        />
       </div>
     </div>
   );

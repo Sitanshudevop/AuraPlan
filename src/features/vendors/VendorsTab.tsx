@@ -9,8 +9,8 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { SegmentedTabs } from '../../components/ui/SegmentedTabs';
 import { Button } from '../../components/ui/Button';
 import { Vendor } from '../../types/vendor';
-import { formatCategory } from '../../utils/formatters';
 import { Kanban, Table, CheckSquare, Plus } from 'lucide-react';
+import { VendorCategoryFilterBar } from './VendorCategoryFilterBar';
 
 export const VendorsTab: React.FC = () => {
   const { state, currency, updateVendor, addVendor, deleteVendor } = useWorkspace();
@@ -70,31 +70,12 @@ export const VendorsTab: React.FC = () => {
 
       {/* Category Filter Row (Kanban & Table) */}
       {layout !== 'checklist' && (
-        <div className="shrink-0 flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 border-b border-stone-200/80 dark:border-white/[0.08]">
-          <button
-            onClick={() => setCategoryFilter('all')}
-            className={`px-2.5 py-1 text-xs rounded-md transition-colors whitespace-nowrap ${
-              categoryFilter === 'all'
-                ? 'bg-black/[0.06] dark:bg-white/[0.08] text-[#111113] dark:text-[#EDEDEF] font-medium'
-                : 'text-stone-500 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF]'
-            }`}
-          >
-            All categories ({state.vendors.length})
-          </button>
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setCategoryFilter(cat)}
-              className={`px-2.5 py-1 text-xs rounded-md transition-colors whitespace-nowrap ${
-                categoryFilter === cat
-                  ? 'bg-black/[0.06] dark:bg-white/[0.08] text-[#111113] dark:text-[#EDEDEF] font-medium'
-                  : 'text-stone-500 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF]'
-              }`}
-            >
-              {formatCategory(cat)}
-            </button>
-          ))}
-        </div>
+        <VendorCategoryFilterBar
+          categories={categories}
+          totalVendors={state.vendors.length}
+          categoryFilter={categoryFilter}
+          onSelectCategory={setCategoryFilter}
+        />
       )}
 
       {/* Main View Mode */}

@@ -1,11 +1,9 @@
 import React, { useMemo } from 'react';
 import { Vendor } from '../../types/vendor';
 import { EventType, Currency } from '../../types/event';
-import { formatCurrency, formatCategory } from '../../utils/formatters';
-import { Button } from '../../components/ui/Button';
 import { StatusDot } from '../../components/ui/StatusDot';
 import { MODALITY_CHECKLISTS, ChecklistRequirement } from '../../data/modalityChecklists';
-import { Plus } from 'lucide-react';
+import { ChecklistItemCard } from './ChecklistItemCard';
 
 interface Props {
   vendors: Vendor[];
@@ -16,7 +14,11 @@ interface Props {
 }
 
 export const VendorChecklistView: React.FC<Props> = ({
-  vendors, currency, eventType, onOpenNegotiation, onAddVendor,
+  vendors,
+  currency,
+  eventType,
+  onOpenNegotiation,
+  onAddVendor,
 }) => {
   const requirements = useMemo(() => MODALITY_CHECKLISTS[eventType] || MODALITY_CHECKLISTS.wedding, [eventType]);
 
@@ -25,7 +27,7 @@ export const VendorChecklistView: React.FC<Props> = ({
       const matchingVendors = vendors.filter((v) => v.category === req.category);
       const contracted = matchingVendors.find((v) => v.status === 'contract_signed' || v.status === 'paid');
       const inProgress = matchingVendors[0];
-      const status = contracted ? 'contracted' : inProgress ? 'sourced' : 'missing';
+      const status: 'contracted' | 'sourced' | 'missing' = contracted ? 'contracted' : inProgress ? 'sourced' : 'missing';
       return { req, matchedVendor: contracted || inProgress || null, status };
     });
   }, [requirements, vendors]);
@@ -59,6 +61,8 @@ export const VendorChecklistView: React.FC<Props> = ({
   };
 
   const modalityTitle = eventType.charAt(0).toUpperCase() + eventType.slice(1);
+  const contractedPct = (stats.contractedCount / itemsWithStatus.length) * 100;
+  const sourcedPct = (stats.sourcedCount / itemsWithStatus.length) * 100;
 
   return (
     <div className="space-y-5">
@@ -79,8 +83,14 @@ export const VendorChecklistView: React.FC<Props> = ({
         </div>
 
         <div className="w-full bg-stone-100 dark:bg-white/[0.08] h-1 rounded-full overflow-hidden flex">
-          <div className="bg-[#6E79F5] h-full transition-all duration-300" style={{ width: `${(stats.contractedCount / itemsWithStatus.length) * 100}%` }} />
-          <div className="bg-amber-400 h-full transition-all duration-300" style={{ width: `${(stats.sourcedCount / itemsWithStatus.length) * 100}%` }} />
+          <div
+            className="bg-[#6E79F5] h-full transition-all duration-300"
+            style={{ width: `${contractedPct}%` }}
+          />
+          <div
+            className="bg-amber-400 h-full transition-all duration-300"
+            style={{ width: `${sourcedPct}%` }}
+          />
         </div>
 
         <div className="flex items-center gap-5 text-xs text-stone-500 dark:text-[#8B8B93] tabular-nums">
@@ -93,65 +103,15 @@ export const VendorChecklistView: React.FC<Props> = ({
       {/* Checklist Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
         {itemsWithStatus.map(({ req, matchedVendor, status }) => (
-          <div
+          <ChecklistItemCard
             key={req.id}
-            className="p-4 rounded-xl border border-stone-200/80 dark:border-white/[0.08] bg-white dark:bg-[#111113] hover:border-stone-300 dark:hover:border-white/[0.14] transition-colors space-y-2.5"
-          >
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <h4 className="text-sm font-medium text-[#111113] dark:text-[#EDEDEF] leading-snug">
-                  {req.roleTitle}
-                </h4>
-                <div className="text-[11px] text-stone-400 dark:text-zinc-500 mt-0.5">
-                  {formatCategory(req.category)} · {req.priority}
-                </div>
-              </div>
-              <StatusDot
-                status={status === 'contracted' ? 'green' : status === 'sourced' ? 'amber' : 'neutral'}
-                label={status.charAt(0).toUpperCase() + status.slice(1)}
-              />
-            </div>
-
-            <p className="text-xs text-stone-600 dark:text-[#8B8B93] leading-relaxed">
-              {req.description}
-            </p>
-
-            <div className="pt-2.5 border-t border-stone-100 dark:border-white/[0.04] flex items-center justify-between text-xs">
-              {matchedVendor ? (
-                <>
-                  <div className="truncate pr-2">
-                    <span className="font-medium text-[#111113] dark:text-[#EDEDEF] truncate block">
-                      {matchedVendor.name}
-                    </span>
-                    <span className="text-[11px] text-stone-400 dark:text-zinc-500 tabular-nums">
-                      {formatCurrency(matchedVendor.contractedPrice || matchedVendor.estimatedPrice, currency)}
-                    </span>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="xs"
-                    onClick={() => onOpenNegotiation(matchedVendor)}
-                  >
-                    Negotiate
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <span className="text-xs text-stone-400 dark:text-zinc-500 tabular-nums">
-                    Est. {formatCurrency(req.defaultEstimate, currency)}
-                  </span>
-                  <Button
-                    variant="primary"
-                    size="xs"
-                    onClick={() => handleQuickSource(req)}
-                    icon={<Plus />}
-                  >
-                    Source vendor
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
+            req={req}
+            matchedVendor={matchedVendor}
+            status={status}
+            currency={currency}
+            onOpenNegotiation={onOpenNegotiation}
+            onQuickSource={handleQuickSource}
+          />
         ))}
       </div>
     </div>

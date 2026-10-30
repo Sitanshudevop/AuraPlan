@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useWorkspace } from '../../context/WorkspaceContext';
-import { Search, Briefcase, CheckCircle } from 'lucide-react';
-import { buildBasePaletteItems, PaletteItem } from './commandPaletteItems';
+import { Search } from 'lucide-react';
+import { useCommandPaletteSearch } from './useCommandPaletteSearch';
 
 export const CommandPalette: React.FC = () => {
   const {
@@ -24,89 +24,26 @@ export const CommandPalette: React.FC = () => {
     announce,
   } = useWorkspace();
 
-  const [query, setQuery] = useState('');
-  const [selectedIndex, setSelectedIndex] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
 
-  const baseItems: PaletteItem[] = useMemo(
-    () =>
-      buildBasePaletteItems({
-        state,
-        currency,
-        isDark,
-        setActiveTab,
-        switchPreset,
-        setCurrency,
-        toggleDarkMode,
-        setAuditDrawerOpen,
-        setCopilotOpen,
-        setAssistantOpen,
-        setNewEventModalOpen,
-        autoBalanceBudget,
-        resetToFactoryDefaults,
-        announce,
-      }),
-    [state, currency, isDark, setActiveTab, switchPreset, setCurrency, toggleDarkMode, setAuditDrawerOpen, setCopilotOpen, setAssistantOpen, setNewEventModalOpen, autoBalanceBudget, resetToFactoryDefaults, announce]
-  );
-
-  // Dynamic searchable vendors and tasks
-  const dynamicItems: PaletteItem[] = useMemo(() => {
-    const vendorItems: PaletteItem[] = state.vendors.map((v) => ({
-      id: `vendor-${v.id}`,
-      title: `Vendor: ${v.name} (${v.category.toUpperCase()} • ${v.status.replace('_', ' ')})`,
-      category: 'Vendors',
-      icon: <Briefcase className="w-3.5 h-3.5 text-stone-400" />,
-      action: () => setActiveTab('vendors'),
-    }));
-
-    const taskItems: PaletteItem[] = state.macroTasks.map((t) => ({
-      id: `task-${t.id}`,
-      title: `Task: ${t.title} [${t.priority.toUpperCase()}]`,
-      category: 'Tasks',
-      icon: <CheckCircle className="w-3.5 h-3.5 text-stone-400" />,
-      action: () => setActiveTab('timeline'),
-    }));
-
-    return [...vendorItems, ...taskItems];
-  }, [state.vendors, state.macroTasks, setActiveTab]);
-
-  const allItems = useMemo(() => [...baseItems, ...dynamicItems], [baseItems, dynamicItems]);
-
-  const filtered = useMemo(() => {
-    if (!query.trim()) return baseItems;
-    const q = query.toLowerCase().trim();
-    return allItems.filter(
-      (item) => item.title.toLowerCase().includes(q) || item.category.toLowerCase().includes(q)
-    );
-  }, [allItems, baseItems, query]);
-
-  useEffect(() => {
-    setSelectedIndex(0);
-  }, [query]);
-
-  // Keyboard navigation: ArrowUp, ArrowDown, Enter, Escape
-  useEffect(() => {
-    if (!isCommandPaletteOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        setSelectedIndex((prev) => (filtered.length > 0 ? (prev + 1) % filtered.length : 0));
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        setSelectedIndex((prev) => (filtered.length > 0 ? (prev - 1 + filtered.length) % filtered.length : 0));
-      } else if (e.key === 'Enter') {
-        e.preventDefault();
-        if (filtered[selectedIndex]) {
-          filtered[selectedIndex].action();
-          setCommandPaletteOpen(false);
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isCommandPaletteOpen, filtered, selectedIndex, setCommandPaletteOpen]);
+  const { query, setQuery, selectedIndex, setSelectedIndex, filtered } = useCommandPaletteSearch({
+    isOpen: isCommandPaletteOpen,
+    onClose: () => setCommandPaletteOpen(false),
+    state,
+    currency,
+    isDark,
+    setActiveTab,
+    switchPreset,
+    setCurrency,
+    toggleDarkMode,
+    setAuditDrawerOpen,
+    setCopilotOpen,
+    setAssistantOpen,
+    setNewEventModalOpen,
+    autoBalanceBudget,
+    resetToFactoryDefaults,
+    announce,
+  });
 
   if (!isCommandPaletteOpen) return null;
 

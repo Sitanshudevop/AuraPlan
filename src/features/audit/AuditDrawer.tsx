@@ -1,20 +1,16 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { getAiEngineStatus } from '../../services/geminiService';
 import { getStorageUsageBytes } from '../../utils/storage';
-import { sanitizeInput } from '../../utils/security';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { useFocusTrap } from '../../hooks';
-import { ShieldCheck, X, Lock, Eye, Zap, RotateCcw, Keyboard } from 'lucide-react';
+import { ShieldCheck, X, Eye, Zap, RotateCcw, Keyboard } from 'lucide-react';
+import { AuditSecuritySection } from './AuditSecuritySection';
 
 export const AuditDrawer: React.FC = () => {
   const { isAuditDrawerOpen, setAuditDrawerOpen, resetToFactoryDefaults, announcerMessage } = useWorkspace();
-
-  const [xssInput, setXssInput] = useState('<script>alert("pwned")</script><b>Wedding VIP</b><iframe src="evil.com"></iframe>');
-  const [sanitizedOutput, setSanitizedOutput] = useState('');
-  const [testRun, setTestRun] = useState(false);
 
   const handleClose = useCallback(() => setAuditDrawerOpen(false), [setAuditDrawerOpen]);
   const drawerRef = useFocusTrap<HTMLDivElement>(isAuditDrawerOpen, handleClose);
@@ -23,12 +19,6 @@ export const AuditDrawer: React.FC = () => {
 
   const aiStatus = getAiEngineStatus();
   const storageBytes = getStorageUsageBytes();
-
-  const handleTestXss = () => {
-    const cleaned = sanitizeInput(xssInput);
-    setSanitizedOutput(cleaned);
-    setTestRun(true);
-  };
 
   const content = (
     <div
@@ -65,61 +55,7 @@ export const AuditDrawer: React.FC = () => {
 
         {/* Content */}
         <div className="p-5 space-y-5 flex-1 overflow-y-auto text-xs">
-          {/* Section 1: Security */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between border-b border-hairline pb-2">
-              <span className="font-semibold text-foreground flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-muted" />
-                Security & sanitization
-              </span>
-              <Badge variant="emerald" size="sm">Verified</Badge>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2">
-              <div className="p-2.5 rounded-lg bg-surface-raised border border-hairline">
-                <div className="text-muted text-[11px]">Schema validation</div>
-                <div className="font-medium text-foreground text-xs mt-0.5">Zod v3.23</div>
-              </div>
-              <div className="p-2.5 rounded-lg bg-surface-raised border border-hairline">
-                <div className="text-muted text-[11px]">Rate limiter</div>
-                <div className="font-medium text-emerald-500 text-xs mt-0.5">10 req/min</div>
-              </div>
-              <div className="p-2.5 rounded-lg bg-surface-raised border border-hairline">
-                <div className="text-muted text-[11px]">Key protection</div>
-                <div className="font-medium text-muted text-xs truncate mt-0.5 font-mono">
-                  {aiStatus.maskedKey}
-                </div>
-              </div>
-            </div>
-
-            {/* XSS Test Sandbox */}
-            <div className="p-3 bg-surface-raised rounded-lg border border-hairline space-y-2">
-              <span className="font-medium text-foreground block">
-                Sanitizer test sandbox
-              </span>
-              <input
-                type="text"
-                value={xssInput}
-                onChange={(e) => setXssInput(e.target.value)}
-                className="w-full text-xs font-mono px-2.5 py-1.5 bg-surface border border-hairline rounded-md text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
-              />
-              <div className="flex items-center justify-between">
-                <Button variant="secondary" size="xs" onClick={handleTestXss}>
-                  Execute test
-                </Button>
-                {testRun && (
-                  <span className="text-[11px] text-emerald-500 font-medium">
-                    Tags stripped safely
-                  </span>
-                )}
-              </div>
-              {testRun && (
-                <div className="p-2 bg-surface rounded border border-hairline font-mono text-[11px] text-muted">
-                  Output: "{sanitizedOutput}"
-                </div>
-              )}
-            </div>
-          </div>
+          <AuditSecuritySection maskedKey={aiStatus.maskedKey} />
 
           {/* Section 2: Accessibility */}
           <div className="space-y-3">
@@ -144,7 +80,6 @@ export const AuditDrawer: React.FC = () => {
               </div>
             </div>
 
-            {/* Shortcuts */}
             <div className="p-3 bg-surface-raised rounded-lg border border-hairline space-y-2">
               <span className="font-medium text-foreground flex items-center gap-1">
                 <Keyboard className="w-3.5 h-3.5 text-muted" />
