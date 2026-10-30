@@ -33,20 +33,20 @@ export const PresetDropdown: React.FC = () => {
         onClick={() => setPresetOpen(!presetOpen)}
         aria-haspopup="true"
         aria-expanded={presetOpen}
-        className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg bg-stone-100 hover:bg-stone-200 dark:bg-zinc-800/80 dark:hover:bg-zinc-700 text-stone-800 dark:text-zinc-200 border border-stone-200 dark:border-zinc-700/80 transition-colors"
+        className="h-8 flex items-center gap-1.5 px-2.5 text-xs font-medium rounded-lg bg-stone-100 dark:bg-white/[0.04] hover:bg-stone-200/70 dark:hover:bg-white/[0.06] text-stone-800 dark:text-[#EDEDEF] border border-stone-200/70 dark:border-white/[0.06] transition-colors"
       >
-        <span className="text-stone-500 dark:text-zinc-400 hidden sm:inline">Preset:</span>
-        <span className="font-semibold truncate max-w-[140px] sm:max-w-[180px]">{currentPreset.title}</span>
-        <ChevronDown className={`w-3.5 h-3.5 text-stone-500 transition-transform ${presetOpen ? 'rotate-180' : ''}`} />
+        <span className="text-stone-400 dark:text-zinc-500 hidden sm:inline font-normal">Preset:</span>
+        <span className="font-medium truncate max-w-[140px] sm:max-w-[180px]">{currentPreset.title}</span>
+        <ChevronDown className={`w-3.5 h-3.5 text-stone-400 dark:text-zinc-500 stroke-[1.5] transition-transform ${presetOpen ? 'rotate-180' : ''}`} />
       </button>
 
       <div
-        className={`absolute left-0 mt-1.5 w-64 bg-white dark:bg-[#18181B] border border-stone-200 dark:border-zinc-700/80 rounded-xl shadow-lg p-1.5 z-40 transition-all duration-150 ${
+        className={`absolute left-0 mt-1.5 w-64 bg-white dark:bg-[#161618] border border-hairline rounded-xl shadow-lg p-1 z-40 transition-all duration-150 ${
           presetOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
         }`}
       >
-        <div className="px-2 py-1 text-[10px] uppercase font-bold tracking-wider text-stone-600 dark:text-zinc-400">
-          Judge Showcase Presets
+        <div className="px-2 py-1 text-[11px] font-medium text-stone-400 dark:text-zinc-500">
+          Event Presets
         </div>
         {PRESET_OPTIONS.map((p) => {
           const isActive = activePresetId === p.id;
@@ -60,32 +60,32 @@ export const PresetDropdown: React.FC = () => {
               aria-pressed={isActive}
               className={`w-full text-left px-2.5 py-2 rounded-lg text-xs transition-colors flex items-center justify-between ${
                 isActive
-                  ? 'bg-amber-500/10 text-amber-900 dark:text-amber-300 font-semibold'
-                  : 'hover:bg-stone-100 dark:hover:bg-zinc-800 text-stone-700 dark:text-zinc-300'
+                  ? 'bg-[#6E79F5]/10 text-[#5D68E2] dark:text-[#6E79F5] font-medium'
+                  : 'hover:bg-stone-100 dark:hover:bg-white/[0.06] text-stone-700 dark:text-[#EDEDEF]'
               }`}
             >
               <div>
                 <div className="font-medium">{p.title}</div>
-                <div className="text-[10px] text-stone-600 dark:text-zinc-400 font-mono mt-0.5">{p.stats}</div>
+                <div className="text-[11px] text-stone-400 dark:text-zinc-500 mt-0.5">{p.stats}</div>
               </div>
-              {isActive && <Check className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />}
+              {isActive && <Check className="w-3.5 h-3.5 shrink-0 text-[#6E79F5]" />}
             </button>
           );
         })}
-        <div className="my-1 border-t border-stone-100 dark:border-zinc-800" />
+
+        <div className="h-px bg-stone-200/70 dark:bg-white/[0.06] my-1" />
+
         <button
           onClick={() => {
             setNewEventModalOpen(true);
             setPresetOpen(false);
           }}
-          aria-label="New Event - Generate Custom Event Plan"
-          className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs text-stone-600 dark:text-zinc-400 hover:bg-stone-100 dark:hover:bg-zinc-800 hover:text-stone-900 dark:hover:text-zinc-100 transition-colors"
+          className="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-stone-700 dark:text-[#EDEDEF] hover:bg-stone-100 dark:hover:bg-white/[0.06] font-medium transition-colors"
         >
-          <Plus className="w-3.5 h-3.5 text-amber-500" />
-          <span>New Custom Event...</span>
+          <Plus className="w-3.5 h-3.5 stroke-[1.5]" />
+          <span>Create new custom event...</span>
         </button>
       </div>
     </div>
   );
 };
-

@@ -118,23 +118,23 @@ export const CommandPalette: React.FC = () => {
       aria-label="Command Palette"
     >
       <div
-        className="w-full max-w-xl bg-white dark:bg-[#121215] border border-stone-200/90 dark:border-zinc-800 rounded-xl shadow-md overflow-hidden"
+        className="w-full max-w-xl bg-white dark:bg-[#161618] border border-stone-200/80 dark:border-white/[0.08] rounded-xl shadow-xl overflow-hidden animate-fade-in"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-stone-200/80 dark:border-zinc-800">
-          <Search className="w-4 h-4 text-stone-400 shrink-0" />
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-stone-200/80 dark:border-white/[0.08]">
+          <Search className="w-4 h-4 text-stone-400 dark:text-zinc-500 stroke-[1.5] shrink-0" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Type a command, search vendor or task (↑↓ to navigate, ↵ to run)..."
-            className="flex-1 bg-transparent text-xs text-[#18181B] dark:text-[#FAFAFA] placeholder:text-stone-400 outline-none"
+            className="flex-1 bg-transparent text-sm text-[#111113] dark:text-[#EDEDEF] placeholder:text-stone-400 dark:placeholder:text-zinc-500 outline-none"
             autoFocus
             aria-label="Search workspace commands, vendors, or tasks"
             aria-autocomplete="list"
             aria-controls="command-results"
           />
-          <kbd className="text-[10px] font-mono px-1.5 py-0.5 bg-stone-100 dark:bg-zinc-800 text-stone-500 rounded border border-stone-200 dark:border-zinc-700 shrink-0">
+          <kbd className="text-[11px] font-sans px-1.5 py-0.5 bg-stone-100 dark:bg-white/[0.06] text-stone-500 dark:text-[#8B8B93] rounded border border-stone-200/80 dark:border-white/[0.08] shrink-0">
             ESC
           </kbd>
         </div>
@@ -144,10 +144,10 @@ export const CommandPalette: React.FC = () => {
           id="command-results"
           role="listbox"
           aria-label="Available commands"
-          className="max-h-80 overflow-y-auto p-2 space-y-0.5 no-scrollbar"
+          className="max-h-80 overflow-y-auto p-1.5 space-y-0.5 no-scrollbar"
         >
           {filtered.length === 0 ? (
-            <div className="p-8 text-center text-xs text-stone-600 dark:text-zinc-400">
+            <div className="p-8 text-center text-xs text-stone-500 dark:text-[#8B8B93]">
               No matching actions, vendors, or tasks found.
             </div>
           ) : (
@@ -165,17 +165,17 @@ export const CommandPalette: React.FC = () => {
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors text-left group ${
                     isSelected
-                      ? 'bg-stone-100 text-[#18181B] dark:bg-zinc-800 dark:text-white font-semibold'
-                      : 'text-stone-600 dark:text-zinc-300 hover:bg-stone-50 dark:hover:bg-zinc-800/50'
+                      ? 'bg-[#6E79F5]/10 text-[#5D68E2] dark:text-[#6E79F5]'
+                      : 'text-stone-700 dark:text-[#8B8B93] hover:bg-stone-100 dark:hover:bg-white/[0.04]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                    <span className={isSelected ? 'text-stone-900 dark:text-white shrink-0' : 'text-stone-500 dark:text-zinc-400 shrink-0'}>
+                    <span className={isSelected ? 'text-[#6E79F5] shrink-0' : 'text-stone-400 dark:text-zinc-500 shrink-0'}>
                       {item.icon}
                     </span>
                     <span className="truncate">{item.title}</span>
                   </div>
-                  <span className="text-[10px] font-mono text-stone-600 dark:text-zinc-400 uppercase shrink-0">
+                  <span className="text-[11px] text-stone-400 dark:text-zinc-500 shrink-0">
                     {item.category}
                   </span>
                 </button>

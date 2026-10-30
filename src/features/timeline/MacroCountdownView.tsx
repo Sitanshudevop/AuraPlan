@@ -1,18 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { Card } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
-import { TimelineHorizon, Priority } from '../../types/timeline';
+import { StatusDot } from '../../components/ui/StatusDot';
+import { TimelineHorizon } from '../../types/timeline';
 import { AddMacroTaskModal } from './AddMacroTaskModal';
 import { Button } from '../../components/ui/Button';
-import { CheckCircle2, Circle, Clock, User, ChevronDown, ChevronRight, Filter, Plus, Trash2 } from 'lucide-react';
+import { CheckCircle2, Circle, ChevronDown, ChevronRight, Plus, Trash2 } from 'lucide-react';
 
 const horizonLabels: Record<TimelineHorizon, string> = {
-  '6_months': '6+ Months Out — Architectural Milestones',
-  '3_months': '3 Months Out — Core Design & Sourcing',
-  '1_month': '1 Month Out — Operational Refinement',
-  '1_week': '1 Week Out — Production Locks & Logistics',
-  'day_before': 'Day Before — Rehearsals & Final Readiness',
+  '6_months': '6+ months out — Architectural milestones',
+  '3_months': '3 months out — Core design & sourcing',
+  '1_month': '1 month out — Operational refinement',
+  '1_week': '1 week out — Production locks & logistics',
+  'day_before': 'Day before — Rehearsals & final readiness',
 };
 
 const horizonsOrder: TimelineHorizon[] = [
@@ -27,15 +27,6 @@ export const MacroCountdownView: React.FC = () => {
   const { state, updateMacroTask, addMacroTask, deleteMacroTask } = useWorkspace();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  
-  // Track open/collapsed state for horizons
-  const [collapsedHorizons, setCollapsedHorizons] = useState<Record<string, boolean>>({
-    '6_months': true, // Collapsed by default as completed
-  });
-
-  const toggleHorizon = (h: string) => {
-    setCollapsedHorizons((prev) => ({ ...prev, [h]: !prev[h] }));
-  };
 
   const categories = useMemo(
     () => Array.from(new Set(state.macroTasks.map((t) => t.category))),
@@ -56,58 +47,78 @@ export const MacroCountdownView: React.FC = () => {
     return map;
   }, [filteredTasks]);
 
-  const getPriorityVariant = (p: Priority) => {
-    if (p === 'critical') return 'rose';
-    if (p === 'high') return 'amber';
-    return 'stone';
+  // Collapse completed phases by default; auto-expand current in-progress phase
+  const [collapsedHorizons, setCollapsedHorizons] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    horizonsOrder.forEach((h) => {
+      const tasks = state.macroTasks.filter((t) => t.horizon === h);
+      const isComplete = tasks.length > 0 && tasks.every((t) => t.completed);
+      initial[h] = isComplete;
+    });
+    return initial;
+  });
+
+  const toggleHorizon = (h: string) => {
+    setCollapsedHorizons((prev) => ({ ...prev, [h]: !prev[h] }));
   };
 
   return (
     <div className="space-y-6">
-      {/* Category Filter Dropdown Bar */}
-      <div className="flex items-center justify-between gap-3 p-3.5 rounded-2xl bg-stone-50/70 dark:bg-zinc-900/40 border border-stone-200/80 dark:border-zinc-800">
-        <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-stone-400 shrink-0" />
-          <span className="text-xs font-semibold text-stone-700 dark:text-zinc-300">
-            Filter Milestones:
-          </span>
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            aria-label="Filter milestones by category"
-            className="px-3 py-1.5 text-xs font-medium rounded-xl border border-stone-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-stone-800 dark:text-zinc-200 focus:outline-none focus:ring-1 focus:ring-amber-500"
+      {/* Category Filter Row & Action Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-stone-200/80 dark:border-white/[0.08]">
+        {/* Quiet text buttons filter */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+          <button
+            onClick={() => setSelectedCategory('all')}
+            className={`px-2.5 py-1 text-xs rounded-md transition-colors whitespace-nowrap ${
+              selectedCategory === 'all'
+                ? 'bg-black/[0.06] dark:bg-white/[0.08] text-[#111113] dark:text-[#EDEDEF] font-medium'
+                : 'text-stone-500 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF]'
+            }`}
           >
-            <option value="all">All Milestone Categories ({state.macroTasks.length})</option>
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat} ({state.macroTasks.filter((t) => t.category === cat).length})
-              </option>
-            ))}
-          </select>
+            All categories ({state.macroTasks.length})
+          </button>
+          {categories.map((cat) => {
+            const count = state.macroTasks.filter((t) => t.category === cat).length;
+            const isSelected = selectedCategory.toLowerCase() === cat.toLowerCase();
+            return (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-2.5 py-1 text-xs rounded-md transition-colors whitespace-nowrap ${
+                  isSelected
+                    ? 'bg-black/[0.06] dark:bg-white/[0.08] text-[#111113] dark:text-[#EDEDEF] font-medium'
+                    : 'text-stone-500 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF]'
+                }`}
+              >
+                {cat} ({count})
+              </button>
+            );
+          })}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5 shrink-0">
+          <div className="text-xs text-stone-500 dark:text-[#8B8B93] tabular-nums">
+            {filteredTasks.filter((t) => t.completed).length} of {filteredTasks.length} complete
+          </div>
           <Button
             variant="primary"
             size="sm"
             onClick={() => setIsAddModalOpen(true)}
-            icon={<Plus className="w-3.5 h-3.5" />}
+            icon={<Plus />}
           >
-            Add Milestone
+            Add milestone
           </Button>
-          <div className="text-xs text-stone-500 dark:text-zinc-400 font-mono tabular-nums">
-            {filteredTasks.filter((t) => t.completed).length} / {filteredTasks.length} Completed
-          </div>
         </div>
       </div>
 
-      {/* Horizons Grouping Accordions */}
+      {/* Grouped Horizon Accordions */}
       {filteredTasks.length === 0 ? (
-        <Card className="p-8 text-center text-xs text-stone-600 dark:text-zinc-400 rounded-2xl">
+        <Card className="p-8 text-center text-xs text-stone-500 dark:text-[#8B8B93] rounded-xl border border-stone-200/80 dark:border-white/[0.08]">
           No scheduled milestones matching this category filter.
         </Card>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {horizonsOrder.map((horizon) => {
             const horizonTasks = tasksByHorizon.get(horizon) || [];
             if (horizonTasks.length === 0) return null;
@@ -117,108 +128,102 @@ export const MacroCountdownView: React.FC = () => {
             const isCollapsed = Boolean(collapsedHorizons[horizon]);
 
             return (
-              <Card key={horizon} className="overflow-hidden p-0 rounded-2xl border-stone-200 dark:border-zinc-800">
+              <div
+                key={horizon}
+                className="overflow-hidden rounded-xl border border-stone-200/80 dark:border-white/[0.08] bg-white dark:bg-[#111113]"
+              >
                 {/* Accordion Header */}
                 <button
                   onClick={() => toggleHorizon(horizon)}
                   aria-expanded={!isCollapsed}
-                  className="w-full flex items-center justify-between p-4 bg-stone-50/60 dark:bg-zinc-900/60 hover:bg-stone-100/60 dark:hover:bg-zinc-800/60 transition-colors text-left"
+                  className="w-full flex items-center justify-between p-3.5 hover:bg-stone-50/60 dark:hover:bg-white/[0.02] transition-colors text-left"
                 >
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-2">
                     {isCollapsed ? (
-                      <ChevronRight className="w-4 h-4 text-stone-400 shrink-0" />
+                      <ChevronRight className="w-4 h-4 text-stone-400 stroke-[1.5] shrink-0" />
                     ) : (
-                      <ChevronDown className="w-4 h-4 text-stone-400 shrink-0" />
+                      <ChevronDown className="w-4 h-4 text-stone-400 stroke-[1.5] shrink-0" />
                     )}
-                    <Clock className="w-4 h-4 text-stone-400 shrink-0" />
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-stone-800 dark:text-zinc-200">
+                    <h3 className="text-sm font-medium tracking-tight text-[#111113] dark:text-[#EDEDEF]">
                       {horizonLabels[horizon]}
                     </h3>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <span className={`text-[11px] font-mono tabular-nums px-2 py-0.5 rounded-md ${
-                      isAllCompleted
-                        ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-semibold'
-                        : 'text-stone-500 dark:text-zinc-400'
-                    }`}>
-                      {completedCount} / {horizonTasks.length} done {isAllCompleted ? '✓' : ''}
-                    </span>
-                  </div>
+                  <span className="text-xs tabular-nums text-stone-400 dark:text-zinc-500">
+                    {completedCount} of {horizonTasks.length} done {isAllCompleted ? '· Complete' : ''}
+                  </span>
                 </button>
 
-                {/* Accordion Task List */}
+                {/* Tasks List */}
                 {!isCollapsed && (
-                  <div className="p-4 space-y-2 border-t border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/30">
+                  <div className="divide-y divide-stone-200/60 dark:divide-white/[0.04] border-t border-stone-200/80 dark:border-white/[0.08]">
                     {horizonTasks.map((task) => (
                       <div
                         key={task.id}
-                        className={`flex items-start justify-between p-3 rounded-xl border transition-all text-xs gap-3 ${
-                          task.completed
-                            ? 'bg-stone-50/50 dark:bg-zinc-900/20 border-stone-200/60 dark:border-zinc-800/40 opacity-75'
-                            : 'bg-white dark:bg-zinc-900/60 border-stone-200 dark:border-zinc-800 hover:border-amber-500/30'
-                        }`}
+                        className="flex items-start justify-between p-3 text-xs gap-3 hover:bg-stone-50/50 dark:hover:bg-white/[0.02] transition-colors"
                       >
-                        <div className="flex items-start gap-3 min-w-0 flex-1">
+                        <div className="flex items-start gap-2.5 min-w-0 flex-1">
                           <button
                             onClick={() => updateMacroTask(task.id, { completed: !task.completed })}
                             className="mt-0.5 shrink-0 focus:outline-none"
                             aria-label={task.completed ? `Mark "${task.title}" incomplete` : `Mark "${task.title}" complete`}
                           >
                             {task.completed ? (
-                              <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                              <CheckCircle2 className="w-4 h-4 text-[#10B981] stroke-[1.5]" />
                             ) : (
-                              <Circle className="w-4 h-4 text-stone-300 hover:text-stone-500 dark:text-zinc-600" />
+                              <Circle className="w-4 h-4 text-stone-300 dark:text-zinc-600 stroke-[1.5]" />
                             )}
                           </button>
 
                           <div className="min-w-0 flex-1">
                             <span
-                              className={`font-medium block leading-snug break-words ${
-                                task.completed ? 'text-stone-500 dark:text-zinc-400' : 'text-stone-900 dark:text-white'
+                              className={`block leading-snug break-words ${
+                                task.completed
+                                  ? 'text-stone-400 dark:text-[#8B8B93]'
+                                  : 'text-[#111113] dark:text-[#EDEDEF] font-medium'
                               }`}
                             >
                               {task.title}
                             </span>
-                            <div className="flex flex-wrap items-center gap-2 text-[11px] text-stone-600 dark:text-zinc-400 mt-1">
-                              <span className="font-mono tabular-nums">Due: {task.dueDate}</span>
-                              <span>•</span>
-                              <span className="flex items-center gap-1 text-stone-500 dark:text-zinc-400">
-                                <User className="w-3 h-3 text-stone-400" />
-                                {task.assignee}
-                              </span>
+                            <div className="flex flex-wrap items-center gap-2 text-xs text-stone-400 dark:text-zinc-500 mt-0.5">
+                              <span className="tabular-nums">Due {task.dueDate}</span>
+                              <span>·</span>
+                              <span>{task.assignee}</span>
+                              <span>·</span>
+                              <span>{task.category}</span>
                             </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2 shrink-0 pt-0.5">
-                          <Badge variant="stone" size="sm">
-                            {task.category}
-                          </Badge>
-                          <Badge variant={getPriorityVariant(task.priority)} size="sm">
-                            {task.priority.toUpperCase()}
-                          </Badge>
+                        <div className="flex items-center gap-3 shrink-0 pt-0.5">
+                          {task.priority === 'critical' ? (
+                            <StatusDot status="red" label="Critical" />
+                          ) : task.priority === 'high' ? (
+                            <StatusDot status="amber" label="High" />
+                          ) : (
+                            <span className="text-xs text-stone-400 dark:text-zinc-500">Normal</span>
+                          )}
+
                           <button
                             type="button"
                             onClick={() => deleteMacroTask(task.id)}
-                            className="p-1 text-stone-400 hover:text-rose-600 dark:hover:text-rose-400 rounded hover:bg-stone-100 dark:hover:bg-zinc-800 transition-colors"
+                            className="p-1 text-stone-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                             aria-label={`Delete task ${task.title}`}
                             title="Delete task"
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="w-3.5 h-3.5 stroke-[1.5]" />
                           </button>
                         </div>
                       </div>
                     ))}
                   </div>
                 )}
-              </Card>
+              </div>
             );
           })}
         </div>
       )}
 
-      {/* Add Milestone Task Modal */}
       <AddMacroTaskModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}

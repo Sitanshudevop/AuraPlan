@@ -1,5 +1,6 @@
 import React from 'react';
 import { EventType, EventSetting, Currency } from '../../types/event';
+import { Select, SelectOption } from '../ui/Select';
 
 export interface EventModalFormFieldsProps {
   name: string;
@@ -22,6 +23,18 @@ export interface EventModalFormFieldsProps {
   hasError: boolean;
 }
 
+const typeOptions: SelectOption[] = [
+  { value: 'wedding', label: 'Wedding celebration' },
+  { value: 'birthday', label: 'Milestone birthday / gala' },
+  { value: 'community', label: 'Community / summit' },
+];
+
+const settingOptions: SelectOption[] = [
+  { value: 'indoor', label: 'Indoor banquet / ballroom' },
+  { value: 'outdoor', label: 'Outdoor lawn / terrace' },
+  { value: 'hybrid', label: 'Hybrid (indoor + outdoor)' },
+];
+
 export const EventModalFormFields: React.FC<EventModalFormFieldsProps> = ({
   name,
   setName,
@@ -43,10 +56,10 @@ export const EventModalFormFields: React.FC<EventModalFormFieldsProps> = ({
   hasError,
 }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs">
       <div>
-        <label htmlFor="event-input-name" className="block text-xs font-semibold uppercase tracking-wider text-stone-600 dark:text-zinc-400 mb-1">
-          Event Name
+        <label htmlFor="event-input-name" className="block font-medium text-muted mb-1">
+          Event name
         </label>
         <input
           id="event-input-name"
@@ -56,30 +69,25 @@ export const EventModalFormFields: React.FC<EventModalFormFieldsProps> = ({
           aria-describedby={hasError ? 'event-form-error' : undefined}
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. Kyoto Cherry Blossom Soirée"
-          className="w-full text-xs px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 dark:text-white"
+          placeholder="e.g. Udaipur Royal Heritage Wedding"
+          className="w-full text-xs px-3 py-2 bg-surface-raised border border-hairline rounded-md focus:outline-none focus:ring-1 focus:ring-accent text-foreground placeholder:text-muted"
         />
       </div>
 
       <div>
-        <label htmlFor="event-select-type" className="block text-xs font-semibold uppercase tracking-wider text-stone-600 dark:text-zinc-400 mb-1">
-          Event Mode / Type
+        <label className="block font-medium text-muted mb-1">
+          Event mode
         </label>
-        <select
-          id="event-select-type"
+        <Select
           value={type}
-          onChange={(e) => setType(e.target.value as EventType)}
-          className="w-full text-xs px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 dark:text-white"
-        >
-          <option value="wedding">Wedding Celebration Mode</option>
-          <option value="birthday">Milestone Birthday / Gala Mode</option>
-          <option value="community">Community / Summit Mode</option>
-        </select>
+          onChange={(val) => setType(val as EventType)}
+          options={typeOptions}
+        />
       </div>
 
       <div>
-        <label htmlFor="event-input-date" className="block text-xs font-semibold uppercase tracking-wider text-stone-600 dark:text-zinc-400 mb-1">
-          Event Date
+        <label htmlFor="event-input-date" className="block font-medium text-muted mb-1">
+          Event date
         </label>
         <input
           id="event-input-date"
@@ -87,13 +95,13 @@ export const EventModalFormFields: React.FC<EventModalFormFieldsProps> = ({
           required
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="w-full text-xs px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 dark:text-white font-mono tabular-nums"
+          className="w-full text-xs px-3 py-2 bg-surface-raised border border-hairline rounded-md focus:outline-none focus:ring-1 focus:ring-accent text-foreground tabular-nums"
         />
       </div>
 
       <div>
-        <label htmlFor="event-input-city" className="block text-xs font-semibold uppercase tracking-wider text-stone-600 dark:text-zinc-400 mb-1">
-          City / Destination
+        <label htmlFor="event-input-city" className="block font-medium text-muted mb-1">
+          City / destination
         </label>
         <input
           id="event-input-city"
@@ -103,14 +111,14 @@ export const EventModalFormFields: React.FC<EventModalFormFieldsProps> = ({
           aria-describedby={hasError ? 'event-form-error' : undefined}
           value={city}
           onChange={(e) => setCity(e.target.value)}
-          placeholder="e.g. Goa, India"
-          className="w-full text-xs px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 dark:text-white"
+          placeholder="e.g. Udaipur, Rajasthan"
+          className="w-full text-xs px-3 py-2 bg-surface-raised border border-hairline rounded-md focus:outline-none focus:ring-1 focus:ring-accent text-foreground placeholder:text-muted"
         />
       </div>
 
       <div>
-        <label htmlFor="event-input-guests" className="block text-xs font-semibold uppercase tracking-wider text-stone-600 dark:text-zinc-400 mb-1">
-          Guest Count
+        <label htmlFor="event-input-guests" className="block font-medium text-muted mb-1">
+          Guest count
         </label>
         <input
           id="event-input-guests"
@@ -119,13 +127,13 @@ export const EventModalFormFields: React.FC<EventModalFormFieldsProps> = ({
           required
           value={guestCount}
           onChange={(e) => setGuestCount(Number(e.target.value))}
-          className="w-full text-xs px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 dark:text-white font-mono tabular-nums"
+          className="w-full text-xs px-3 py-2 bg-surface-raised border border-hairline rounded-md focus:outline-none focus:ring-1 focus:ring-accent text-foreground tabular-nums"
         />
       </div>
 
       <div>
-        <label htmlFor="event-input-budget" className="block text-xs font-semibold uppercase tracking-wider text-stone-600 dark:text-zinc-400 mb-1">
-          Target Budget ({currency})
+        <label htmlFor="event-input-budget" className="block font-medium text-muted mb-1">
+          Target budget ({currency})
         </label>
         <input
           id="event-input-budget"
@@ -134,40 +142,34 @@ export const EventModalFormFields: React.FC<EventModalFormFieldsProps> = ({
           required
           value={targetBudget}
           onChange={(e) => setTargetBudget(Number(e.target.value))}
-          className="w-full text-xs px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 dark:text-white font-mono tabular-nums"
+          className="w-full text-xs px-3 py-2 bg-surface-raised border border-hairline rounded-md focus:outline-none focus:ring-1 focus:ring-accent text-foreground tabular-nums"
         />
       </div>
 
       <div>
-        <label htmlFor="event-select-setting" className="block text-xs font-semibold uppercase tracking-wider text-stone-600 dark:text-zinc-400 mb-1">
+        <label className="block font-medium text-muted mb-1">
           Setting
         </label>
-        <select
-          id="event-select-setting"
+        <Select
           value={setting}
-          onChange={(e) => setSetting(e.target.value as EventSetting)}
-          className="w-full text-xs px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 dark:text-white"
-        >
-          <option value="indoor">Indoor Banquet / Ballroom</option>
-          <option value="outdoor">Outdoor Lawn / Beach / Rooftop</option>
-          <option value="hybrid">Hybrid (Indoor + Outdoor Pavilions)</option>
-        </select>
+          onChange={(val) => setSetting(val as EventSetting)}
+          options={settingOptions}
+        />
       </div>
 
       <div>
-        <label htmlFor="event-input-prefs" className="block text-xs font-semibold uppercase tracking-wider text-stone-600 dark:text-zinc-400 mb-1">
-          Styling & Dietary Notes
+        <label htmlFor="event-input-prefs" className="block font-medium text-muted mb-1">
+          Styling & dietary notes
         </label>
         <input
           id="event-input-prefs"
           type="text"
           value={culturalPreferences}
           onChange={(e) => setCulturalPreferences(e.target.value)}
-          placeholder="e.g. Modern bohemian, strict Jain counter, live indie band"
-          className="w-full text-xs px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-400 dark:text-white"
+          placeholder="e.g. Royal Marwari, lakeside lawn, sangeet night"
+          className="w-full text-xs px-3 py-2 bg-surface-raised border border-hairline rounded-md focus:outline-none focus:ring-1 focus:ring-accent text-foreground placeholder:text-muted"
         />
       </div>
     </div>
   );
 };
-

@@ -4,6 +4,7 @@ import { DietarySummaryBar } from './DietarySummaryBar';
 import { ZoneCapacityMeters } from './ZoneCapacityMeters';
 import { GuestTable } from './GuestTable';
 import { Button } from '../../components/ui/Button';
+import { PageHeader } from '../../components/ui/PageHeader';
 import { AddGuestModal } from './AddGuestModal';
 import { UserPlus } from 'lucide-react';
 
@@ -13,34 +14,28 @@ export const GuestsTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header & Add Action */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div>
-          <h2 className="text-base font-bold text-[#18181B] dark:text-[#FAFAFA] tracking-tight">
-            Guest RSVP, Dietary Matrix & Capacity Planner
-          </h2>
-          <p className="text-xs text-stone-500 dark:text-zinc-400">
-            Real-time catering dietary breakdowns and physical zone capacity allocation
-          </p>
-        </div>
+      <PageHeader
+        title="Guest RSVP, Dietary Matrix & Capacity Planner"
+        subtitle="RSVP status, catering dietary preferences, and venue zone allocations."
+        actions={
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => setIsAddModalOpen(true)}
+            icon={<UserPlus className="w-3.5 h-3.5" />}
+          >
+            Add guest
+          </Button>
+        }
+      />
 
-        <Button
-          variant="primary"
-          size="sm"
-          onClick={() => setIsAddModalOpen(true)}
-          icon={<UserPlus className="w-3.5 h-3.5" />}
-        >
-          Add Guest
-        </Button>
-      </div>
-
-      {/* Automatic Catering Sync: Dietary Breakdown Bar */}
+      {/* Live dietary breakdown */}
       <DietarySummaryBar guests={state.guests} />
 
-      {/* Zone Capacity Meters */}
+      {/* Zone capacity */}
       <ZoneCapacityMeters zones={state.zones} />
 
-      {/* Main Guest Roster Table */}
+      {/* Guest roster table */}
       <GuestTable
         guests={state.guests}
         zones={state.zones}
@@ -48,7 +43,7 @@ export const GuestsTab: React.FC = () => {
         onDeleteGuest={deleteGuest}
       />
 
-      {/* Add Guest Modal */}
+      {/* Add guest modal */}
       <AddGuestModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}

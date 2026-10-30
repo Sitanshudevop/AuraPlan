@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
+import { Select, SelectOption } from '../../components/ui/Select';
 import { BudgetItem, BudgetCategory } from '../../types/budget';
 import { Currency } from '../../types/event';
 import { sanitizeInput } from '../../utils/sanitizer';
@@ -10,15 +11,25 @@ interface AddBudgetItemModalProps {
   onClose: () => void;
   onAddBudgetItem: (item: BudgetItem) => void;
   currency: Currency;
-  remainingBudget: number;
+  remainingBudget?: number;
 }
+
+const categoryOptions: SelectOption[] = [
+  { value: 'venue', label: 'Venue & grounds' },
+  { value: 'catering', label: 'Catering & bar' },
+  { value: 'decor', label: 'Decor & florals' },
+  { value: 'av_photo', label: 'Photography & AV' },
+  { value: 'entertainment', label: 'Entertainment & music' },
+  { value: 'logistics', label: 'Logistics & shuttles' },
+  { value: 'buffer', label: 'Emergency contingency' },
+];
 
 export const AddBudgetItemModal: React.FC<AddBudgetItemModalProps> = ({
   isOpen,
   onClose,
   onAddBudgetItem,
   currency,
-  remainingBudget,
+  remainingBudget = 50000,
 }) => {
   const [name, setName] = useState('');
   const [category, setCategory] = useState<BudgetCategory>('decor');
@@ -59,14 +70,14 @@ export const AddBudgetItemModal: React.FC<AddBudgetItemModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Add Budget Line Item"
+      title="Add budget line item"
       description="Create a custom cost allocation for decor, vendors, permits, or contingencies."
       maxWidth="md"
     >
       <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
         <div>
-          <label htmlFor="budget-name" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-            Item Name / Scope
+          <label htmlFor="budget-name" className="block text-muted font-medium mb-1">
+            Item name / scope
           </label>
           <input
             id="budget-name"
@@ -74,35 +85,26 @@ export const AddBudgetItemModal: React.FC<AddBudgetItemModalProps> = ({
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Cold Pyrotechnics Rig & Entry Foggers"
-            className="w-full px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md focus:outline-none dark:text-white"
+            placeholder="e.g. Cold pyrotechnics rig & entry foggers"
+            className="w-full px-3 py-2 bg-surface-raised border border-hairline rounded-md focus:outline-none focus:ring-1 focus:ring-accent text-foreground placeholder:text-muted"
           />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label htmlFor="budget-cat" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-              Budget Category
+            <label className="block text-muted font-medium mb-1">
+              Budget category
             </label>
-            <select
-              id="budget-cat"
+            <Select
               value={category}
-              onChange={(e) => setCategory(e.target.value as BudgetCategory)}
-              className="w-full px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md dark:text-white"
-            >
-              <option value="venue">Venue & Grounds</option>
-              <option value="catering">Catering & Bar</option>
-              <option value="decor">Decor & Florals</option>
-              <option value="av_photo">Photography & AV</option>
-              <option value="entertainment">Entertainment & Music</option>
-              <option value="logistics">Logistics & Shuttles</option>
-              <option value="buffer">Emergency Contingency</option>
-            </select>
+              onChange={(val) => setCategory(val as BudgetCategory)}
+              options={categoryOptions}
+            />
           </div>
 
           <div>
-            <label htmlFor="budget-alloc" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-              Target Allocation ({currency === 'INR' ? '₹' : '$'})
+            <label htmlFor="budget-alloc" className="block text-muted font-medium mb-1">
+              Target allocation ({currency})
             </label>
             <input
               id="budget-alloc"
@@ -112,15 +114,15 @@ export const AddBudgetItemModal: React.FC<AddBudgetItemModalProps> = ({
               required
               value={allocated}
               onChange={(e) => setAllocated(Number(e.target.value))}
-              className="w-full px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md font-mono dark:text-white"
+              className="w-full px-3 py-2 bg-surface-raised border border-hairline rounded-md tabular-nums text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label htmlFor="budget-quote" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-              Vendor Quote
+            <label htmlFor="budget-quote" className="block text-muted font-medium mb-1">
+              Vendor quote
             </label>
             <input
               id="budget-quote"
@@ -129,13 +131,13 @@ export const AddBudgetItemModal: React.FC<AddBudgetItemModalProps> = ({
               step="500"
               value={vendorQuote}
               onChange={(e) => setVendorQuote(Number(e.target.value))}
-              className="w-full px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md font-mono dark:text-white"
+              className="w-full px-3 py-2 bg-surface-raised border border-hairline rounded-md tabular-nums text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
             />
           </div>
 
           <div>
-            <label htmlFor="budget-actual" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-              Contracted Cost
+            <label htmlFor="budget-actual" className="block text-muted font-medium mb-1">
+              Contracted cost
             </label>
             <input
               id="budget-actual"
@@ -144,13 +146,13 @@ export const AddBudgetItemModal: React.FC<AddBudgetItemModalProps> = ({
               step="500"
               value={actualContracted}
               onChange={(e) => setActualContracted(Number(e.target.value))}
-              className="w-full px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md font-mono dark:text-white"
+              className="w-full px-3 py-2 bg-surface-raised border border-hairline rounded-md tabular-nums text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
             />
           </div>
 
           <div>
-            <label htmlFor="budget-paid" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-              Amount Paid
+            <label htmlFor="budget-paid" className="block text-muted font-medium mb-1">
+              Amount paid
             </label>
             <input
               id="budget-paid"
@@ -159,7 +161,7 @@ export const AddBudgetItemModal: React.FC<AddBudgetItemModalProps> = ({
               step="500"
               value={amountPaid}
               onChange={(e) => setAmountPaid(Number(e.target.value))}
-              className="w-full px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md font-mono dark:text-white"
+              className="w-full px-3 py-2 bg-surface-raised border border-hairline rounded-md tabular-nums text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
             />
           </div>
         </div>
@@ -170,16 +172,16 @@ export const AddBudgetItemModal: React.FC<AddBudgetItemModalProps> = ({
             type="checkbox"
             checked={isLocked}
             onChange={(e) => setIsLocked(e.target.checked)}
-            className="rounded border-stone-300 dark:border-zinc-700 text-stone-900 focus:ring-stone-400"
+            className="rounded border-hairline bg-surface-raised text-accent focus:ring-accent"
           />
-          <label htmlFor="budget-locked" className="text-stone-700 dark:text-zinc-300 select-none">
+          <label htmlFor="budget-locked" className="text-muted text-xs select-none">
             Lock from auto-balancing algorithms
           </label>
         </div>
 
         <div>
-          <label htmlFor="budget-notes" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-            Notes / Deliverables Specification
+          <label htmlFor="budget-notes" className="block text-muted font-medium mb-1">
+            Notes / deliverables
           </label>
           <input
             id="budget-notes"
@@ -187,11 +189,11 @@ export const AddBudgetItemModal: React.FC<AddBudgetItemModalProps> = ({
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="e.g. 4 stage flame units with cold spark duration 30s"
-            className="w-full px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md dark:text-white"
+            className="w-full px-3 py-2 bg-surface-raised border border-hairline rounded-md text-foreground placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent"
           />
         </div>
 
-        <div className="flex justify-end gap-2 pt-3 border-t border-stone-200 dark:border-zinc-800">
+        <div className="flex justify-end gap-2 pt-3 border-t border-hairline">
           <Button type="button" variant="ghost" size="sm" onClick={onClose}>
             Cancel
           </Button>

@@ -22,7 +22,7 @@ export const weddingPreset: EventWorkspaceState = {
   },
   budgetItems: [
     { id: 'b-1', category: 'venue', name: 'Palace Courtyard & Lake Pavilion Hire (2 Days)', allocated: 550000, vendorQuote: 550000, actualContracted: 550000, amountPaid: 300000, isLocked: true, vendorId: 'v-1' },
-    { id: 'b-2', category: 'catering', name: '4-Meal Royal Banquet (₹1,900/plate × 250 guests)', allocated: 475000, vendorQuote: 490000, actualContracted: 475000, amountPaid: 200000, isLocked: false, vendorId: 'v-2' },
+    { id: 'b-2', category: 'catering', name: '4-Meal Royal Banquet (250 covers)', allocated: 475000, vendorQuote: 490000, actualContracted: 475000, amountPaid: 200000, isLocked: false, vendorId: 'v-2' },
     { id: 'b-3', category: 'catering', name: 'Signature Bar & Sommelier Mixology Service', allocated: 95000, vendorQuote: 110000, actualContracted: 95000, amountPaid: 50000, isLocked: false, vendorId: 'v-3' },
     { id: 'b-4', category: 'decor', name: 'Marigold Mandap, Floral Drapes & Lakeside Lighting', allocated: 260000, vendorQuote: 280000, actualContracted: 260000, amountPaid: 130000, isLocked: false, vendorId: 'v-4' },
     { id: 'b-5', category: 'av_photo', name: 'Cinematic Drone + 4K Wedding Film & Candid Album', allocated: 180000, vendorQuote: 195000, actualContracted: 180000, amountPaid: 90000, isLocked: false, vendorId: 'v-5' },

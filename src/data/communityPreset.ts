@@ -19,7 +19,7 @@ export const communityPreset: EventWorkspaceState = {
     ],
     speakerTracks: ['Track 1: Agentic Architectures', 'Track 2: Local LLM Fine-Tuning & Quantization', 'Track 3: Open-Source Governance & Security'],
     volunteerRoles: ['Registration & Badge Desk (8)', 'Speaker AV & Mic Handlers (6)', 'Catering & Coffee Logistics (6)', 'Emergency First-Aid & Crowd Direction (4)'],
-    notes: 'Total gross budget ₹3,80,000 offset by ₹1,50,000 confirmed sponsorship from leading cloud and AI infrastructure partners.',
+    notes: 'Total gross budget offset by confirmed sponsorship from leading cloud and AI infrastructure partners.',
   },
   budgetItems: [
     { id: 'cb-1', category: 'venue', name: 'Convention Center Main Auditorium + 2 Breakout Halls', allocated: 150000, vendorQuote: 160000, actualContracted: 150000, amountPaid: 80000, isLocked: true, vendorId: 'cv-1' },

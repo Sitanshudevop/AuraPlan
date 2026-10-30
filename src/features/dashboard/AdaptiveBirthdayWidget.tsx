@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { Card } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
+import { Select } from '../../components/ui/Select';
 import { formatCurrency } from '../../utils/formatters';
-import { Cake, Music, Gift } from 'lucide-react';
 
 export const AdaptiveBirthdayWidget: React.FC = () => {
   const { state, currency, updateEvent } = useWorkspace();
@@ -18,83 +17,88 @@ export const AdaptiveBirthdayWidget: React.FC = () => {
 
   const favorTotal = favorPerHead * state.event.guestCount;
 
+  const cakeOptions = [
+    { value: '3-Tier Artisanal Matcha & Raspberry', label: '3-tier artisanal matcha & raspberry (8kg)' },
+    { value: '4-Tier Dark Belgian Truffle & Gold Foil', label: '4-tier dark Belgian truffle & gold foil (12kg)' },
+    { value: 'Contemporary Minimalist Biscoff Mirror Glaze', label: 'Contemporary Biscoff mirror glaze (6kg)' },
+    { value: 'Deconstructed Macaron & Choux Tower', label: 'Deconstructed macaron tower (200 pieces)' },
+  ];
+
+  const vibeOptions = [
+    { value: 'Indie Sunset → Melodic Deep House', label: 'Indie sunset → Melodic deep house' },
+    { value: 'Golden Age Vinyl Jazz → Nu-Disco', label: 'Golden age vinyl jazz → Nu-disco' },
+    { value: 'Lo-Fi Beats → R&B Retro Jam', label: 'Lo-fi beats → R&B retro jam' },
+    { value: 'High-Energy Electronic & Club Anthems', label: 'High-energy electronic & club anthems' },
+  ];
+
   return (
-    <Card className="col-span-12 lg:col-span-7 space-y-4">
-      <div className="flex items-center justify-between border-b border-stone-200 dark:border-zinc-800 pb-3">
+    <Card className="col-span-12 lg:col-span-8 space-y-4 rounded-xl border border-stone-200/80 dark:border-white/[0.08]">
+      <div className="flex items-center justify-between border-b border-stone-200/80 dark:border-white/[0.08] pb-3">
         <div>
-          <h3 className="text-sm font-semibold text-[#18181B] dark:text-[#FAFAFA]">
+          <h3 className="text-base font-semibold tracking-tight text-[#111113] dark:text-[#EDEDEF]">
             Milestone Soirée Experience Customizer
           </h3>
-          <p className="text-xs text-stone-500 dark:text-zinc-400">
+          <p className="text-xs text-stone-500 dark:text-[#8B8B93] mt-0.5">
             Artisanal cake tiering, soundscape playlist, and party favor estimator
           </p>
         </div>
-        <Badge variant="amber" size="sm">Birthday Mode</Badge>
+        <span className="text-xs text-stone-400 dark:text-zinc-500">
+          Birthday Experience
+        </span>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Cake Tier */}
-        <div className="p-3.5 bg-stone-50 dark:bg-zinc-900/60 border border-stone-200 dark:border-zinc-800 rounded-lg space-y-2">
-          <div className="flex items-center gap-2 text-xs font-semibold text-stone-800 dark:text-zinc-200">
-            <Cake className="w-4 h-4 text-amber-600" />
-            <span>Custom Cake / Dessert Tier</span>
+        <div className="p-3.5 bg-stone-50/50 dark:bg-white/[0.02] border border-stone-200/80 dark:border-white/[0.08] rounded-lg space-y-2">
+          <div className="text-xs font-medium text-stone-700 dark:text-[#EDEDEF]">
+            Custom cake / dessert tier
           </div>
-          <select
+          <Select
             value={cakeTier}
-            onChange={(e) => {
-              setCakeTier(e.target.value);
-              updateEvent({ cakeTier: e.target.value });
+            onChange={(val) => {
+              setCakeTier(val);
+              updateEvent({ cakeTier: val });
             }}
-            className="w-full text-xs p-2 bg-white dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md text-stone-800 dark:text-white"
-          >
-            <option value="3-Tier Artisanal Matcha & Raspberry">3-Tier Artisanal Matcha & Raspberry (8kg)</option>
-            <option value="4-Tier Dark Belgian Truffle & Gold Foil">4-Tier Dark Belgian Truffle & Gold Foil (12kg)</option>
-            <option value="Contemporary Minimalist Biscoff Mirror Glaze">Contemporary Biscoff Mirror Glaze (6kg)</option>
-            <option value="Deconstructed Macaron & Choux Tower">Deconstructed Macaron Tower (200 pieces)</option>
-          </select>
-          <p className="text-[11px] text-stone-500 dark:text-zinc-400">
-            Current Selection: <span className="font-medium text-stone-700 dark:text-zinc-300">{cakeTier}</span>
+            options={cakeOptions}
+            ariaLabel="Custom cake tier"
+          />
+          <p className="text-[11px] text-stone-500 dark:text-[#8B8B93]">
+            Selected: <span className="text-stone-700 dark:text-[#EDEDEF]">{cakeTier}</span>
           </p>
         </div>
 
         {/* Music Vibe */}
-        <div className="p-3.5 bg-stone-50 dark:bg-zinc-900/60 border border-stone-200 dark:border-zinc-800 rounded-lg space-y-2">
-          <div className="flex items-center gap-2 text-xs font-semibold text-stone-800 dark:text-zinc-200">
-            <Music className="w-4 h-4 text-indigo-600" />
-            <span>Playlist & Soundscape Curve</span>
+        <div className="p-3.5 bg-stone-50/50 dark:bg-white/[0.02] border border-stone-200/80 dark:border-white/[0.08] rounded-lg space-y-2">
+          <div className="text-xs font-medium text-stone-700 dark:text-[#EDEDEF]">
+            Playlist & soundscape curve
           </div>
-          <select
+          <Select
             value={vibe}
-            onChange={(e) => {
-              setVibe(e.target.value);
-              updateEvent({ vibePlaylist: e.target.value });
+            onChange={(val) => {
+              setVibe(val);
+              updateEvent({ vibePlaylist: val });
             }}
-            className="w-full text-xs p-2 bg-white dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md text-stone-800 dark:text-white"
-          >
-            <option value="Indie Sunset → Melodic Deep House">Indie Sunset → Melodic Deep House</option>
-            <option value="Golden Age Vinyl Jazz → Nu-Disco">Golden Age Vinyl Jazz → Nu-Disco</option>
-            <option value="Lo-Fi Beats → R&B Retro Jam">Lo-Fi Beats → R&B Retro Jam</option>
-            <option value="High-Energy Electronic & Club Anthems">High-Energy Electronic & Club Anthems</option>
-          </select>
-          <p className="text-[11px] text-stone-500 dark:text-zinc-400">
+            options={vibeOptions}
+            ariaLabel="Soundscape curve"
+          />
+          <p className="text-[11px] text-stone-500 dark:text-[#8B8B93]">
             Acoustic tone transitions dynamically after midnight toast.
           </p>
         </div>
       </div>
 
       {/* Favor Estimator */}
-      <div className="p-3.5 bg-stone-50 dark:bg-zinc-900/60 border border-stone-200 dark:border-zinc-800 rounded-lg space-y-2">
+      <div className="p-3.5 bg-stone-50/50 dark:bg-white/[0.02] border border-stone-200/80 dark:border-white/[0.08] rounded-lg space-y-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs font-semibold text-stone-800 dark:text-zinc-200">
-            <Gift className="w-4 h-4 text-emerald-600" />
-            <span>Party Favor & Return-Gift Estimator</span>
+          <div className="text-xs font-medium text-stone-700 dark:text-[#EDEDEF]">
+            Party favor & return-gift estimator
           </div>
-          <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
+          <span className="text-xs font-semibold tabular-nums text-stone-800 dark:text-[#EDEDEF]">
             {formatCurrency(favorTotal, currency)} total ({state.event.guestCount} guests)
           </span>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 pt-1">
           <input
             type="range"
             min="50"
@@ -102,9 +106,9 @@ export const AdaptiveBirthdayWidget: React.FC = () => {
             step="10"
             value={favorPerHead}
             onChange={(e) => setFavorPerHead(Number(e.target.value))}
-            className="flex-1 accent-stone-900 dark:accent-white"
+            className="flex-1 accent-[#6E79F5]"
           />
-          <span className="text-xs font-mono font-medium text-stone-700 dark:text-zinc-300 tabular-nums shrink-0">
+          <span className="text-xs tabular-nums text-stone-600 dark:text-[#8B8B93] shrink-0">
             {formatCurrency(favorPerHead, currency)} / guest
           </span>
         </div>

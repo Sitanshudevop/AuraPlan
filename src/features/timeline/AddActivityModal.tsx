@@ -171,3 +171,4 @@ export const AddActivityModal: React.FC<AddActivityModalProps> = ({
     </Modal>
   );
 };
+

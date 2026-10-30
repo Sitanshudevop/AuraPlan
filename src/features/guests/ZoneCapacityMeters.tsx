@@ -1,8 +1,7 @@
 import React from 'react';
 import { ZoneCapacity } from '../../types/guest';
 import { Card } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
-import { LayoutGrid } from 'lucide-react';
+import { StatusDot } from '../../components/ui/StatusDot';
 
 interface ZoneCapacityMetersProps {
   zones: ZoneCapacity[];
@@ -10,59 +9,43 @@ interface ZoneCapacityMetersProps {
 
 export const ZoneCapacityMeters: React.FC<ZoneCapacityMetersProps> = ({ zones }) => {
   return (
-    <Card className="space-y-4 p-5 sm:p-6 rounded-2xl border-stone-200 dark:border-zinc-800">
-      <div className="flex items-center justify-between border-b border-stone-100 dark:border-zinc-800 pb-3">
-        <div className="flex items-center gap-2 text-xs font-semibold text-stone-800 dark:text-zinc-200">
-          <LayoutGrid className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-          <span>Interactive Zone & Table Capacity Matrix</span>
-        </div>
-        <span className="text-[11px] font-mono text-stone-500 dark:text-zinc-400">
-          {zones.length} Managed Enclosures
-        </span>
+    <Card className="p-4 sm:p-5 space-y-3">
+      <div className="flex items-center justify-between text-xs">
+        <span className="font-semibold text-foreground">Interactive Zone & Table Capacity Matrix</span>
+        <span className="text-muted tabular-nums">{zones.length} active zones</span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="space-y-3 pt-1">
         {zones.map((zone) => {
           const isOver = zone.assignedCount > zone.maxCapacity;
           const pct = Math.min(100, Math.round((zone.assignedCount / zone.maxCapacity) * 100));
 
           return (
-            <div
-              key={zone.id}
-              className={`p-4 rounded-xl border transition-all space-y-2.5 ${
-                isOver
-                  ? 'bg-rose-50/50 dark:bg-rose-950/20 border-rose-300 dark:border-rose-800'
-                  : 'bg-stone-50/60 dark:bg-zinc-900/60 border-stone-200/80 dark:border-zinc-800'
-              }`}
-            >
-              <div className="flex items-start justify-between gap-2">
-                <h4 className="text-xs font-semibold text-stone-900 dark:text-white min-w-0 flex-1 leading-snug">
-                  {zone.name}
-                </h4>
-                {isOver ? (
-                  <Badge variant="rose" size="sm" className="shrink-0 whitespace-nowrap">
-                    Over-Capacity
-                  </Badge>
-                ) : (
-                  <Badge variant="stone" size="sm" className="shrink-0 whitespace-nowrap font-mono tabular-nums">
-                    {pct}% Full
-                  </Badge>
-                )}
+            <div key={zone.id} className="space-y-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="font-medium text-foreground truncate">{zone.name}</span>
+                  {isOver && (
+                    <span className="text-[11px] text-rose-500 font-medium flex items-center gap-1 shrink-0">
+                      <StatusDot status="conflict" /> Over-capacity
+                    </span>
+                  )}
+                </div>
+                <div className="text-muted tabular-nums text-xs shrink-0 pl-2">
+                  <span className="text-foreground font-medium">{zone.assignedCount}</span>
+                  <span> / {zone.maxCapacity}</span>
+                  <span className="text-[11px] text-muted ml-1.5">({pct}%)</span>
+                </div>
               </div>
 
-              {/* Capacity Bar */}
-              <div className="w-full h-2 bg-stone-200 dark:bg-zinc-700 rounded-full overflow-hidden">
+              {/* Slim progress bar (4px) */}
+              <div className="w-full h-1.5 bg-stone-200 dark:bg-white/[0.08] rounded-full overflow-hidden">
                 <div
-                  className={`h-full rounded-full transition-all duration-300 ${
-                    isOver ? 'bg-rose-600' : pct > 85 ? 'bg-amber-500' : 'bg-emerald-600 dark:bg-emerald-500'
+                  className={`h-full rounded-full transition-all duration-150 ${
+                    isOver ? 'bg-rose-500' : pct > 85 ? 'bg-amber-500' : 'bg-accent'
                   }`}
                   style={{ width: `${pct}%` }}
                 />
-              </div>
-
-              <div className="flex items-center justify-between text-[11px] font-mono text-stone-500 dark:text-zinc-400 tabular-nums">
-                <span>{zone.assignedCount} Assigned</span>
-                <span>Max: {zone.maxCapacity}</span>
               </div>
             </div>
           );

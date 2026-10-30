@@ -24,7 +24,7 @@ export const birthdayPreset: EventWorkspaceState = {
   },
   budgetItems: [
     { id: 'bb-1', category: 'venue', name: 'The Veranda Rooftop Sky Terrace (6 hrs exclusive)', allocated: 32000, vendorQuote: 35000, actualContracted: 32000, amountPaid: 16000, isLocked: true, vendorId: 'bv-1' },
-    { id: 'bb-2', category: 'catering', name: 'Artisanal Tapas & Woodfired Flatbreads (₹550/head)', allocated: 26000, vendorQuote: 28000, actualContracted: 26000, amountPaid: 13000, isLocked: false, vendorId: 'bv-2' },
+    { id: 'bb-2', category: 'catering', name: 'Artisanal Tapas & Woodfired Flatbreads', allocated: 26000, vendorQuote: 28000, actualContracted: 26000, amountPaid: 13000, isLocked: false, vendorId: 'bv-2' },
     { id: 'bb-3', category: 'catering', name: 'Botanical Craft Mixology & Natural Wine Bar', allocated: 14000, vendorQuote: 16000, actualContracted: 14000, amountPaid: 7000, isLocked: false, vendorId: 'bv-3' },
     { id: 'bb-4', category: 'decor', name: 'Lush Ferns, Edison Bulbs & Custom Neon Signboard', allocated: 9000, vendorQuote: 10500, actualContracted: 9000, amountPaid: 5000, isLocked: false, vendorId: 'bv-4' },
     { id: 'bb-5', category: 'entertainment', name: 'Live Indie Acoustic Duo + Vinyl DJ Set', allocated: 6500, vendorQuote: 7000, actualContracted: 6000, amountPaid: 3000, isLocked: false, vendorId: 'bv-5' },

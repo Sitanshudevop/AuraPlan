@@ -32,7 +32,12 @@ export function useFocusTrap<T extends HTMLElement = HTMLDivElement>(
     // Focus initial element ONLY if focus is not already inside the container
     if (!container.contains(document.activeElement)) {
       const elements = getFocusableElements();
-      const autoFocusEl = elements.find((el) => el.hasAttribute('autofocus'));
+      const autoFocusEl = elements.find(
+        (el) =>
+          el.hasAttribute('autofocus') ||
+          (el as HTMLInputElement).autofocus ||
+          el.getAttribute('data-autofocus') === 'true'
+      );
       if (autoFocusEl) {
         autoFocusEl.focus();
       } else if (elements.length > 0) {

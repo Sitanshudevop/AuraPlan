@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
+import { Select, SelectOption } from '../../components/ui/Select';
 import { Guest, GuestGroup, DietaryTag, RsvpStatus, ZoneCapacity } from '../../types/guest';
 import { sanitizeInput } from '../../utils/sanitizer';
 
@@ -10,6 +11,29 @@ export interface AddGuestModalProps {
   onAddGuest: (guest: Guest) => void;
   zones: ZoneCapacity[];
 }
+
+const groupOptions: SelectOption[] = [
+  { value: 'bride', label: 'Bride side' },
+  { value: 'groom', label: 'Groom side' },
+  { value: 'vip', label: 'VIP guest' },
+  { value: 'speaker_sponsor', label: 'Speaker / sponsor' },
+  { value: 'general', label: 'General attendee' },
+];
+
+const rsvpOptions: SelectOption[] = [
+  { value: 'confirmed', label: 'Confirmed', dotColor: 'bg-emerald-500' },
+  { value: 'pending', label: 'Pending', dotColor: 'bg-amber-500' },
+  { value: 'declined', label: 'Declined', dotColor: 'bg-rose-500' },
+];
+
+const dietaryOptions: SelectOption[] = [
+  { value: 'regular', label: 'Regular' },
+  { value: 'vegetarian', label: 'Vegetarian', dotColor: 'bg-emerald-500' },
+  { value: 'jain', label: 'Jain (no root veg)', dotColor: 'bg-amber-500' },
+  { value: 'vegan', label: 'Vegan', dotColor: 'bg-teal-500' },
+  { value: 'gluten_free', label: 'Gluten-free', dotColor: 'bg-indigo-500' },
+  { value: 'nut_free', label: 'Nut-free', dotColor: 'bg-rose-500' },
+];
 
 export const AddGuestModal: React.FC<AddGuestModalProps> = ({
   isOpen,
@@ -23,6 +47,11 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
   const [dietary, setDietary] = useState<DietaryTag>('vegetarian');
   const [plusOnes, setPlusOnes] = useState<number>(0);
   const [zoneId, setZoneId] = useState<string>('');
+
+  const zoneOptions: SelectOption[] = [
+    { value: '', label: 'Unassigned' },
+    ...zones.map((z) => ({ value: z.id, label: `${z.name} (Max ${z.maxCapacity})` })),
+  ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,13 +78,13 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       title="Add Attendee to Guest Roster"
-      description="Records dietary preferences, plus-ones, and table/zone placement."
+      description="Record dietary preferences, party size, and zone placement."
       maxWidth="md"
     >
-      <form onSubmit={handleSubmit} className="space-y-3 text-xs">
+      <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
         <div>
-          <label htmlFor="guest-input-name" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-            Full Name
+          <label htmlFor="guest-input-name" className="block text-muted font-medium mb-1">
+            Full name
           </label>
           <input
             id="guest-input-name"
@@ -64,69 +93,49 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Dr. Siddharth Sharma"
-            className="w-full px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md focus:outline-none dark:text-white"
+            className="w-full px-3 py-2 bg-surface-raised border border-hairline rounded-md focus:outline-none focus:ring-1 focus:ring-accent text-foreground placeholder:text-muted"
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label htmlFor="guest-select-group" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-              Group Side
+            <label className="block text-muted font-medium mb-1">
+              Group
             </label>
-            <select
-              id="guest-select-group"
+            <Select
               value={group}
-              onChange={(e) => setGroup(e.target.value as GuestGroup)}
-              className="w-full px-2 py-1.5 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md dark:text-white"
-            >
-              <option value="bride">Bride Side</option>
-              <option value="groom">Groom Side</option>
-              <option value="vip">VIP Guest</option>
-              <option value="speaker_sponsor">Speaker / Sponsor</option>
-              <option value="general">General Attendee</option>
-            </select>
+              onChange={(val) => setGroup(val as GuestGroup)}
+              options={groupOptions}
+            />
           </div>
 
           <div>
-            <label htmlFor="guest-select-rsvp" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-              Initial RSVP
+            <label className="block text-muted font-medium mb-1">
+              RSVP status
             </label>
-            <select
-              id="guest-select-rsvp"
+            <Select
               value={rsvp}
-              onChange={(e) => setRsvp(e.target.value as RsvpStatus)}
-              className="w-full px-2 py-1.5 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md dark:text-white"
-            >
-              <option value="confirmed">Confirmed</option>
-              <option value="pending">Pending</option>
-              <option value="declined">Declined</option>
-            </select>
+              onChange={(val) => setRsvp(val as RsvpStatus)}
+              options={rsvpOptions}
+            />
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label htmlFor="guest-select-diet" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-              Dietary Profile
+            <label className="block text-muted font-medium mb-1">
+              Dietary profile
             </label>
-            <select
-              id="guest-select-diet"
+            <Select
               value={dietary}
-              onChange={(e) => setDietary(e.target.value as DietaryTag)}
-              className="w-full px-2 py-1.5 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md dark:text-white"
-            >
-              <option value="vegetarian">Vegetarian</option>
-              <option value="vegan">Vegan</option>
-              <option value="jain">Strict Jain (No root veg)</option>
-              <option value="halal">Halal</option>
-              <option value="gluten_free">Gluten-Free</option>
-              <option value="non_veg">Non-Vegetarian</option>
-            </select>
+              onChange={(val) => setDietary(val as DietaryTag)}
+              options={dietaryOptions}
+            />
           </div>
 
           <div>
-            <label htmlFor="guest-input-plusones" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-              Additional Covers (+Pax)
+            <label htmlFor="guest-input-plusones" className="block text-muted font-medium mb-1">
+              Plus-ones
             </label>
             <input
               id="guest-input-plusones"
@@ -135,31 +144,23 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
               max="10"
               value={plusOnes}
               onChange={(e) => setPlusOnes(Number(e.target.value))}
-              className="w-full px-2 py-1.5 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md dark:text-white font-mono tabular-nums"
+              className="w-full px-3 py-2 bg-surface-raised border border-hairline rounded-md text-foreground tabular-nums focus:outline-none focus:ring-1 focus:ring-accent"
             />
           </div>
         </div>
 
         <div>
-          <label htmlFor="guest-select-zone" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-            Table / Zone Assignment
+          <label className="block text-muted font-medium mb-1">
+            Zone / table assignment
           </label>
-          <select
-            id="guest-select-zone"
+          <Select
             value={zoneId}
-            onChange={(e) => setZoneId(e.target.value)}
-            className="w-full px-2 py-1.5 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md dark:text-white"
-          >
-            <option value="">Unassigned</option>
-            {zones.map((z) => (
-              <option key={z.id} value={z.id}>
-                {z.name} (Max {z.maxCapacity})
-              </option>
-            ))}
-          </select>
+            onChange={(val) => setZoneId(val)}
+            options={zoneOptions}
+          />
         </div>
 
-        <div className="pt-3 border-t border-stone-200 dark:border-zinc-800 flex justify-end gap-2">
+        <div className="pt-3 border-t border-hairline flex justify-end gap-2">
           <Button
             type="button"
             variant="ghost"
@@ -169,11 +170,10 @@ export const AddGuestModal: React.FC<AddGuestModalProps> = ({
             Cancel
           </Button>
           <Button type="submit" variant="primary" size="sm">
-            Save Guest
+            Save guest
           </Button>
         </div>
       </form>
     </Modal>
   );
 };
-

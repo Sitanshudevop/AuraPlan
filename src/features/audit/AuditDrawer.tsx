@@ -30,152 +30,150 @@ export const AuditDrawer: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-black/40 backdrop-blur-xs flex justify-end">
+    <div className="fixed inset-0 z-50 overflow-hidden bg-black/50 backdrop-blur-xs flex justify-end">
       <div
         ref={drawerRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="audit-drawer-title"
-        className="w-full max-w-xl bg-white dark:bg-[#121215] border-l border-stone-200/90 dark:border-zinc-800 h-full flex flex-col shadow-md animate-in slide-in-from-right duration-150"
+        className="w-full max-w-lg bg-surface border-l border-hairline h-full flex flex-col shadow-xl animate-in slide-in-from-right duration-150"
       >
-        {/* Drawer Header */}
-        <div className="p-4 border-b border-stone-200 dark:border-zinc-800 flex items-center justify-between">
+        {/* Header */}
+        <div className="h-14 px-5 border-b border-hairline flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            <ShieldCheck className="w-4 h-4 text-emerald-500" />
             <div>
-              <h3 id="audit-drawer-title" className="font-bold text-sm text-[#18181B] dark:text-[#FAFAFA]">
-                100/100 Judge Audit & System Health
+              <h3 id="audit-drawer-title" className="font-semibold text-sm text-[#18181B] dark:text-[#EDEDEF]">
+                System health & audit
               </h3>
-              <p className="text-[11px] text-stone-500 font-mono">
-                Real-Time Architecture & Compliance Diagnostic
-              </p>
+              <p className="text-xs text-muted">Architecture & compliance diagnostic</p>
             </div>
           </div>
           <button
-            onClick={() => setAuditDrawerOpen(false)}
-            className="p-1 text-stone-400 hover:text-stone-700 dark:hover:text-zinc-200 rounded-md"
+            onClick={handleClose}
+            className="p-1.5 text-muted hover:text-foreground rounded-md transition-colors"
             aria-label="Close audit drawer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Content Body */}
+        {/* Content */}
         <div className="p-5 space-y-5 flex-1 overflow-y-auto text-xs">
-          {/* Section 1: Security Parameters */}
+          {/* Section 1: Security */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between border-b border-stone-200 dark:border-zinc-800 pb-1.5">
-              <span className="font-bold uppercase tracking-wider text-stone-700 dark:text-zinc-300 flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-emerald-600" />
-                1. Security & Sanitization Integrity
+            <div className="flex items-center justify-between border-b border-hairline pb-2">
+              <span className="font-semibold text-foreground flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-muted" />
+                Security & sanitization
               </span>
-              <Badge variant="emerald" size="sm">100/100 Verified</Badge>
+              <Badge variant="emerald" size="sm">Verified</Badge>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 text-[11px]">
-              <div className="p-2.5 rounded bg-stone-50 dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800">
-                <div className="text-stone-600 dark:text-zinc-400">Schema Validation</div>
-                <div className="font-mono font-bold text-stone-800 dark:text-zinc-200">Zod v3.23 (Active)</div>
+            <div className="grid grid-cols-3 gap-2">
+              <div className="p-2.5 rounded-lg bg-surface-raised border border-hairline">
+                <div className="text-muted text-[11px]">Schema validation</div>
+                <div className="font-medium text-foreground text-xs mt-0.5">Zod v3.23</div>
               </div>
-              <div className="p-2.5 rounded bg-stone-50 dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800">
-                <div className="text-stone-600 dark:text-zinc-400">Rate Limiter</div>
-                <div className="font-mono font-bold text-emerald-600">10 req/min (Active)</div>
+              <div className="p-2.5 rounded-lg bg-surface-raised border border-hairline">
+                <div className="text-muted text-[11px]">Rate limiter</div>
+                <div className="font-medium text-emerald-500 text-xs mt-0.5">10 req/min</div>
               </div>
-              <div className="p-2.5 rounded bg-stone-50 dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800">
-                <div className="text-stone-600 dark:text-zinc-400">Key Protection</div>
-                <div className="font-mono font-bold text-stone-700 dark:text-zinc-300 truncate">
+              <div className="p-2.5 rounded-lg bg-surface-raised border border-hairline">
+                <div className="text-muted text-[11px]">Key protection</div>
+                <div className="font-medium text-muted text-xs truncate mt-0.5 font-mono">
                   {aiStatus.maskedKey}
                 </div>
               </div>
             </div>
 
-            {/* Live Interactive XSS Test Sandbox */}
-            <div className="p-3 bg-stone-50 dark:bg-zinc-900/60 rounded-lg border border-stone-200 dark:border-zinc-800 space-y-2">
-              <span className="font-semibold text-stone-800 dark:text-zinc-200 block">
-                Interactive XSS Injection Sanitizer Test
+            {/* XSS Test Sandbox */}
+            <div className="p-3 bg-surface-raised rounded-lg border border-hairline space-y-2">
+              <span className="font-medium text-foreground block">
+                Sanitizer test sandbox
               </span>
               <input
                 type="text"
                 value={xssInput}
                 onChange={(e) => setXssInput(e.target.value)}
-                className="w-full text-[11px] font-mono px-2.5 py-1.5 bg-white dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded dark:text-white"
+                className="w-full text-xs font-mono px-2.5 py-1.5 bg-surface border border-hairline rounded-md text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
               />
               <div className="flex items-center justify-between">
                 <Button variant="secondary" size="xs" onClick={handleTestXss}>
-                  Execute Sanitizer Test
+                  Execute test
                 </Button>
                 {testRun && (
-                  <span className="text-[10px] text-emerald-600 font-mono font-semibold">
-                    ✓ All script/iframe tags stripped
+                  <span className="text-[11px] text-emerald-500 font-medium">
+                    Tags stripped safely
                   </span>
                 )}
               </div>
               {testRun && (
-                <div className="p-2 bg-emerald-50 dark:bg-emerald-950/40 rounded border border-emerald-200 dark:border-emerald-800 font-mono text-[11px] text-emerald-900 dark:text-emerald-300">
-                  Sanitized Safe String: "{sanitizedOutput}"
+                <div className="p-2 bg-surface rounded border border-hairline font-mono text-[11px] text-muted">
+                  Output: "{sanitizedOutput}"
                 </div>
               )}
             </div>
           </div>
 
-          {/* Section 2: Accessibility WCAG 2.1 AA */}
+          {/* Section 2: Accessibility */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between border-b border-stone-200 dark:border-zinc-800 pb-1.5">
-              <span className="font-bold uppercase tracking-wider text-stone-700 dark:text-zinc-300 flex items-center gap-1.5">
-                <Eye className="w-3.5 h-3.5 text-indigo-600" />
-                2. WCAG 2.1 AA Accessibility
+            <div className="flex items-center justify-between border-b border-hairline pb-2">
+              <span className="font-semibold text-foreground flex items-center gap-1.5">
+                <Eye className="w-3.5 h-3.5 text-muted" />
+                Accessibility (WCAG 2.1 AA)
               </span>
-              <Badge variant="indigo" size="sm">Verified Compliant</Badge>
+              <Badge variant="indigo" size="sm">Compliant</Badge>
             </div>
 
-            <div className="space-y-1.5 text-[11px]">
-              <div className="flex items-center justify-between p-2 rounded bg-stone-50 dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800">
-                <span>Color Contrast Ratio</span>
-                <span className="font-mono font-bold text-emerald-600">≥ 4.5:1 (Passed)</span>
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between p-2 rounded-lg bg-surface-raised border border-hairline">
+                <span className="text-muted">Color contrast</span>
+                <span className="font-medium text-emerald-500">≥ 4.5:1 passed</span>
               </div>
-              <div className="flex items-center justify-between p-2 rounded bg-stone-50 dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800">
-                <span>Screen-Reader Live Region</span>
-                <span className="font-mono text-stone-500 truncate max-w-[200px]">
-                  {announcerMessage || 'Listening for updates...'}
+              <div className="flex items-center justify-between p-2 rounded-lg bg-surface-raised border border-hairline">
+                <span className="text-muted">Screen-reader region</span>
+                <span className="text-muted truncate max-w-[200px]">
+                  {announcerMessage || 'Active'}
                 </span>
               </div>
             </div>
 
-            {/* Keyboard Shortcuts Table */}
-            <div className="p-3 bg-stone-50 dark:bg-zinc-900/60 rounded-lg border border-stone-200 dark:border-zinc-800 space-y-1.5">
-              <span className="font-semibold text-stone-800 dark:text-zinc-200 flex items-center gap-1">
-                <Keyboard className="w-3.5 h-3.5 text-stone-500" />
-                Full Keyboard Navigation Guide
+            {/* Shortcuts */}
+            <div className="p-3 bg-surface-raised rounded-lg border border-hairline space-y-2">
+              <span className="font-medium text-foreground flex items-center gap-1">
+                <Keyboard className="w-3.5 h-3.5 text-muted" />
+                Keyboard shortcuts
               </span>
-              <div className="grid grid-cols-2 gap-1.5 text-[11px] font-mono">
-                <div><kbd className="px-1 bg-stone-200 dark:bg-zinc-700 rounded">⌘ / Ctrl + K</kbd> Command Palette</div>
-                <div><kbd className="px-1 bg-stone-200 dark:bg-zinc-700 rounded">ESC</kbd> Close Modals / Drawers</div>
-                <div><kbd className="px-1 bg-stone-200 dark:bg-zinc-700 rounded">Alt + 1..6</kbd> Direct Tab Jumps</div>
-                <div><kbd className="px-1 bg-stone-200 dark:bg-zinc-700 rounded">Tab / Shift+Tab</kbd> Focus Traps</div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div><kbd className="px-1.5 py-0.5 bg-surface border border-hairline rounded text-[11px]">⌘ / Ctrl + K</kbd> Command palette</div>
+                <div><kbd className="px-1.5 py-0.5 bg-surface border border-hairline rounded text-[11px]">ESC</kbd> Close drawers</div>
+                <div><kbd className="px-1.5 py-0.5 bg-surface border border-hairline rounded text-[11px]">Alt + 1..6</kbd> Direct tab jumps</div>
+                <div><kbd className="px-1.5 py-0.5 bg-surface border border-hairline rounded text-[11px]">Tab</kbd> Focus trap navigation</div>
               </div>
             </div>
           </div>
 
-          {/* Section 3: Performance & State Persistence */}
+          {/* Section 3: Performance */}
           <div className="space-y-3">
-            <div className="flex items-center justify-between border-b border-stone-200 dark:border-zinc-800 pb-1.5">
-              <span className="font-bold uppercase tracking-wider text-stone-700 dark:text-zinc-300 flex items-center gap-1.5">
-                <Zap className="w-3.5 h-3.5 text-amber-600" />
-                3. Efficiency & State Persistence
+            <div className="flex items-center justify-between border-b border-hairline pb-2">
+              <span className="font-semibold text-foreground flex items-center gap-1.5">
+                <Zap className="w-3.5 h-3.5 text-muted" />
+                Performance & storage
               </span>
-              <Badge variant="amber" size="sm">Sub-2ms Latency</Badge>
+              <Badge variant="stone" size="sm">Sub-2ms</Badge>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 text-[11px]">
-              <div className="p-2.5 rounded bg-stone-50 dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800">
-                <div className="text-stone-600 dark:text-zinc-400">LocalStorage Footprint</div>
-                <div className="font-mono font-bold text-stone-800 dark:text-zinc-200">
-                  {(storageBytes / 1024).toFixed(1)} KB (v1 Sync)
+            <div className="grid grid-cols-2 gap-2">
+              <div className="p-2.5 rounded-lg bg-surface-raised border border-hairline">
+                <div className="text-muted text-[11px]">LocalStorage footprint</div>
+                <div className="font-medium text-foreground text-xs tabular-nums mt-0.5">
+                  {(storageBytes / 1024).toFixed(1)} KB (v1 sync)
                 </div>
               </div>
-              <div className="p-2.5 rounded bg-stone-50 dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800">
-                <div className="text-stone-600 dark:text-zinc-400">Calculation Engine</div>
-                <div className="font-mono font-bold text-emerald-600">Memoized React 18+</div>
+              <div className="p-2.5 rounded-lg bg-surface-raised border border-hairline">
+                <div className="text-muted text-[11px]">Calculation engine</div>
+                <div className="font-medium text-emerald-500 text-xs mt-0.5">Memoized React 18+</div>
               </div>
             </div>
 
@@ -186,7 +184,7 @@ export const AuditDrawer: React.FC = () => {
               icon={<RotateCcw className="w-3.5 h-3.5" />}
               className="w-full"
             >
-              Reset All Data to Factory Judge Presets
+              Reset data to factory presets
             </Button>
           </div>
         </div>

@@ -1,14 +1,14 @@
 import React, { useMemo } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { Card } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
+import { StatusDot } from '../../components/ui/StatusDot';
 import { formatCurrency } from '../../utils/formatters';
 import { WelcomeHero } from './WelcomeHero';
 import { DashboardStatTiles } from './DashboardStatTiles';
 import { AdaptiveWeddingWidget } from './AdaptiveWeddingWidget';
 import { AdaptiveBirthdayWidget } from './AdaptiveBirthdayWidget';
 import { AdaptiveCommunityWidget } from './AdaptiveCommunityWidget';
-import { AlertTriangle, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export const DashboardTab: React.FC = () => {
   const { state, currency, setActiveTab } = useWorkspace();
@@ -51,38 +51,38 @@ export const DashboardTab: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <h2 className="sr-only">Executive Bento Overview</h2>
 
-      {/* Warm Greeting Hero Moment */}
+      {/* Greeting Header */}
       <WelcomeHero
         taskCompletionPct={metrics.taskCompletionPct}
         signedVendors={metrics.signedVendors}
         totalVendors={state.vendors.length}
       />
 
-      {/* Over Budget Alert Banner if applicable */}
+      {/* Over Budget Alert if applicable */}
       {metrics.isOverBudget && (
-        <div className="flex items-center justify-between p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/80 rounded-2xl text-xs text-rose-900 dark:text-rose-300">
-          <div className="flex items-center gap-2.5">
-            <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
+        <div className="flex items-center justify-between p-3.5 bg-red-500/10 border border-red-500/20 rounded-xl text-xs text-red-600 dark:text-red-400">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
             <span>
-              <strong>Budget Variance Alert:</strong> Contracted obligations exceed target by{' '}
-              <strong className="font-mono tabular-nums">
+              <strong>Budget variance:</strong> Contracted obligations exceed target by{' '}
+              <strong className="tabular-nums">
                 {formatCurrency(metrics.totalActual - state.event.targetBudget, currency)}
               </strong>.
             </span>
           </div>
           <button
             onClick={() => setActiveTab('budget')}
-            className="underline font-semibold hover:text-rose-700 text-xs shrink-0 ml-2"
+            className="text-xs font-medium text-red-600 dark:text-red-400 hover:underline shrink-0 ml-2"
           >
-            Review Allocations →
+            Review allocations →
           </button>
         </div>
       )}
 
-      {/* 4 Focused Stat Tiles with generous spacing */}
+      {/* Single Stats Strip with Thin Dividers */}
       <DashboardStatTiles
         targetBudget={state.event.targetBudget}
         totalPaid={metrics.totalPaid}
@@ -95,61 +95,59 @@ export const DashboardTab: React.FC = () => {
         currency={currency}
       />
 
-      {/* 12-Column Responsive Bento Main Grid */}
-      <div className="grid grid-cols-12 gap-6">
-        {/* Adaptive Widget based on Event Mode */}
+      {/* 2-Column Responsive Layout (8/4 Ratio) */}
+      <div className="grid grid-cols-12 gap-6 items-start">
+        {/* Left Column (8 cols): Modality Specific Itinerary / Experience Customizer */}
         {state.event.type === 'wedding' && <AdaptiveWeddingWidget />}
         {state.event.type === 'birthday' && <AdaptiveBirthdayWidget />}
         {state.event.type === 'community' && <AdaptiveCommunityWidget />}
 
-        {/* Upcoming Payment Milestones Card */}
-        <Card className="col-span-12 lg:col-span-5 p-5 sm:p-6 space-y-4 rounded-2xl border-stone-200 dark:border-zinc-800">
-          <div className="flex items-center justify-between border-b border-stone-100 dark:border-zinc-800 pb-3.5">
+        {/* Right Column (4 cols): Upcoming Payment Milestones Card */}
+        <Card className="col-span-12 lg:col-span-4 p-5 sm:p-6 space-y-4 rounded-xl border border-stone-200/80 dark:border-white/[0.08]">
+          <div className="flex items-center justify-between border-b border-stone-200/80 dark:border-white/[0.08] pb-3.5">
             <div>
-              <h3 className="text-base font-serif font-semibold text-[#18181B] dark:text-[#FAFAFA]">
+              <h3 className="text-base font-semibold tracking-tight text-[#111113] dark:text-[#EDEDEF]">
                 Upcoming Milestones
               </h3>
-              <p className="text-xs text-stone-500 dark:text-zinc-400">
+              <p className="text-xs text-stone-500 dark:text-[#8B8B93] mt-0.5">
                 Next vendor tranche release deadlines
               </p>
             </div>
             <button
               onClick={() => setActiveTab('budget')}
-              className="inline-flex items-center gap-1 text-xs text-amber-700 dark:text-amber-400 hover:text-amber-800 font-medium transition-colors"
+              className="inline-flex items-center gap-1 text-xs text-[#6E79F5] hover:text-[#5D68E2] transition-colors"
             >
-              <span>View all in Budget</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <span>View all</span>
+              <ArrowRight className="w-3.5 h-3.5 stroke-[1.5]" />
             </button>
           </div>
 
-          <div className="space-y-3">
-            {state.paymentMilestones.slice(0, 3).map((pm) => (
+          <div className="space-y-2">
+            {state.paymentMilestones.slice(0, 4).map((pm) => (
               <div
                 key={pm.id}
-                className="flex items-start justify-between p-3.5 rounded-xl border border-stone-200/80 dark:border-zinc-800 bg-stone-50/50 dark:bg-zinc-900/40 text-xs transition-colors hover:border-amber-500/30 gap-3"
+                className="flex items-start justify-between p-3 rounded-lg border border-stone-200/80 dark:border-white/[0.08] bg-stone-50/30 dark:bg-white/[0.02] text-xs transition-colors hover:border-stone-300 dark:hover:border-white/[0.14] gap-3"
               >
                 <div className="space-y-0.5 min-w-0 flex-1">
-                  <div className="font-semibold text-stone-900 dark:text-white leading-snug">
+                  <div className="font-medium text-[#111113] dark:text-[#EDEDEF] leading-snug truncate">
                     {pm.title}
                   </div>
-                  <div className="text-[11px] text-stone-500 dark:text-zinc-400 font-medium">
+                  <div className="text-[11px] text-stone-500 dark:text-[#8B8B93] truncate">
                     {pm.vendorName}
                   </div>
-                  <div className="text-[11px] text-stone-600 dark:text-zinc-400 font-mono tabular-nums">
-                    Due: {formatFriendlyDate(pm.dueDate)}
+                  <div className="text-[11px] text-stone-400 dark:text-zinc-500 tabular-nums">
+                    Due {formatFriendlyDate(pm.dueDate)}
                   </div>
                 </div>
 
                 <div className="text-right shrink-0 space-y-1">
-                  <div className="font-mono font-bold text-stone-900 dark:text-white text-xs tabular-nums">
+                  <div className="font-medium text-[#111113] dark:text-[#EDEDEF] text-xs tabular-nums">
                     {formatCurrency(pm.amount, currency)}
                   </div>
-                  <Badge
-                    variant={pm.status === 'paid' ? 'emerald' : pm.status === 'overdue' ? 'rose' : 'amber'}
-                    size="sm"
-                  >
-                    {pm.status.toUpperCase()}
-                  </Badge>
+                  <StatusDot
+                    status={pm.status === 'paid' ? 'green' : pm.status === 'overdue' ? 'red' : 'amber'}
+                    label={pm.status.charAt(0).toUpperCase() + pm.status.slice(1)}
+                  />
                 </div>
               </div>
             ))}

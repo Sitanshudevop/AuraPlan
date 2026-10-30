@@ -5,9 +5,10 @@ import { ThemeConceptCard } from './ThemeConceptCard';
 import { PersonalizedActivitiesView, PersonalizedActivity } from './PersonalizedActivitiesView';
 import { generateThemeIdea } from '../../services/geminiService';
 import { getLocalThemeIdea } from '../../services/deterministicFallback';
+import { PageHeader } from '../../components/ui/PageHeader';
 import { Button } from '../../components/ui/Button';
 import { logger } from '../../utils/logger';
-import { Sparkles, RefreshCw, Loader2 } from 'lucide-react';
+import { RefreshCw, Loader2, GitCompare } from 'lucide-react';
 
 export const IdeationTab: React.FC = () => {
   const {
@@ -105,35 +106,29 @@ export const IdeationTab: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Top Header & Ripple Trigger */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div>
-          <h2 className="text-base font-bold text-[#18181B] dark:text-[#FAFAFA] tracking-tight">
-            Personalized AI Ideation Studio & Theme Engine
-          </h2>
-          <p className="text-xs text-stone-500 dark:text-zinc-400">
-            Synthesizes hex palettes, decor concepts, and experiential activity moments with 1-click plan injection
-          </p>
-        </div>
-
-        <Button
-          variant="primary"
-          size="sm"
-          onClick={() => setCopilotOpen(true)}
-          icon={<Sparkles className="w-3.5 h-3.5 text-indigo-400" />}
-        >
-          Open "What-If" Ripple Simulator
-        </Button>
-      </div>
+      <PageHeader
+        title="Personalized AI Ideation Studio & Theme Engine"
+        subtitle="Synthesizes color swatches, culinary pairings, and experiential moments with 1-click plan injection"
+        actions={
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setCopilotOpen(true)}
+            icon={<GitCompare />}
+          >
+            Open "What-If" Ripple Simulator
+          </Button>
+        }
+      />
 
       {/* Generator Prompt Bar */}
-      <div className="flex gap-2 p-3 bg-stone-100/70 dark:bg-zinc-900/60 rounded-xl border border-stone-200 dark:border-zinc-800">
+      <div className="flex gap-2 p-2 bg-stone-50/50 dark:bg-white/[0.02] rounded-xl border border-stone-200/80 dark:border-white/[0.08]">
         <input
           type="text"
           value={vibePrompt}
           onChange={(e) => setVibePrompt(e.target.value)}
-          placeholder="Describe your design preference, seasonal mood, or cultural nuances..."
-          className="flex-1 text-xs px-3 py-2 bg-white dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md focus:outline-none dark:text-white"
+          placeholder="Describe your design preference, seasonal vibe, or cultural nuance..."
+          className="flex-1 text-xs px-3 py-2 bg-white dark:bg-[#111113] border border-stone-200/80 dark:border-white/[0.08] rounded-lg focus:outline-none focus-visible:ring-1 focus-visible:ring-[#6E79F5]"
         />
         <Button
           variant="secondary"
@@ -148,33 +143,19 @@ export const IdeationTab: React.FC = () => {
 
       {/* Render AI Concept Card */}
       {loading && !idea ? (
-        <div className="py-20 flex flex-col items-center justify-center space-y-3">
-          <Loader2 className="w-7 h-7 animate-spin text-stone-800 dark:text-zinc-200" />
-          <p className="text-xs font-mono text-stone-500">
-            Synthesizing color swatches, culinary pairings, and experiential moments...
-          </p>
+        <div className="py-20 flex flex-col items-center justify-center space-y-2 text-xs text-stone-500 dark:text-[#8B8B93]">
+          <Loader2 className="w-6 h-6 animate-spin text-[#6E79F5]" />
+          <p>Synthesizing color palettes, decor concepts, and experiential moments...</p>
         </div>
       ) : idea ? (
-        <div className="relative">
-          {loading && (
-            <div className="absolute inset-0 bg-stone-50/60 dark:bg-zinc-950/60 backdrop-blur-[1px] flex items-center justify-center rounded-2xl z-10">
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-zinc-900 border border-stone-200 dark:border-zinc-800 rounded-full shadow-sm">
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-500" />
-                <span className="text-xs font-medium text-stone-700 dark:text-zinc-300">
-                  Refreshing theme concepts...
-                </span>
-              </div>
-            </div>
-          )}
-          <ThemeConceptCard
-            idea={idea}
-            currency={currency}
-            onAddToPlan={handleAddToPlan}
-          />
-        </div>
+        <ThemeConceptCard
+          idea={idea}
+          currency={currency}
+          onAddToPlan={handleAddToPlan}
+        />
       ) : null}
 
-      {/* Curated Experiential Moments & Activities */}
+      {/* Curated Experiential Moments */}
       <PersonalizedActivitiesView
         eventType={state.event.type}
         currency={currency}

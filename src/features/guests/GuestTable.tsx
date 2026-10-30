@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { Guest, RsvpStatus, GuestGroup, DietaryTag, ZoneCapacity } from '../../types/guest';
 import { Badge } from '../../components/ui/Badge';
-import { Trash2, Search } from 'lucide-react';
+import { Select, SelectOption } from '../../components/ui/Select';
+import { Trash2, Search, X } from 'lucide-react';
 
 interface GuestTableProps {
   guests: Guest[];
@@ -9,6 +10,37 @@ interface GuestTableProps {
   onUpdateGuest: (id: string, partial: Partial<Guest>) => void;
   onDeleteGuest: (id: string) => void;
 }
+
+const rsvpOptions: SelectOption[] = [
+  { value: 'confirmed', label: 'Confirmed', dotColor: 'bg-emerald-500' },
+  { value: 'pending', label: 'Pending', dotColor: 'bg-amber-500' },
+  { value: 'declined', label: 'Declined', dotColor: 'bg-rose-500' },
+];
+
+const dietaryOptions: SelectOption[] = [
+  { value: 'regular', label: 'Regular' },
+  { value: 'vegetarian', label: 'Vegetarian', dotColor: 'bg-emerald-500' },
+  { value: 'jain', label: 'Jain', dotColor: 'bg-amber-500' },
+  { value: 'vegan', label: 'Vegan', dotColor: 'bg-teal-500' },
+  { value: 'gluten_free', label: 'Gluten-free', dotColor: 'bg-indigo-500' },
+  { value: 'nut_free', label: 'Nut-free', dotColor: 'bg-rose-500' },
+];
+
+const getGroupBadge = (group: GuestGroup) => {
+  if (group === 'vip' || group === 'speaker_sponsor') return 'indigo';
+  if (group === 'bride') return 'amber';
+  return 'stone';
+};
+
+const formatGroupName = (group: GuestGroup): string => {
+  switch (group) {
+    case 'bride': return 'Bride side';
+    case 'groom': return 'Groom side';
+    case 'vip': return 'VIP guest';
+    case 'speaker_sponsor': return 'Speaker / sponsor';
+    default: return 'General attendee';
+  }
+};
 
 export const GuestTable: React.FC<GuestTableProps> = ({
   guests,
@@ -18,6 +50,12 @@ export const GuestTable: React.FC<GuestTableProps> = ({
 }) => {
   const [search, setSearch] = useState('');
   const [rsvpFilter, setRsvpFilter] = useState<string>('all');
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
+  const zoneOptions: SelectOption[] = useMemo(() => [
+    { value: '', label: 'Unassigned' },
+    ...zones.map((z) => ({ value: z.id, label: z.name })),
+  ], [zones]);
 
   const filtered = useMemo(() => {
     const query = search.toLowerCase();
@@ -28,37 +66,30 @@ export const GuestTable: React.FC<GuestTableProps> = ({
     });
   }, [guests, search, rsvpFilter]);
 
-  const getGroupVariant = (group: GuestGroup) => {
-    if (group === 'vip' || group === 'speaker_sponsor') return 'indigo';
-    if (group === 'bride') return 'amber';
-    if (group === 'groom') return 'stone';
-    return 'stone';
-  };
-
   return (
-    <div className="bg-white dark:bg-[#121215] border border-stone-200 dark:border-zinc-800 rounded-xl overflow-hidden space-y-2">
-      {/* Search & Filter Bar */}
-      <div className="p-3 border-b border-stone-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-2">
-        <div className="relative w-full sm:w-64">
-          <Search className="w-3.5 h-3.5 text-stone-400 absolute left-2.5 top-2.5" />
+    <div className="bg-surface border border-hairline rounded-xl overflow-hidden">
+      {/* Search & Filter Toolbar */}
+      <div className="p-3 sm:px-4 border-b border-hairline flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-surface">
+        <div className="relative flex-1 max-w-xs">
+          <Search className="w-3.5 h-3.5 text-muted absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search attendees..."
-            className="w-full text-xs pl-8 pr-3 py-1.5 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md focus:outline-none dark:text-white"
+            className="w-full text-xs pl-8 pr-3 py-1.5 bg-surface-raised border border-hairline rounded-md text-foreground placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent"
           />
         </div>
 
-        <div className="flex items-center gap-1 overflow-x-auto w-full sm:w-auto">
+        <div className="flex items-center gap-1 overflow-x-auto">
           {['all', 'confirmed', 'pending', 'declined'].map((status) => (
             <button
               key={status}
               onClick={() => setRsvpFilter(status)}
-              className={`text-[11px] px-2.5 py-1 rounded font-medium uppercase tracking-wider ${
+              className={`text-xs px-2.5 py-1 rounded-md font-medium transition-colors capitalize ${
                 rsvpFilter === status
-                  ? 'bg-stone-900 text-white dark:bg-white dark:text-stone-900'
-                  : 'bg-stone-100 text-stone-600 dark:bg-zinc-800 dark:text-zinc-400 hover:bg-stone-200'
+                  ? 'bg-foreground text-background'
+                  : 'text-muted hover:text-foreground hover:bg-stone-100 dark:hover:bg-white/[0.04]'
               }`}
             >
               {status}
@@ -70,104 +101,112 @@ export const GuestTable: React.FC<GuestTableProps> = ({
       {/* Guest Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs border-collapse">
-          <thead className="bg-stone-50 dark:bg-zinc-900/60 border-b border-stone-200 dark:border-zinc-800 text-[11px] font-semibold uppercase tracking-wider text-stone-500 dark:text-zinc-400">
+          <thead className="bg-surface-raised border-b border-hairline text-xs font-medium text-muted sticky top-0">
             <tr>
-              <th className="py-2.5 px-3">Guest Name</th>
-              <th className="py-2.5 px-3">Group / Affiliation</th>
-              <th className="py-2.5 px-3">RSVP Status</th>
-              <th className="py-2.5 px-3">Dietary Tag</th>
-              <th className="py-2.5 px-3">Zone / Table Assignment</th>
-              <th className="py-2.5 px-3 text-right">Remove</th>
+              <th className="py-2.5 px-4 font-medium">Guest name</th>
+              <th className="py-2.5 px-3 font-medium">Group</th>
+              <th className="py-2.5 px-3 font-medium">RSVP status</th>
+              <th className="py-2.5 px-3 font-medium">Dietary tag</th>
+              <th className="py-2.5 px-3 font-medium min-w-[220px]">Zone / table assignment</th>
+              <th className="py-2.5 px-4 font-medium text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-stone-100 dark:divide-zinc-800/60">
+          <tbody className="divide-y divide-hairline">
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-8 text-center text-xs text-stone-600 dark:text-zinc-400">
-                  No attendees matching this filter.
+                <td colSpan={6} className="py-12 text-center text-xs text-muted">
+                  No guests matching this filter.
                 </td>
               </tr>
             ) : (
               filtered.map((guest) => (
-              <tr key={guest.id} className="hover:bg-stone-50/50 dark:hover:bg-zinc-900/30">
-                <td className="py-3 px-3">
-                  <div className="font-semibold text-stone-900 dark:text-white">
-                    {guest.name}
-                  </div>
-                  <label className="flex items-center gap-1 text-[10px] text-stone-500 dark:text-zinc-400 mt-0.5">
-                    <span>Plus-ones:</span>
-                    <input
-                      type="number"
-                      min="0"
-                      max="10"
-                      value={guest.plusOnes}
-                      onChange={(e) => onUpdateGuest(guest.id, { plusOnes: Math.max(0, Number(e.target.value)) })}
-                      className="w-12 px-1 py-0.5 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded font-mono text-xs dark:text-white"
-                      aria-label={`Plus-ones for ${guest.name}`}
+                <tr key={guest.id} className="h-14 hover:bg-stone-50/50 dark:hover:bg-white/[0.02] transition-colors">
+                  <td className="py-2 px-4">
+                    <div className="font-medium text-foreground">{guest.name}</div>
+                    <div className="flex items-center gap-1.5 text-[11px] text-muted mt-0.5">
+                      <span>Plus-ones:</span>
+                      <input
+                        type="number"
+                        min="0"
+                        max="10"
+                        value={guest.plusOnes}
+                        onChange={(e) => onUpdateGuest(guest.id, { plusOnes: Math.max(0, Number(e.target.value)) })}
+                        className="w-10 px-1 py-0.5 bg-surface-raised border border-hairline rounded text-xs tabular-nums text-foreground focus:outline-none"
+                        aria-label={`Plus-ones for ${guest.name}`}
+                      />
+                    </div>
+                  </td>
+
+                  <td className="py-2 px-3">
+                    <Badge variant={getGroupBadge(guest.group)} size="sm">
+                      {formatGroupName(guest.group)}
+                    </Badge>
+                  </td>
+
+                  <td className="py-2 px-3">
+                    <Select
+                      value={guest.rsvp}
+                      onChange={(val) => onUpdateGuest(guest.id, { rsvp: val as RsvpStatus })}
+                      options={rsvpOptions}
+                      variant="compact"
+                      ariaLabel={`RSVP status for ${guest.name}`}
                     />
-                  </label>
-                </td>
+                  </td>
 
-                <td className="py-3 px-3">
-                  <Badge variant={getGroupVariant(guest.group)} size="sm">
-                    {guest.group.replace('_', ' ').toUpperCase()}
-                  </Badge>
-                </td>
+                  <td className="py-2 px-3">
+                    <Select
+                      value={guest.dietary}
+                      onChange={(val) => onUpdateGuest(guest.id, { dietary: val as DietaryTag })}
+                      options={dietaryOptions}
+                      variant="compact"
+                      ariaLabel={`Dietary preference for ${guest.name}`}
+                    />
+                  </td>
 
-                <td className="py-3 px-3">
-                  <select
-                    value={guest.rsvp}
-                    onChange={(e) => onUpdateGuest(guest.id, { rsvp: e.target.value as RsvpStatus })}
-                    className="text-xs bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded px-2 py-0.5"
-                  >
-                    <option value="confirmed">Confirmed</option>
-                    <option value="pending">Pending</option>
-                    <option value="declined">Declined</option>
-                  </select>
-                </td>
+                  <td className="py-2 px-3 min-w-[220px]">
+                    <Select
+                      value={guest.tableOrZoneId || ''}
+                      onChange={(val) => onUpdateGuest(guest.id, { tableOrZoneId: val || undefined })}
+                      options={zoneOptions}
+                      variant="ghost"
+                      ariaLabel={`Zone assignment for ${guest.name}`}
+                      className="w-full max-w-[260px]"
+                    />
+                  </td>
 
-                <td className="py-3 px-3">
-                  <select
-                    value={guest.dietary}
-                    onChange={(e) => onUpdateGuest(guest.id, { dietary: e.target.value as DietaryTag })}
-                    className="text-xs bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded px-2 py-0.5"
-                  >
-                    <option value="regular">Regular</option>
-                    <option value="vegetarian">Vegetarian</option>
-                    <option value="jain">Jain</option>
-                    <option value="vegan">Vegan</option>
-                    <option value="gluten_free">Gluten-Free</option>
-                    <option value="nut_free">Nut-Free</option>
-                  </select>
-                </td>
-
-                <td className="py-3 px-3">
-                  <select
-                    value={guest.tableOrZoneId || ''}
-                    onChange={(e) => onUpdateGuest(guest.id, { tableOrZoneId: e.target.value || undefined })}
-                    className="text-xs bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded px-2 py-0.5 max-w-[180px] truncate"
-                  >
-                    <option value="">-- Unassigned --</option>
-                    {zones.map((z) => (
-                      <option key={z.id} value={z.id}>
-                        {z.name}
-                      </option>
-                    ))}
-                  </select>
-                </td>
-
-                <td className="py-3 px-3 text-right">
-                  <button
-                    onClick={() => onDeleteGuest(guest.id)}
-                    className="p-1 text-stone-400 hover:text-rose-600 transition-colors"
-                    title="Remove guest from roster"
-                    aria-label={`Remove ${guest.name}`}
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </td>
-              </tr>
-            ))
+                  <td className="py-2 px-4 text-right">
+                    {confirmDeleteId === guest.id ? (
+                      <div className="inline-flex items-center gap-1">
+                        <button
+                          onClick={() => {
+                            onDeleteGuest(guest.id);
+                            setConfirmDeleteId(null);
+                          }}
+                          className="px-2 py-1 text-xs bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 rounded-md font-medium transition-colors"
+                        >
+                          Delete
+                        </button>
+                        <button
+                          onClick={() => setConfirmDeleteId(null)}
+                          className="p-1 text-muted hover:text-foreground rounded-md transition-colors"
+                          title="Cancel"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setConfirmDeleteId(guest.id)}
+                        className="p-1.5 text-muted hover:text-rose-500 rounded-md transition-colors"
+                        title="Remove guest"
+                        aria-label={`Remove ${guest.name}`}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))
             )}
           </tbody>
         </table>

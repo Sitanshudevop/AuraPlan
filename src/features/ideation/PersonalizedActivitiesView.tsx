@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { EventType, Currency } from '../../types/event';
 import { formatCurrency } from '../../utils/formatters';
 import { Button } from '../../components/ui/Button';
-import { Badge } from '../../components/ui/Badge';
 import { MODALITY_ACTIVITIES, PersonalizedActivity } from '../../data/modalityActivities';
-import { Sparkles, CalendarPlus, Wallet, Check, Clock, MapPin } from 'lucide-react';
+import { Check, CalendarPlus, Wallet } from 'lucide-react';
 
 export type { PersonalizedActivity };
 
@@ -37,20 +36,21 @@ export const PersonalizedActivitiesView: React.FC<Props> = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between pb-1 border-b border-stone-200/80 dark:border-white/[0.08]">
         <div>
-          <h3 className="text-base font-serif font-bold text-[#18181B] dark:text-[#FAFAFA] flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-amber-500" />
-            <span>Curated Experiential Moments & Personalized Itinerary</span>
+          <h3 className="text-base font-semibold tracking-tight text-[#111113] dark:text-[#EDEDEF]">
+            Curated experiential moments & personalized itinerary
           </h3>
-          <p className="text-xs text-stone-500 dark:text-zinc-400 mt-0.5">
-            Modality-tailored creative highlights with 1-click injection into your Run-of-Show and Budget
+          <p className="text-xs text-stone-500 dark:text-[#8B8B93] mt-0.5">
+            Add experiential moments directly into your run-of-show and budget ledger
           </p>
         </div>
-        <Badge variant="indigo" size="sm">{activities.length} Ideas Available</Badge>
+        <span className="text-xs text-stone-400 dark:text-zinc-500">
+          {activities.length} ideas available
+        </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {activities.map((act) => {
           const isTimelineAdded = addedTimelineIds.has(act.id);
           const isBudgetAdded = addedBudgetIds.has(act.id);
@@ -58,52 +58,40 @@ export const PersonalizedActivitiesView: React.FC<Props> = ({
           return (
             <div
               key={act.id}
-              className="p-5 bg-white dark:bg-zinc-900/60 rounded-2xl border border-stone-200 dark:border-zinc-800 space-y-3.5 shadow-xs hover:border-amber-500/30 transition-all flex flex-col justify-between"
+              className="p-5 bg-white dark:bg-[#111113] rounded-xl border border-stone-200/80 dark:border-white/[0.08] hover:border-stone-300 dark:hover:border-white/[0.14] transition-colors space-y-3 flex flex-col justify-between text-xs"
             >
-              <div className="space-y-2">
-                {/* Category Badge on its own line above title */}
-                <div className="flex items-center justify-between">
-                  <Badge variant="stone" size="sm" className="uppercase font-mono text-[10px]">
-                    {act.category}
-                  </Badge>
-                  <div className="flex items-center gap-2 text-[11px] text-stone-600 dark:text-zinc-400 font-mono tabular-nums">
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3 text-stone-400" />
-                      {act.durationMinutes} mins
-                    </span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-stone-400" />
-                      {act.location}
-                    </span>
-                  </div>
+              <div className="space-y-1.5">
+                {/* Category as muted text line above title */}
+                <div className="flex items-center justify-between text-xs text-stone-400 dark:text-zinc-500">
+                  <span className="capitalize">{act.category}</span>
+                  <span className="tabular-nums">{act.durationMinutes} mins · {act.location}</span>
                 </div>
 
                 {/* Title & Description */}
                 <div>
-                  <h4 className="text-sm font-semibold text-stone-900 dark:text-white leading-snug">
+                  <h4 className="text-sm font-medium text-[#111113] dark:text-[#EDEDEF] leading-snug">
                     {act.title}
                   </h4>
-                  <p className="text-xs text-stone-600 dark:text-zinc-400 leading-relaxed mt-1.5">
+                  <p className="text-xs text-stone-500 dark:text-[#8B8B93] leading-relaxed mt-1">
                     {act.description}
                   </p>
                 </div>
 
                 {act.culturalNote && (
-                  <div className="text-[11px] text-amber-800 dark:text-amber-300 bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/20 px-2.5 py-1.5 rounded-xl leading-relaxed">
-                    ✦ {act.culturalNote}
-                  </div>
+                  <p className="text-[11px] text-stone-600 dark:text-[#8B8B93] bg-stone-50/80 dark:bg-white/[0.03] border border-stone-200/60 dark:border-white/[0.04] p-2 rounded-lg leading-relaxed">
+                    Note: {act.culturalNote}
+                  </p>
                 )}
               </div>
 
-              {/* Bottom Row: POC on Left, Price + Action Buttons on Right */}
-              <div className="pt-3 border-t border-stone-100 dark:border-zinc-800/80 flex flex-wrap items-center justify-between gap-3">
-                <span className="text-[11px] text-stone-600 dark:text-zinc-400 font-medium truncate">
+              {/* Bottom Row: Lead on Left, Price + Actions on Right */}
+              <div className="pt-3 border-t border-stone-100 dark:border-white/[0.04] flex flex-wrap items-center justify-between gap-3">
+                <span className="text-xs text-stone-400 dark:text-zinc-500 truncate">
                   Lead: {act.poc}
                 </span>
 
                 <div className="flex items-center gap-3 ml-auto">
-                  <span className="text-xs font-mono font-bold text-stone-900 dark:text-white tabular-nums">
+                  <span className="text-xs font-semibold tabular-nums text-[#111113] dark:text-[#EDEDEF]">
                     {formatCurrency(act.estimatedCost, currency)}
                   </span>
 
@@ -113,9 +101,9 @@ export const PersonalizedActivitiesView: React.FC<Props> = ({
                       size="xs"
                       onClick={() => handleAddTimeline(act)}
                       disabled={isTimelineAdded}
-                      icon={isTimelineAdded ? <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> : <CalendarPlus className="w-3 h-3" />}
+                      icon={isTimelineAdded ? <Check className="w-3 h-3 text-emerald-500" /> : <CalendarPlus className="w-3 h-3 stroke-[1.5]" />}
                     >
-                      {isTimelineAdded ? 'In Run-of-Show' : '+ Run-of-Show'}
+                      {isTimelineAdded ? 'In run-of-show' : '+ Run-of-show'}
                     </Button>
 
                     <Button
@@ -123,9 +111,9 @@ export const PersonalizedActivitiesView: React.FC<Props> = ({
                       size="xs"
                       onClick={() => handleAddBudget(act)}
                       disabled={isBudgetAdded}
-                      icon={isBudgetAdded ? <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> : <Wallet className="w-3 h-3" />}
+                      icon={isBudgetAdded ? <Check className="w-3 h-3 text-emerald-500" /> : <Wallet className="w-3 h-3 stroke-[1.5]" />}
                     >
-                      {isBudgetAdded ? 'In Budget' : '+ Budget'}
+                      {isBudgetAdded ? 'In budget' : '+ Budget'}
                     </Button>
                   </div>
                 </div>

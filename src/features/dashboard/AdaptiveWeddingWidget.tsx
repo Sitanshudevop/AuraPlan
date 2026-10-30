@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { Card } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
 import { Calendar, Users, MapPin, CheckCircle2, Circle, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from 'lucide-react';
 
 export const AdaptiveWeddingWidget: React.FC = () => {
@@ -40,34 +39,34 @@ export const AdaptiveWeddingWidget: React.FC = () => {
   const displayedRituals = showAllRituals ? rituals : rituals.slice(0, 4);
 
   return (
-    <Card className="col-span-12 lg:col-span-7 p-5 sm:p-6 space-y-5 rounded-2xl border-stone-200 dark:border-zinc-800">
-      <div className="flex items-center justify-between border-b border-stone-100 dark:border-zinc-800 pb-3.5">
+    <Card className="col-span-12 lg:col-span-8 p-5 sm:p-6 space-y-5 rounded-xl border border-stone-200/80 dark:border-white/[0.08]">
+      <div className="flex items-center justify-between border-b border-stone-200/80 dark:border-white/[0.08] pb-3.5">
         <div>
-          <h3 className="text-base font-serif font-semibold text-[#18181B] dark:text-[#FAFAFA]">
+          <h3 className="text-base font-semibold tracking-tight text-[#111113] dark:text-[#EDEDEF]">
             Wedding Itinerary & Cultural Ceremonies
           </h3>
-          <p className="text-xs text-stone-500 dark:text-zinc-400 mt-0.5">
+          <p className="text-xs text-stone-500 dark:text-[#8B8B93] mt-0.5">
             Multi-day ceremony sequence with VIP family traditions
           </p>
         </div>
-        <Badge variant="indigo" size="sm">
-          {state.event.subEvents.length} Ceremonies
-        </Badge>
+        <span className="text-xs text-stone-400 dark:text-zinc-500">
+          {state.event.subEvents.length} ceremonies
+        </span>
       </div>
 
       {/* Sub-Event Selector Tabs with Scroll Controls */}
       <div className="relative flex items-center">
         <button
           onClick={() => scrollTabs('left')}
-          className="p-1 rounded-lg text-stone-400 hover:text-stone-700 dark:hover:text-zinc-200 hover:bg-stone-100 dark:hover:bg-zinc-800 shrink-0 mr-1 transition-colors"
+          className="p-1 rounded-md text-stone-400 hover:text-stone-700 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] shrink-0 mr-1 transition-colors"
           aria-label="Scroll ceremonies left"
         >
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronLeft className="w-4 h-4 stroke-[1.5]" />
         </button>
 
         <div
           ref={tabRef}
-          className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth py-1 flex-1"
+          className="flex items-center gap-1.5 overflow-x-auto no-scrollbar scroll-smooth py-1 flex-1"
         >
           {state.event.subEvents.map((sub) => {
             const isActive = currentSubEvent?.id === sub.id;
@@ -75,10 +74,10 @@ export const AdaptiveWeddingWidget: React.FC = () => {
               <button
                 key={sub.id}
                 onClick={() => setSelectedSubEventId(sub.id)}
-                className={`text-xs px-3.5 py-2 rounded-xl font-medium shrink-0 whitespace-nowrap transition-all ${
+                className={`text-xs px-3 py-1.5 rounded-lg font-medium shrink-0 whitespace-nowrap transition-colors ${
                   isActive
-                    ? 'bg-amber-500/15 text-amber-950 dark:text-amber-200 border border-amber-500/30 font-semibold shadow-xs'
-                    : 'bg-stone-100/80 hover:bg-stone-200/80 text-stone-600 dark:bg-zinc-800/80 dark:hover:bg-zinc-700 dark:text-zinc-300'
+                    ? 'bg-[#6E79F5]/10 text-[#5D68E2] dark:text-[#6E79F5]'
+                    : 'text-stone-600 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF] hover:bg-black/[0.03] dark:hover:bg-white/[0.04]'
                 }`}
               >
                 {sub.name}
@@ -89,85 +88,95 @@ export const AdaptiveWeddingWidget: React.FC = () => {
 
         <button
           onClick={() => scrollTabs('right')}
-          className="p-1 rounded-lg text-stone-400 hover:text-stone-700 dark:hover:text-zinc-200 hover:bg-stone-100 dark:hover:bg-zinc-800 shrink-0 ml-1 transition-colors"
+          className="p-1 rounded-md text-stone-400 hover:text-stone-700 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] shrink-0 ml-1 transition-colors"
           aria-label="Scroll ceremonies right"
         >
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight className="w-4 h-4 stroke-[1.5]" />
         </button>
       </div>
 
       {/* Active Sub-Event Overview */}
       {currentSubEvent && (
-        <div className="bg-stone-50/70 dark:bg-zinc-900/60 p-4 rounded-xl border border-stone-200/80 dark:border-zinc-800 space-y-3">
-          <div className="flex items-center justify-between">
-            <h4 className="text-sm font-semibold text-stone-900 dark:text-white">
+        <div className="p-4 rounded-lg border border-stone-200/80 dark:border-white/[0.08] bg-stone-50/50 dark:bg-white/[0.02] space-y-2 text-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <span className="font-semibold text-stone-900 dark:text-[#EDEDEF] text-sm">
               {currentSubEvent.name}
-            </h4>
-            <span className="text-xs font-mono tabular-nums font-semibold text-amber-700 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md">
-              {currentSubEvent.startTime} — {currentSubEvent.endTime}
             </span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-            <div className="flex items-center gap-2 text-stone-600 dark:text-zinc-400">
-              <Calendar className="w-4 h-4 text-stone-400 shrink-0" />
-              <span>{currentSubEvent.date}</span>
-            </div>
-            <div className="flex items-center gap-2 text-stone-600 dark:text-zinc-400">
-              <MapPin className="w-4 h-4 text-stone-400 shrink-0" />
-              <span className="truncate">{currentSubEvent.venueName}</span>
-            </div>
-            <div className="flex items-center gap-2 text-stone-600 dark:text-zinc-400">
-              <Users className="w-4 h-4 text-stone-400 shrink-0" />
-              <span className="font-mono tabular-nums">{currentSubEvent.guestCount} Guests</span>
+            <div className="flex items-center gap-3 text-stone-500 dark:text-[#8B8B93]">
+              <span className="flex items-center gap-1">
+                <Calendar className="w-3.5 h-3.5 stroke-[1.5]" />
+                <span>{currentSubEvent.date}</span>
+              </span>
+              <span>{currentSubEvent.startTime} – {currentSubEvent.endTime}</span>
             </div>
           </div>
 
+          <div className="flex flex-wrap items-center gap-4 text-stone-500 dark:text-[#8B8B93] pt-1 border-t border-stone-200/60 dark:border-white/[0.04]">
+            <div className="flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 stroke-[1.5]" />
+              <span>{currentSubEvent.venueName}</span>
+            </div>
+            <div className="flex items-center gap-1.5 tabular-nums">
+              <Users className="w-3.5 h-3.5 stroke-[1.5]" />
+              <span>{currentSubEvent.guestCount} guests expected</span>
+            </div>
+          </div>
           {currentSubEvent.notes && (
-            <p className="text-xs text-stone-600 dark:text-zinc-400 pt-2 border-t border-stone-200/60 dark:border-zinc-800/60 leading-relaxed">
-              <strong className="text-stone-800 dark:text-zinc-200 font-medium">Highlight:</strong> {currentSubEvent.notes}
+            <p className="text-[11px] text-stone-400 dark:text-zinc-500 italic pt-0.5">
+              "{currentSubEvent.notes}"
             </p>
           )}
         </div>
       )}
 
-      {/* Cultural Ritual Checklist */}
-      <div className="space-y-2.5">
+      {/* Key Rituals & Traditions Tracker */}
+      <div className="space-y-2.5 pt-1">
         <div className="flex items-center justify-between">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-zinc-400">
-            VIP Family Ritual Verification
-          </h4>
-          <button
-            onClick={() => setShowAllRituals(!showAllRituals)}
-            className="flex items-center gap-1 text-xs text-amber-700 dark:text-amber-400 hover:text-amber-800 font-medium transition-colors"
-          >
-            <span>{showAllRituals ? 'Show fewer' : `Show all rituals (${rituals.length})`}</span>
-            {showAllRituals ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-          </button>
+          <span className="text-xs font-medium text-stone-700 dark:text-[#EDEDEF]">
+            Traditional Ceremonies & VIP Protocol
+          </span>
+          <span className="text-xs text-stone-400 dark:text-zinc-500 tabular-nums">
+            {rituals.filter((r) => r.done).length} of {rituals.length} complete
+          </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        <div className="space-y-1.5">
           {displayedRituals.map((r) => (
             <button
               key={r.id}
               onClick={() => toggleRitual(r.id)}
-              className={`flex items-center gap-2.5 p-2.5 rounded-xl border text-left text-xs transition-all ${
+              className={`w-full flex items-center justify-between p-2.5 rounded-lg border text-xs text-left transition-colors ${
                 r.done
-                  ? 'border-emerald-200/70 bg-emerald-50/40 dark:border-emerald-900/40 dark:bg-emerald-950/20 text-stone-600 dark:text-zinc-400'
-                  : 'border-stone-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:bg-stone-50 dark:hover:bg-zinc-800/60 text-stone-800 dark:text-zinc-200'
+                  ? 'border-stone-200/60 dark:border-white/[0.04] bg-stone-50/30 dark:bg-white/[0.01] text-stone-500 dark:text-zinc-400'
+                  : 'border-stone-200/80 dark:border-white/[0.08] hover:border-stone-300 dark:hover:border-white/[0.14] text-stone-800 dark:text-[#EDEDEF]'
               }`}
             >
-              {r.done ? (
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-              ) : (
-                <Circle className="w-4 h-4 text-stone-300 dark:text-zinc-600 shrink-0" />
-              )}
-              <span className="font-medium leading-tight">
-                {r.name}
+              <div className="flex items-center gap-2.5">
+                {r.done ? (
+                  <CheckCircle2 className="w-4 h-4 text-[#10B981] stroke-[1.5] shrink-0" />
+                ) : (
+                  <Circle className="w-4 h-4 text-stone-300 dark:text-zinc-600 stroke-[1.5] shrink-0" />
+                )}
+                <span>{r.name}</span>
+              </div>
+              <span className="text-[11px] text-stone-400 dark:text-zinc-500">
+                {r.done ? 'Verified' : 'Pending'}
               </span>
             </button>
           ))}
         </div>
+
+        {rituals.length > 4 && (
+          <div className="text-center pt-1">
+            <button
+              onClick={() => setShowAllRituals(!showAllRituals)}
+              className="inline-flex items-center gap-1 text-xs text-[#6E79F5] hover:text-[#5D68E2] transition-colors"
+            >
+              <span>{showAllRituals ? 'Show fewer' : 'Show all rituals'}</span>
+              {showAllRituals ? <ChevronUp className="w-3.5 h-3.5 stroke-[1.5]" /> : <ChevronDown className="w-3.5 h-3.5 stroke-[1.5]" />}
+            </button>
+          </div>
+        )}
       </div>
     </Card>
   );

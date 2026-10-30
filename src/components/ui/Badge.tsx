@@ -1,34 +1,60 @@
 import React from 'react';
 
-export type BadgeVariant = 'emerald' | 'amber' | 'rose' | 'indigo' | 'stone' | 'obsidian';
+export type BadgeVariant = 'emerald' | 'amber' | 'rose' | 'indigo' | 'neutral' | 'stone';
 
 interface BadgeProps {
   children: React.ReactNode;
   variant?: BadgeVariant;
-  className?: string;
   size?: 'sm' | 'md';
+  className?: string;
+  dot?: boolean;
 }
 
-const variantStyles: Record<BadgeVariant, string> = {
-  emerald: 'bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800/60',
-  amber: 'bg-amber-50 text-amber-800 border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800/60',
-  rose: 'bg-rose-50 text-rose-800 border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800/60',
-  indigo: 'bg-indigo-50 text-indigo-800 border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-400 dark:border-indigo-800/60',
-  stone: 'bg-stone-100 text-stone-700 border-stone-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700',
-  obsidian: 'bg-stone-900 text-stone-100 border-stone-800 dark:bg-zinc-100 dark:text-zinc-900 dark:border-zinc-300',
+const variantStyles: Record<BadgeVariant, { bg: string; text: string; dot: string }> = {
+  emerald: {
+    bg: 'bg-emerald-500/10 dark:bg-emerald-500/15',
+    text: 'text-emerald-700 dark:text-emerald-400',
+    dot: 'bg-emerald-500',
+  },
+  amber: {
+    bg: 'bg-amber-500/10 dark:bg-amber-500/15',
+    text: 'text-amber-700 dark:text-amber-400',
+    dot: 'bg-amber-500',
+  },
+  rose: {
+    bg: 'bg-rose-500/10 dark:bg-rose-500/15',
+    text: 'text-rose-700 dark:text-rose-400',
+    dot: 'bg-rose-500',
+  },
+  indigo: {
+    bg: 'bg-[#6E79F5]/10 dark:bg-[#6E79F5]/15',
+    text: 'text-[#5D68E2] dark:text-[#6E79F5]',
+    dot: 'bg-[#6E79F5]',
+  },
+  neutral: {
+    bg: 'bg-black/[0.05] dark:bg-white/[0.06]',
+    text: 'text-stone-700 dark:text-[#8B8B93]',
+    dot: 'bg-stone-400 dark:bg-zinc-500',
+  },
+  stone: {
+    bg: 'bg-black/[0.05] dark:bg-white/[0.06]',
+    text: 'text-stone-700 dark:text-[#8B8B93]',
+    dot: 'bg-stone-400 dark:bg-zinc-500',
+  },
 };
 
 export const Badge: React.FC<BadgeProps> = ({
   children,
-  variant = 'stone',
+  variant = 'neutral',
   className = '',
-  size = 'sm',
+  dot = false,
 }) => {
-  const sizeStyle = size === 'sm' ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-1 text-xs';
+  const style = variantStyles[variant] || variantStyles.neutral;
   return (
     <span
-      className={`inline-flex items-center font-medium border rounded-full transition-colors ${sizeStyle} ${variantStyles[variant]} ${className}`}
+      className={`inline-flex items-center gap-1.5 h-5 px-2 text-xs font-medium rounded-md select-none ${style.bg} ${style.text} ${className}`}
     >
+      {dot && <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${style.dot}`} />}
       {children}
     </span>
   );

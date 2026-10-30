@@ -5,13 +5,15 @@ import { VendorQuoteTable } from './VendorQuoteTable';
 import { VendorChecklistView } from './VendorChecklistView';
 import { VendorNegotiationModal } from './VendorNegotiationModal';
 import { AddVendorModal } from './AddVendorModal';
+import { PageHeader } from '../../components/ui/PageHeader';
+import { SegmentedTabs } from '../../components/ui/SegmentedTabs';
 import { Button } from '../../components/ui/Button';
 import { Vendor } from '../../types/vendor';
 import { Kanban, Table, CheckSquare, Plus } from 'lucide-react';
 
 export const VendorsTab: React.FC = () => {
   const { state, currency, updateVendor, addVendor, deleteVendor } = useWorkspace();
-  const [layout, setLayout] = useState<'kanban' | 'table' | 'checklist'>('checklist');
+  const [layout, setLayout] = useState<'checklist' | 'kanban' | 'table'>('checklist');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [activeNegotiatingVendor, setActiveNegotiatingVendor] = useState<Vendor | null>(null);
   const [isAddVendorModalOpen, setIsAddVendorModalOpen] = useState(false);
@@ -27,99 +29,68 @@ export const VendorsTab: React.FC = () => {
     return state.vendors.filter((v) => v.category.toLowerCase() === lowerFilter);
   }, [state.vendors, categoryFilter]);
 
+  const layoutTabs = [
+    { id: 'checklist', label: 'Category Checklist', icon: <CheckSquare className="w-3.5 h-3.5 stroke-[1.5]" /> },
+    { id: 'kanban', label: 'Kanban Pipeline', icon: <Kanban className="w-3.5 h-3.5 stroke-[1.5]" /> },
+    { id: 'table', label: 'Side-by-Side Table', icon: <Table className="w-3.5 h-3.5 stroke-[1.5]" /> },
+  ];
+
   return (
     <div className="space-y-6">
-      {/* Top Header & View Controls */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div>
-          <h2 className="text-base font-bold text-[#18181B] dark:text-[#FAFAFA] tracking-tight">
-            Vendor CRM, Checklist & AI Negotiation Studio
-          </h2>
-          <p className="text-xs text-stone-500 dark:text-zinc-400">
-            Modality-specific category checklists and pipeline tracking synced to budget
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => setIsAddVendorModalOpen(true)}
-            icon={<Plus className="w-3.5 h-3.5" />}
-          >
-            Add Vendor
-          </Button>
-
-          {/* Tri-Layout Switcher */}
-          <div className="flex items-center p-1 bg-stone-100 dark:bg-zinc-800 rounded-lg border border-stone-200 dark:border-zinc-700">
-            <button
-              onClick={() => setLayout('checklist')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
-                layout === 'checklist'
-                  ? 'bg-white dark:bg-zinc-900 text-stone-900 dark:text-white shadow-xs'
-                  : 'text-stone-600 dark:text-zinc-400 hover:text-stone-900'
-              }`}
+      <PageHeader
+        title="Vendor CRM, Checklist & AI Negotiation Studio"
+        subtitle="Category checklist, commercial pipeline tracking, and AI-assisted contract terms"
+        actions={
+          <div className="flex items-center gap-3">
+            <SegmentedTabs
+              tabs={layoutTabs}
+              activeTab={layout}
+              onChange={(id) => setLayout(id as 'checklist' | 'kanban' | 'table')}
+              variant="segmented"
+            />
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => setIsAddVendorModalOpen(true)}
+              icon={<Plus />}
             >
-              <CheckSquare className="w-3.5 h-3.5" />
-              <span>Category Checklist</span>
-            </button>
-            <button
-              onClick={() => setLayout('kanban')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
-                layout === 'kanban'
-                  ? 'bg-white dark:bg-zinc-900 text-stone-900 dark:text-white shadow-xs'
-                  : 'text-stone-600 dark:text-zinc-400 hover:text-stone-900'
-              }`}
-            >
-              <Kanban className="w-3.5 h-3.5" />
-              <span>Kanban Pipeline</span>
-            </button>
-            <button
-              onClick={() => setLayout('table')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
-                layout === 'table'
-                  ? 'bg-white dark:bg-zinc-900 text-stone-900 dark:text-white shadow-xs'
-                  : 'text-stone-600 dark:text-zinc-400 hover:text-stone-900'
-              }`}
-            >
-              <Table className="w-3.5 h-3.5" />
-              <span>Side-by-Side Table</span>
-            </button>
+              Add vendor
+            </Button>
           </div>
-        </div>
-      </div>
+        }
+      />
 
-      {/* Category Filter Pills (Kanban & Table only) */}
+      {/* Category Filter Row (Kanban & Table) */}
       {layout !== 'checklist' && (
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 border-b border-stone-200/80 dark:border-white/[0.08]">
           <button
             onClick={() => setCategoryFilter('all')}
-            className={`text-xs px-2.5 py-1 rounded-md font-medium transition-colors ${
+            className={`px-2.5 py-1 text-xs rounded-md transition-colors whitespace-nowrap ${
               categoryFilter === 'all'
-                ? 'bg-[#18181B] text-white dark:bg-white dark:text-stone-900 shadow-xs'
-                : 'bg-stone-100 hover:bg-stone-200 text-stone-600 dark:bg-zinc-800 dark:text-zinc-300'
+                ? 'bg-black/[0.06] dark:bg-white/[0.08] text-[#111113] dark:text-[#EDEDEF] font-medium'
+                : 'text-stone-500 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF]'
             }`}
           >
-            All Categories ({state.vendors.length})
+            All categories ({state.vendors.length})
           </button>
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setCategoryFilter(cat)}
-              className={`text-xs px-2.5 py-1 rounded-md font-medium transition-colors shrink-0 ${
+              className={`px-2.5 py-1 text-xs rounded-md transition-colors capitalize whitespace-nowrap ${
                 categoryFilter === cat
-                  ? 'bg-[#18181B] text-white dark:bg-white dark:text-stone-900 shadow-xs'
-                  : 'bg-stone-100 hover:bg-stone-200 text-stone-600 dark:bg-zinc-800 dark:text-zinc-300'
+                  ? 'bg-black/[0.06] dark:bg-white/[0.08] text-[#111113] dark:text-[#EDEDEF] font-medium'
+                  : 'text-stone-500 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF]'
               }`}
             >
-              {cat.toUpperCase()}
+              {cat}
             </button>
           ))}
         </div>
       )}
 
-      {/* Layout Content */}
-      {layout === 'checklist' ? (
+      {/* Main View Mode */}
+      {layout === 'checklist' && (
         <VendorChecklistView
           vendors={state.vendors}
           currency={currency}
@@ -127,7 +98,9 @@ export const VendorsTab: React.FC = () => {
           onOpenNegotiation={(vendor) => setActiveNegotiatingVendor(vendor)}
           onAddVendor={addVendor}
         />
-      ) : layout === 'kanban' ? (
+      )}
+
+      {layout === 'kanban' && (
         <VendorKanban
           vendors={filteredVendors}
           currency={currency}
@@ -135,7 +108,9 @@ export const VendorsTab: React.FC = () => {
           onDeleteVendor={deleteVendor}
           onOpenNegotiation={(vendor) => setActiveNegotiatingVendor(vendor)}
         />
-      ) : (
+      )}
+
+      {layout === 'table' && (
         <VendorQuoteTable
           vendors={filteredVendors}
           currency={currency}
@@ -145,11 +120,13 @@ export const VendorsTab: React.FC = () => {
         />
       )}
 
-      {/* AI Negotiation Studio Modal */}
-      <VendorNegotiationModal
-        vendor={activeNegotiatingVendor}
-        onClose={() => setActiveNegotiatingVendor(null)}
-      />
+      {/* Vendor Negotiation Drawer Modal */}
+      {activeNegotiatingVendor && (
+        <VendorNegotiationModal
+          vendor={activeNegotiatingVendor}
+          onClose={() => setActiveNegotiatingVendor(null)}
+        />
+      )}
 
       {/* Add Custom Vendor Modal */}
       <AddVendorModal

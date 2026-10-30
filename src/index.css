@@ -3,14 +3,48 @@
 @tailwind utilities;
 
 @layer base {
-  * {
-    border-color: inherit;
+  :root {
+    --color-bg: #FAF9F6;
+    --color-surface: #FFFFFF;
+    --color-surface-raised: #F3F3F5;
+    --color-hairline: rgba(0, 0, 0, 0.08);
+    --color-text: #111113;
+    --color-text-muted: #6E6E77;
+    --color-accent: #6E79F5;
+    --color-accent-hover: #5D68E2;
   }
-  
-  /* JetBrains Mono tabular-nums enforcement for all financial figures and counters */
+
+  .dark {
+    --color-bg: #0B0B0C;
+    --color-surface: #111113;
+    --color-surface-raised: #161618;
+    --color-hairline: rgba(255, 255, 255, 0.08);
+    --color-text: #EDEDEF;
+    --color-text-muted: #8B8B93;
+    --color-accent: #6E79F5;
+    --color-accent-hover: #5D68E2;
+  }
+
+  * {
+    border-color: var(--color-hairline);
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  /* Universal tabular figures for currency, dates, percentages, and metrics */
   .tabular-nums {
     font-variant-numeric: tabular-nums;
   }
+}
+
+/* Hairline border helper */
+.border-hairline {
+  border-color: var(--color-hairline);
 }
 
 /* Custom minimal scrollbar */
@@ -22,11 +56,12 @@
   scrollbar-width: none;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.98); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.15s ease-out forwards;
+/* Restrained, calm transitions (120-180ms) */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

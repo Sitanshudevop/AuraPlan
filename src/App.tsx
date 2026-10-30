@@ -46,7 +46,7 @@ const MainWorkspaceContent: React.FC = () => {
 
   return (
     <div className="flex-1 flex flex-col min-w-0">
-      <main id="main-content" className="flex-1 p-4 sm:p-6 lg:p-8 max-w-6xl w-full mx-auto" tabIndex={-1}>
+      <main id="main-content" className="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1200px] w-full mx-auto space-y-8" tabIndex={-1}>
         <Suspense fallback={<TabSkeleton />}>
           {activeTab === 'dashboard' && <DashboardTab />}
           {activeTab === 'budget' && <BudgetTab />}
@@ -71,7 +71,7 @@ export const App: React.FC = () => {
         Skip to main workspace
       </a>
 
-      <div className="min-h-screen bg-[#FAF9F6] text-[#18181B] dark:bg-[#09090B] dark:text-[#FAFAFA] flex flex-col font-sans transition-colors duration-150">
+      <div className="min-h-screen bg-[#FAF9F6] text-[#111113] dark:bg-[#0B0B0C] dark:text-[#EDEDEF] flex flex-col font-sans transition-colors duration-150">
         <Header />
 
         <div className="flex-1 flex">

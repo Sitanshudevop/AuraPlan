@@ -63,7 +63,7 @@ export async function askPlanningAssistant(
     const prompt = `You are AuraPlan AI planner for ${event.type}. Event: "${event.name}", City: "${event.city}", Guests: ${event.guestCount}, Budget: ${event.targetBudget}. Question: "${sanitizedQuery}". Return ONLY a JSON object with schema: {"content": "detailed tactical advice", "suggestedActions": [{"type": "add_task", "label": string, "payload": {"task": {"title": string, "horizon": "1_week", "category": "Operations", "priority": "high"}}}]}`;
 
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

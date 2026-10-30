@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal } from '../../components/ui/Modal';
 import { Button } from '../../components/ui/Button';
+import { Select, SelectOption } from '../../components/ui/Select';
 import { Vendor, VendorStatus } from '../../types/vendor';
 import { BudgetCategory } from '../../types/budget';
 import { Currency } from '../../types/event';
@@ -12,6 +13,24 @@ interface AddVendorModalProps {
   onAddVendor: (vendor: Vendor) => void;
   currency: Currency;
 }
+
+const categoryOptions: SelectOption[] = [
+  { value: 'venue', label: 'Venue & grounds' },
+  { value: 'catering', label: 'Catering & bar' },
+  { value: 'decor', label: 'Decor & florals' },
+  { value: 'av_photo', label: 'Photography & AV' },
+  { value: 'entertainment', label: 'Entertainment & music' },
+  { value: 'logistics', label: 'Logistics & shuttles' },
+  { value: 'buffer', label: 'Contingency services' },
+];
+
+const statusOptions: SelectOption[] = [
+  { value: 'shortlisted', label: 'Shortlisted', dotColor: 'bg-stone-400' },
+  { value: 'contacted', label: 'Contacted', dotColor: 'bg-stone-400' },
+  { value: 'quote_received', label: 'Quote received', dotColor: 'bg-amber-500' },
+  { value: 'contract_signed', label: 'Contract signed', dotColor: 'bg-emerald-500' },
+  { value: 'paid', label: 'Paid in full', dotColor: 'bg-emerald-500' },
+];
 
 export const AddVendorModal: React.FC<AddVendorModalProps> = ({
   isOpen,
@@ -54,7 +73,7 @@ export const AddVendorModal: React.FC<AddVendorModalProps> = ({
       rating: 4.8,
       ratingCount: 1,
       location: cleanLocation || 'Local Region',
-      notes: cleanDeliverables || 'Standard Service Agreement',
+      notes: cleanDeliverables || '',
       deliverables: cleanDeliverables ? cleanDeliverables.split(',').map((d) => d.trim()) : ['Full Scope of Work'],
     });
 
@@ -70,15 +89,15 @@ export const AddVendorModal: React.FC<AddVendorModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Add Vendor Partner"
-      description="Record vendor commercial terms, contact details, and contract milestones."
+      title="Add vendor partner"
+      description="Record vendor commercials, contact details, and pipeline milestone."
       maxWidth="lg"
     >
       <form onSubmit={handleSubmit} className="space-y-3.5 text-xs">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label htmlFor="vendor-name" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-              Company / Vendor Name
+            <label htmlFor="vendor-name" className="block text-muted font-medium mb-1">
+              Company / vendor name
             </label>
             <input
               id="vendor-name"
@@ -87,53 +106,37 @@ export const AddVendorModal: React.FC<AddVendorModalProps> = ({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Royal Marwar Sound & Light Rigging"
-              className="w-full px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md focus:outline-none dark:text-white"
+              className="w-full px-3 py-2 bg-surface-raised border border-hairline rounded-md focus:outline-none focus:ring-1 focus:ring-accent text-foreground placeholder:text-muted"
             />
           </div>
 
           <div>
-            <label htmlFor="vendor-cat" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
+            <label className="block text-muted font-medium mb-1">
               Category
             </label>
-            <select
-              id="vendor-cat"
+            <Select
               value={category}
-              onChange={(e) => setCategory(e.target.value as BudgetCategory)}
-              className="w-full px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md dark:text-white"
-            >
-              <option value="venue">Venue & Grounds</option>
-              <option value="catering">Catering & Bar</option>
-              <option value="decor">Decor & Florals</option>
-              <option value="av_photo">Photography & AV</option>
-              <option value="entertainment">Entertainment & Music</option>
-              <option value="logistics">Logistics & Shuttles</option>
-              <option value="buffer">Contingency Services</option>
-            </select>
+              onChange={(val) => setCategory(val as BudgetCategory)}
+              options={categoryOptions}
+            />
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label htmlFor="vendor-status" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-              Pipeline Stage
+            <label className="block text-muted font-medium mb-1">
+              Pipeline stage
             </label>
-            <select
-              id="vendor-status"
+            <Select
               value={status}
-              onChange={(e) => setStatus(e.target.value as VendorStatus)}
-              className="w-full px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md dark:text-white"
-            >
-              <option value="shortlisted">Shortlisted</option>
-              <option value="contacted">Contacted</option>
-              <option value="quote_received">Quote Received</option>
-              <option value="contract_signed">Contract Signed</option>
-              <option value="paid">Paid in Full</option>
-            </select>
+              onChange={(val) => setStatus(val as VendorStatus)}
+              options={statusOptions}
+            />
           </div>
 
           <div>
-            <label htmlFor="vendor-estimate" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-              Estimated Quote ({currency === 'INR' ? '₹' : '$'})
+            <label htmlFor="vendor-estimate" className="block text-muted font-medium mb-1">
+              Estimated quote ({currency})
             </label>
             <input
               id="vendor-estimate"
@@ -143,13 +146,13 @@ export const AddVendorModal: React.FC<AddVendorModalProps> = ({
               required
               value={estimatedPrice}
               onChange={(e) => setEstimatedPrice(Number(e.target.value))}
-              className="w-full px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md font-mono dark:text-white"
+              className="w-full px-3 py-2 bg-surface-raised border border-hairline rounded-md tabular-nums text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
             />
           </div>
 
           <div>
-            <label htmlFor="vendor-contracted" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-              Contracted Price ({currency === 'INR' ? '₹' : '$'})
+            <label htmlFor="vendor-contracted" className="block text-muted font-medium mb-1">
+              Contracted price ({currency})
             </label>
             <input
               id="vendor-contracted"
@@ -159,15 +162,15 @@ export const AddVendorModal: React.FC<AddVendorModalProps> = ({
               value={contractedPrice}
               onChange={(e) => setContractedPrice(Number(e.target.value))}
               placeholder="0 if not signed"
-              className="w-full px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md font-mono dark:text-white"
+              className="w-full px-3 py-2 bg-surface-raised border border-hairline rounded-md tabular-nums text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
             />
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label htmlFor="vendor-contact" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-              Contact Person
+            <label htmlFor="vendor-contact" className="block text-muted font-medium mb-1">
+              Contact person
             </label>
             <input
               id="vendor-contact"
@@ -175,13 +178,13 @@ export const AddVendorModal: React.FC<AddVendorModalProps> = ({
               value={contactName}
               onChange={(e) => setContactName(e.target.value)}
               placeholder="e.g. Vikramaditya Singh"
-              className="w-full px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md dark:text-white"
+              className="w-full px-3 py-2 bg-surface-raised border border-hairline rounded-md text-foreground placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent"
             />
           </div>
 
           <div>
-            <label htmlFor="vendor-phone" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-              Phone Number
+            <label htmlFor="vendor-phone" className="block text-muted font-medium mb-1">
+              Phone number
             </label>
             <input
               id="vendor-phone"
@@ -189,13 +192,13 @@ export const AddVendorModal: React.FC<AddVendorModalProps> = ({
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="e.g. +91 98200 88776"
-              className="w-full px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md dark:text-white"
+              className="w-full px-3 py-2 bg-surface-raised border border-hairline rounded-md text-foreground placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent tabular-nums"
             />
           </div>
 
           <div>
-            <label htmlFor="vendor-email" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-              Email Address
+            <label htmlFor="vendor-email" className="block text-muted font-medium mb-1">
+              Email address
             </label>
             <input
               id="vendor-email"
@@ -203,31 +206,31 @@ export const AddVendorModal: React.FC<AddVendorModalProps> = ({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="e.g. vikram@marwarlighting.com"
-              className="w-full px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md dark:text-white"
+              className="w-full px-3 py-2 bg-surface-raised border border-hairline rounded-md text-foreground placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent"
             />
           </div>
         </div>
 
         <div>
-          <label htmlFor="vendor-scope" className="block text-stone-600 dark:text-zinc-400 font-semibold mb-1">
-            Deliverables / Scope (comma-separated)
+          <label htmlFor="vendor-scope" className="block text-muted font-medium mb-1">
+            Deliverables / scope
           </label>
           <input
             id="vendor-scope"
             type="text"
             value={deliverables}
             onChange={(e) => setDeliverables(e.target.value)}
-            placeholder="e.g. 12 Moving-Head Beams, Warm 2700K Par Cans, Stage Truss Scaffolding"
-            className="w-full px-3 py-2 bg-stone-50 dark:bg-zinc-800 border border-stone-200 dark:border-zinc-700 rounded-md dark:text-white"
+            placeholder="e.g. 12 Moving-head beams, warm par cans, stage truss"
+            className="w-full px-3 py-2 bg-surface-raised border border-hairline rounded-md text-foreground placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent"
           />
         </div>
 
-        <div className="flex justify-end gap-2 pt-3 border-t border-stone-200 dark:border-zinc-800">
+        <div className="flex justify-end gap-2 pt-3 border-t border-hairline">
           <Button type="button" variant="ghost" size="sm" onClick={onClose}>
             Cancel
           </Button>
           <Button type="submit" variant="primary" size="sm">
-            Add Vendor
+            Add vendor
           </Button>
         </div>
       </form>
