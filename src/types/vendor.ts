@@ -1,11 +1,7 @@
 import { BudgetCategory } from './budget';
+import type { VendorStageKey } from '../constants';
 
-export type VendorStatus =
-  | 'shortlisted'
-  | 'contacted'
-  | 'quote_received'
-  | 'contract_signed'
-  | 'paid';
+export type VendorStatus = VendorStageKey;
 
 export interface QuoteItem {
   title: string;

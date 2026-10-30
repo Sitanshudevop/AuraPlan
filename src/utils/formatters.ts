@@ -1,4 +1,5 @@
 import { Currency } from '../types/event';
+import { CATEGORY_LABELS } from '../constants';
 
 export const USD_TO_INR_RATE = 83.5;
 
@@ -74,13 +75,7 @@ export function formatDate(dateStr: string): string {
 }
 
 export const CATEGORY_DISPLAY_MAP: Record<string, string> = {
-  venue: 'Venue',
-  catering: 'Catering',
-  decor: 'Decor & Styling',
-  av_photo: 'AV & Photo',
-  entertainment: 'Entertainment',
-  logistics: 'Logistics & Permits',
-  buffer: 'Contingency Buffer',
+  ...CATEGORY_LABELS,
 };
 
 export function formatCategory(cat: string): string {

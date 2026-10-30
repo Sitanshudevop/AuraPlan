@@ -1,4 +1,6 @@
-export type RsvpStatus = 'confirmed' | 'pending' | 'declined';
+import type { RsvpStatusKey, DietaryTagKey } from '../constants';
+
+export type RsvpStatus = RsvpStatusKey;
 
 export type GuestGroup =
   | 'bride'
@@ -7,13 +9,7 @@ export type GuestGroup =
   | 'general'
   | 'speaker_sponsor';
 
-export type DietaryTag =
-  | 'regular'
-  | 'vegetarian'
-  | 'jain'
-  | 'vegan'
-  | 'gluten_free'
-  | 'nut_free';
+export type DietaryTag = DietaryTagKey;
 
 export interface Guest {
   id: string;

@@ -1,9 +1,6 @@
-export type TimelineHorizon =
-  | '6_months'
-  | '3_months'
-  | '1_month'
-  | '1_week'
-  | 'day_before';
+import type { TimelineHorizonKey } from '../constants';
+
+export type TimelineHorizon = TimelineHorizonKey;
 
 export type Priority = 'critical' | 'high' | 'normal';
 

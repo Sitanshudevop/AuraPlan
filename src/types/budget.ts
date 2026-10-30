@@ -1,11 +1,6 @@
-export type BudgetCategory =
-  | 'venue'
-  | 'catering'
-  | 'decor'
-  | 'av_photo'
-  | 'entertainment'
-  | 'logistics'
-  | 'buffer';
+import type { CategoryKey } from '../constants';
+
+export type BudgetCategory = CategoryKey;
 
 export interface BudgetItem {
   id: string;

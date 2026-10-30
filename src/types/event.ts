@@ -1,6 +1,8 @@
-export type EventType = 'wedding' | 'birthday' | 'community';
-export type Currency = 'INR' | 'USD';
-export type EventSetting = 'indoor' | 'outdoor' | 'hybrid';
+import type { EventTypeKey, CurrencyKey, EventSettingKey } from '../constants';
+
+export type EventType = EventTypeKey;
+export type Currency = CurrencyKey;
+export type EventSetting = EventSettingKey;
 
 export interface SubEvent {
   id: string;
