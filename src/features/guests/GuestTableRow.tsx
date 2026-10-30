@@ -42,7 +42,7 @@ interface GuestTableRowProps {
   onDeleteGuest: (id: string) => void;
 }
 
-export const GuestTableRow: React.FC<GuestTableRowProps> = ({
+const GuestTableRowComponent: React.FC<GuestTableRowProps> = ({
   guest,
   zoneOptions,
   onUpdateGuest,
@@ -99,23 +99,20 @@ export const GuestTableRow: React.FC<GuestTableRowProps> = ({
           value={guest.tableOrZoneId || ''}
           onChange={(val) => onUpdateGuest(guest.id, { tableOrZoneId: val || undefined })}
           options={zoneOptions}
-          variant="ghost"
+          variant="compact"
           ariaLabel={`Zone assignment for ${guest.name}`}
-          className="w-full max-w-[260px]"
         />
       </td>
 
       <td className="py-2 px-4 text-right">
         {confirmDelete ? (
-          <div className="inline-flex items-center gap-1">
+          <div className="inline-flex items-center gap-1.5 animate-fade-in">
+            <span className="text-[10px] text-rose-500 font-medium">Delete?</span>
             <button
-              onClick={() => {
-                onDeleteGuest(guest.id);
-                setConfirmDelete(false);
-              }}
-              className="px-2 py-1 text-xs bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 rounded-md font-medium transition-colors"
+              onClick={() => onDeleteGuest(guest.id)}
+              className="px-1.5 py-0.5 bg-rose-500 text-white rounded text-[10px] font-medium hover:bg-rose-600 transition-colors"
             >
-              Delete
+              Confirm
             </button>
             <button
               onClick={() => setConfirmDelete(false)}
@@ -140,3 +137,4 @@ export const GuestTableRow: React.FC<GuestTableRowProps> = ({
   );
 };
 
+export const GuestTableRow = React.memo(GuestTableRowComponent);
