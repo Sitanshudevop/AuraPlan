@@ -14,7 +14,6 @@ import {
   setCustomApiKey,
   removeCustomApiKey,
   isGeminiKeyConfigured,
-  getSafeMaskedKey,
   getAiEngineStatus,
 } from './geminiKeyManager';
 
@@ -23,7 +22,6 @@ export {
   setCustomApiKey,
   removeCustomApiKey,
   isGeminiKeyConfigured,
-  getSafeMaskedKey,
   getAiEngineStatus,
 };
 
