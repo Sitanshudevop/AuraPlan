@@ -15,6 +15,10 @@ export default defineConfig({
   plugins: [react()],
   build: {
     rollupOptions: {
+      onwarn(warning, warn) {
+        if (warning.code === 'INVALID_ANNOTATION') return;
+        warn(warning);
+      },
       output: {
         manualChunks: {
           'vendor-react': ['react', 'react-dom'],
