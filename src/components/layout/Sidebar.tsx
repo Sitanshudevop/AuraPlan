@@ -62,12 +62,12 @@ export const Sidebar: React.FC = () => {
           <div className="space-y-1.5">
             <div className="flex items-start justify-between gap-1.5">
               <div className="min-w-0 flex-1">
-                <h1
+                <div
                   className="text-sm font-semibold tracking-tight line-clamp-2 leading-snug text-[#111113] dark:text-[#EDEDEF]"
                   title={state.event.name}
                 >
                   {state.event.name}
-                </h1>
+                </div>
                 <div className="text-xs text-stone-500 dark:text-[#8B8B93] mt-0.5 truncate">
                   <span className="sr-only">{state.event.type.toUpperCase()} MODE</span>
                   <span>{modalityLabel} · {daysLeft} days to go</span>

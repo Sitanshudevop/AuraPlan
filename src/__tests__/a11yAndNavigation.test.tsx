@@ -1,12 +1,19 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
 import { App } from '../App';
 import { clearPersistedState } from '../utils/storage';
 
 describe('A11y, Navigation & 1-Click Judge Presets Integration', () => {
   beforeEach(() => {
+    cleanup();
+    document.body.innerHTML = '';
     clearPersistedState();
     localStorage.clear();
+  });
+
+  afterEach(() => {
+    cleanup();
+    document.body.innerHTML = '';
   });
 
   describe('1-Click Judge Presets DOM State Transitions', () => {
