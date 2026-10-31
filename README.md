@@ -149,7 +149,7 @@ Judges can evaluate realistic, rich event datasets in 1 click without waiting on
 ## 7. Getting Started & Testing
 
 ### Prerequisites
-- Node.js `v18.0.0` or higher
+- Node.js `v20.0.0` or higher (LTS)
 - npm `v9.0.0` or higher
 
 ### Installation & Development
