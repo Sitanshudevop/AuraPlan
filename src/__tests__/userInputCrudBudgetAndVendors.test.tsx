@@ -110,3 +110,4 @@ describe('User Input CRUD: Budget & Vendor Operations', () => {
     expect(screen.getByLabelText(/Company \/ Vendor Name/i)).toBeInTheDocument();
   });
 });
+

@@ -135,3 +135,4 @@ describe('Security Suite: XSS Sanitization, Rate Limiter & CSP Directives', () =
     });
   });
 });
+

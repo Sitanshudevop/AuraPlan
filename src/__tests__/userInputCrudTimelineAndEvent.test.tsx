@@ -98,3 +98,4 @@ describe('User Input CRUD: Timeline Tasks, Activities & Event Parameters', () =>
     expect(screen.getByTestId('event-title').textContent).toBe('Jaipur Sunset Gala Celebration');
   });
 });
+

@@ -91,3 +91,4 @@ describe('Component Interactions: Category Row & New Event Modal', () => {
     });
   });
 });
+

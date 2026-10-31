@@ -80,3 +80,4 @@ describe('Storage Error Handling and Quota Management', () => {
     expect(getStorageUsageBytes()).toBe(0);
   });
 });
+

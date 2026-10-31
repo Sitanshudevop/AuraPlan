@@ -72,3 +72,4 @@ describe('Sidebar and PresetDropdown Navigation Components', () => {
     fireEvent.keyDown(document, { key: 'Escape' });
   });
 });
+
