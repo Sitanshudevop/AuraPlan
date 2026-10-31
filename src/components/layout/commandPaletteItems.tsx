@@ -15,6 +15,7 @@ import {
   IndianRupee,
   DollarSign,
   Download,
+  CheckCircle,
 } from 'lucide-react';
 import { EventWorkspaceState, ActiveTab } from '../../types/state';
 import { Currency } from '../../types/event';
@@ -99,3 +100,27 @@ export const buildBasePaletteItems = (params: BuildBaseItemsParams): PaletteItem
     { id: 'act-reset', title: 'Reset Workspace to Factory Presets', category: 'Settings', icon: <RefreshCw className="w-4 h-4 text-rose-500" />, action: () => resetToFactoryDefaults() },
   ];
 };
+
+export function buildDynamicPaletteItems(
+  vendors: EventWorkspaceState['vendors'],
+  tasks: EventWorkspaceState['macroTasks'],
+  setActiveTab: (tab: ActiveTab) => void
+): PaletteItem[] {
+  const vendorItems: PaletteItem[] = vendors.map((v) => ({
+    id: `vendor-${v.id}`,
+    title: `Vendor: ${v.name} (${v.category.toUpperCase()} • ${v.status.replace('_', ' ')})`,
+    category: 'Vendors',
+    icon: <Briefcase className="w-3.5 h-3.5 text-stone-500" />,
+    action: () => setActiveTab('vendors'),
+  }));
+
+  const taskItems: PaletteItem[] = tasks.map((t) => ({
+    id: `task-${t.id}`,
+    title: `Task: ${t.title} [${t.priority.toUpperCase()}]`,
+    category: 'Tasks',
+    icon: <CheckCircle className="w-3.5 h-3.5 text-stone-500" />,
+    action: () => setActiveTab('timeline'),
+  }));
+
+  return [...vendorItems, ...taskItems];
+}
