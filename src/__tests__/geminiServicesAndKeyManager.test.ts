@@ -9,6 +9,7 @@ import {
   getSafeMaskedKey,
   getAiEngineStatus,
   rateLimitDebounce,
+  _resetMigrationFlagForTesting,
 } from '../services/geminiKeyManager';
 import {
   generateThemeIdea,
@@ -18,16 +19,20 @@ import {
 } from '../services/geminiService';
 import { INITIAL_PRESETS } from '../data/presets';
 
-describe('Gemini Key Manager & Configuration', () => {
+describe('Gemini Key Manager & Configuration (F8)', () => {
   beforeEach(() => {
     localStorage.clear();
+    sessionStorage.clear();
+    _resetMigrationFlagForTesting();
   });
 
   afterEach(() => {
     localStorage.clear();
+    sessionStorage.clear();
+    _resetMigrationFlagForTesting();
   });
 
-  it('manages custom API keys stored in localStorage with masking', () => {
+  it('stores custom key strictly in sessionStorage, never in localStorage', () => {
     expect(isGeminiKeyConfigured()).toBe(false);
     expect(getActiveApiKey()).toBeUndefined();
     expect(getSafeMaskedKey()).toBe('Not Configured');
@@ -36,6 +41,10 @@ describe('Gemini Key Manager & Configuration', () => {
     expect(isGeminiKeyConfigured()).toBe(true);
     expect(getActiveApiKey()).toBe('AIzaSyD-TEST-KEY-1234567890');
 
+    // Invariant: stored in sessionStorage only
+    expect(sessionStorage.getItem('auraplan_custom_gemini_key')).toBe('AIzaSyD-TEST-KEY-1234567890');
+    expect(localStorage.getItem('auraplan_custom_gemini_key')).toBeNull();
+
     const status = getAiEngineStatus();
     expect(status.isConfigured).toBe(true);
     expect(status.label).toContain('Gemini');
@@ -43,7 +52,37 @@ describe('Gemini Key Manager & Configuration', () => {
 
     removeCustomApiKey();
     expect(isGeminiKeyConfigured()).toBe(false);
-    expect(getAiEngineStatus().isConfigured).toBe(false);
+    expect(sessionStorage.getItem('auraplan_custom_gemini_key')).toBeNull();
+    expect(localStorage.getItem('auraplan_custom_gemini_key')).toBeNull();
+  });
+
+  it('migrates legacy key from localStorage to sessionStorage on initial access and deletes it from disk', () => {
+    // Seed legacy localStorage entry
+    localStorage.setItem('auraplan_custom_gemini_key', 'AIzaSyD-LEGACY-KEY-MIGRATION-999');
+    expect(sessionStorage.getItem('auraplan_custom_gemini_key')).toBeNull();
+
+    // Access key triggers migration
+    const active = getActiveApiKey();
+    expect(active).toBe('AIzaSyD-LEGACY-KEY-MIGRATION-999');
+
+    // Key migrated to sessionStorage and removed from localStorage
+    expect(sessionStorage.getItem('auraplan_custom_gemini_key')).toBe('AIzaSyD-LEGACY-KEY-MIGRATION-999');
+    expect(localStorage.getItem('auraplan_custom_gemini_key')).toBeNull();
+  });
+
+  it('falls back to memory storage when sessionStorage throws QuotaExceededError', () => {
+    const originalSetItem = sessionStorage.setItem;
+    sessionStorage.setItem = () => {
+      throw new Error('QuotaExceededError');
+    };
+
+    setCustomApiKey('AIzaSyD-MEMORY-FALLBACK-KEY-888');
+    expect(isGeminiKeyConfigured()).toBe(true);
+    expect(getActiveApiKey()).toBe('AIzaSyD-MEMORY-FALLBACK-KEY-888');
+
+    removeCustomApiKey();
+    expect(getActiveApiKey()).toBeUndefined();
+    sessionStorage.setItem = originalSetItem;
   });
 
   it('rateLimitDebounce limits calling frequency safely', async () => {

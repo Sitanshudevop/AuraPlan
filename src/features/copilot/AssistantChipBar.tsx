@@ -26,23 +26,28 @@ export const AssistantChipBar: React.FC<AssistantChipBarProps> = ({
   return (
     <>
       {showKeyInput && (
-        <div className="p-3 bg-stone-100/80 dark:bg-[#161618] border-b border-stone-200/80 dark:border-white/[0.08] flex items-center gap-2 text-xs">
-          <Key className="w-3.5 h-3.5 text-stone-500 shrink-0" />
-          <input
-            type="password"
-            placeholder="Paste Gemini API key..."
-            value={customKey}
-            onChange={(e) => setCustomKey(e.target.value)}
-            className="flex-1 text-xs px-2.5 py-1.5 bg-white dark:bg-[#111113] border border-stone-200/80 dark:border-white/[0.08] rounded-md text-[#111113] dark:text-[#EDEDEF] focus:outline-none focus:ring-1 focus:ring-accent"
-          />
-          <Button size="sm" variant="primary" onClick={handleSaveKey} disabled={!customKey.trim()}>
-            Save
-          </Button>
-          {hasKey && (
-            <Button size="sm" variant="ghost" onClick={handleClearKey}>
-              Reset
+        <div className="p-3 bg-stone-100/80 dark:bg-[#161618] border-b border-stone-200/80 dark:border-white/[0.08] space-y-1.5 text-xs">
+          <div className="flex items-center gap-2">
+            <Key className="w-3.5 h-3.5 text-stone-500 shrink-0" />
+            <input
+              type="password"
+              placeholder="Paste Gemini API key..."
+              value={customKey}
+              onChange={(e) => setCustomKey(e.target.value)}
+              className="flex-1 text-xs px-2.5 py-1.5 bg-white dark:bg-[#111113] border border-stone-200/80 dark:border-white/[0.08] rounded-md text-[#111113] dark:text-[#EDEDEF] focus:outline-none focus:ring-1 focus:ring-accent"
+            />
+            <Button size="sm" variant="primary" onClick={handleSaveKey} disabled={!customKey.trim()}>
+              Save
             </Button>
-          )}
+            {hasKey && (
+              <Button size="sm" variant="ghost" onClick={handleClearKey}>
+                Reset
+              </Button>
+            )}
+          </div>
+          <p className="text-[10px] text-stone-500 dark:text-[#8B8B93] pl-5">
+            Key is stored in session memory only (cleared on tab close). Never persisted to disk.
+          </p>
         </div>
       )}
 
@@ -63,4 +68,3 @@ export const AssistantChipBar: React.FC<AssistantChipBarProps> = ({
     </>
   );
 };
-
