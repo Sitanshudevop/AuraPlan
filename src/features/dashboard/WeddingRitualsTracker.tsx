@@ -69,7 +69,7 @@ export const WeddingRitualsTracker: React.FC = () => {
         <div className="text-center pt-1">
           <button
             onClick={() => setShowAllRituals(!showAllRituals)}
-            className="inline-flex items-center gap-1 text-xs text-[#6E79F5] hover:text-[#5D68E2] transition-colors"
+            className="inline-flex items-center gap-1 text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium transition-colors"
           >
             <span>{showAllRituals ? 'Show fewer' : 'Show all rituals'}</span>
             {showAllRituals ? <ChevronUp className="w-3.5 h-3.5 stroke-[1.5]" /> : <ChevronDown className="w-3.5 h-3.5 stroke-[1.5]" />}

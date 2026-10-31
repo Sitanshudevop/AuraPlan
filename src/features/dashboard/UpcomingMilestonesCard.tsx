@@ -40,7 +40,7 @@ export const UpcomingMilestonesCard: React.FC<UpcomingMilestonesCardProps> = ({
         </div>
         <button
           onClick={onViewAll}
-          className="inline-flex items-center gap-1 text-xs text-[#6E79F5] hover:text-[#5D68E2] transition-colors"
+          className="inline-flex items-center gap-1 text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium transition-colors"
         >
           <span>View all</span>
           <ArrowRight className="w-3.5 h-3.5 stroke-[1.5]" />

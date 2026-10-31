@@ -79,7 +79,7 @@ export const SegmentedTabs: React.FC<SegmentedTabsProps> = ({
               </span>
             )}
             {isActive && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#6E79F5] rounded-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 rounded-full" />
             )}
           </button>
         );

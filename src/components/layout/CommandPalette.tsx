@@ -103,12 +103,12 @@ export const CommandPalette: React.FC = () => {
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium transition-colors text-left group ${
                     isSelected
-                      ? 'bg-[#6E79F5]/10 text-[#5D68E2] dark:text-[#6E79F5]'
+                      ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300'
                       : 'text-stone-700 dark:text-[#8B8B93] hover:bg-stone-100 dark:hover:bg-white/[0.04]'
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                    <span className={isSelected ? 'text-[#6E79F5] shrink-0' : 'text-stone-500 dark:text-zinc-500 shrink-0'}>
+                    <span className={isSelected ? 'text-indigo-600 dark:text-indigo-400 shrink-0' : 'text-stone-500 dark:text-zinc-500 shrink-0'}>
                       {item.icon}
                     </span>
                     <span className="truncate">{item.title}</span>

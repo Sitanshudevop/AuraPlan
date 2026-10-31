@@ -13,7 +13,7 @@ export const CategoryLockButton: React.FC<CategoryLockButtonProps> = ({ isLocked
     onClick={onToggle}
     className={`p-1 rounded transition-colors mt-0.5 shrink-0 ${
       isLocked
-        ? 'text-[#6E79F5] hover:text-[#5D68E2]'
+        ? 'text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300'
         : 'text-stone-500 hover:text-stone-600 dark:text-zinc-500 dark:hover:text-zinc-300'
     }`}
     title={isLocked ? 'Locked from auto-rebalancing' : 'Click to lock allocation'}

@@ -27,9 +27,9 @@ const variantStyles: Record<BadgeVariant, { bg: string; text: string; dot: strin
     dot: 'bg-rose-500',
   },
   indigo: {
-    bg: 'bg-[#6E79F5]/10 dark:bg-[#6E79F5]/15',
-    text: 'text-[#5D68E2] dark:text-[#6E79F5]',
-    dot: 'bg-[#6E79F5]',
+    bg: 'bg-indigo-500/10 dark:bg-indigo-500/15',
+    text: 'text-indigo-700 dark:text-indigo-300',
+    dot: 'bg-indigo-600 dark:bg-indigo-400',
   },
   neutral: {
     bg: 'bg-black/[0.05] dark:bg-white/[0.06]',

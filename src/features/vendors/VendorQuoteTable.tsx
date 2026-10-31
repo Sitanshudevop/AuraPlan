@@ -99,7 +99,7 @@ export const VendorQuoteTable: React.FC<VendorQuoteTableProps> = ({
                   <div className="flex items-center justify-end gap-2">
                     <button
                       onClick={() => onOpenNegotiation(vendor)}
-                      className="text-xs text-[#6E79F5] hover:text-[#5D68E2] transition-colors"
+                      className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium transition-colors"
                     >
                       Vet & negotiate
                     </button>

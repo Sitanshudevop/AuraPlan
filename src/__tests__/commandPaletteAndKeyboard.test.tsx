@@ -19,7 +19,7 @@ describe('CommandPalette Keyboard Navigation and Execution', () => {
   it('opens via search button and closes with Escape key', async () => {
     render(<App />);
 
-    const searchBtn = screen.getByRole('button', { name: /Search or run command/i });
+    const searchBtn = screen.getByRole('button', { name: /Search (workspace|or run command)/i });
     fireEvent.click(searchBtn);
 
     const dialog = await screen.findByRole('dialog', { name: /Command Palette/i });

@@ -88,7 +88,7 @@ describe('A11y, Navigation & 1-Click Judge Presets Integration', () => {
     it('ensures all interactive tool buttons have explicit aria-labels', () => {
       render(<App />);
 
-      expect(screen.getByRole('button', { name: /Search or run command/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Search (workspace|or run command)/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Toggle currency between INR and USD/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Toggle dark mode/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Open 100\/100 Judge Audit Drawer/i })).toBeInTheDocument();

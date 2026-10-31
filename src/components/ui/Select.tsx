@@ -96,7 +96,7 @@ export const Select: React.FC<SelectProps> = ({
                 onMouseEnter={() => setFocusedIndex(idx)}
                 className={`flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md cursor-pointer transition-colors ${
                   isSelected
-                    ? 'bg-[#6E79F5]/10 text-[#5D68E2] dark:text-[#6E79F5] font-medium'
+                    ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 font-medium'
                     : isFocused
                       ? 'bg-stone-100 dark:bg-white/[0.06] text-stone-900 dark:text-[#EDEDEF]'
                       : 'text-stone-700 dark:text-[#8B8B93]'
@@ -108,7 +108,7 @@ export const Select: React.FC<SelectProps> = ({
                   )}
                   <span className="truncate">{option.label}</span>
                 </div>
-                {isSelected && <Check className="w-3.5 h-3.5 shrink-0 text-[#6E79F5]" />}
+                {isSelected && <Check className="w-3.5 h-3.5 shrink-0 text-indigo-600 dark:text-indigo-400" />}
               </li>
             );
           })}

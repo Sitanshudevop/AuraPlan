@@ -108,12 +108,12 @@ export const Sidebar: React.FC = () => {
               aria-current={isActive ? 'page' : undefined}
               className={`group relative w-full h-9 flex items-center gap-2.5 px-2.5 rounded-lg text-sm transition-colors text-left ${
                 isActive
-                  ? 'bg-black/[0.05] dark:bg-white/[0.06] text-[#111113] dark:text-white font-medium before:absolute before:left-0 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#6E79F5] before:rounded-r'
+                  ? 'bg-black/[0.05] dark:bg-white/[0.06] text-[#111113] dark:text-white font-medium before:absolute before:left-0 before:top-2 before:bottom-2 before:w-0.5 before:bg-indigo-600 before:rounded-r'
                   : 'text-stone-600 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF] hover:bg-black/[0.03] dark:hover:bg-white/[0.03]'
               } ${isCollapsed ? 'justify-center px-0' : ''}`}
               title={`${item.label} (${item.shortcut})`}
             >
-              <span className={`shrink-0 transition-colors ${isActive ? 'text-[#6E79F5]' : 'text-stone-500 group-hover:text-stone-600 dark:text-zinc-500 dark:group-hover:text-zinc-300'}`}>
+              <span className={`shrink-0 transition-colors ${isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-stone-500 group-hover:text-stone-600 dark:text-zinc-500 dark:group-hover:text-zinc-300'}`}>
                 {item.icon}
               </span>
               {!isCollapsed && (

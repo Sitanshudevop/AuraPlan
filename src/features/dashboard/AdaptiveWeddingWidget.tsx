@@ -60,7 +60,7 @@ export const AdaptiveWeddingWidget: React.FC = () => {
                 onClick={() => setSelectedSubEventId(sub.id)}
                 className={`text-xs px-3 py-1.5 rounded-lg font-medium shrink-0 whitespace-nowrap transition-colors ${
                   isActive
-                    ? 'bg-[#6E79F5]/10 text-[#5D68E2] dark:text-[#6E79F5]'
+                    ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 font-medium'
                     : 'text-stone-600 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF] hover:bg-black/[0.03] dark:hover:bg-white/[0.04]'
                 }`}
               >

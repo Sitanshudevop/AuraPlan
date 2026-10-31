@@ -124,7 +124,7 @@ export const BudgetTab: React.FC = () => {
           <span>Tax configuration: {state.taxRatePercent}% statutory GST/VAT</span>
           <button
             onClick={() => toggleTax(!state.includeTaxInTotals)}
-            className="text-xs text-[#6E79F5] hover:text-[#5D68E2] transition-colors"
+            className="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium transition-colors"
           >
             {state.includeTaxInTotals ? 'Exclude tax from total' : 'Include tax in total'}
           </button>
