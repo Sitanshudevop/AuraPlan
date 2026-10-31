@@ -37,7 +37,7 @@ export const AssistantHeader: React.FC<AssistantHeaderProps> = ({
           aria-label="Toggle Gemini API Key settings"
         >
           <StatusDot status={hasKey ? 'confirmed' : 'pending'} />
-          <span>{hasKey ? 'Gemini live' : 'Local (Zero Latency)'}</span>
+          <span role="status" aria-live="polite">{hasKey ? 'Gemini live' : 'Local (Zero Latency)'}</span>
         </button>
         <button
           onClick={onClose}
