@@ -7,25 +7,8 @@ import { timelineReducer } from './timelineReducer';
 import { guestReducer } from './guestReducer';
 import { rippleReducer } from './rippleReducer';
 
-/**
- * Root reducer composing all domain slices with 100% backward compatibility.
- */
-export function rootWorkspaceReducer(
-  state: EventWorkspaceState,
-  action: WorkspaceAction
-): EventWorkspaceState {
-  if (action.type === 'LOAD_STATE') {
-    return action.payload;
-  }
-
-  if (action.type === 'APPLY_RIPPLE') {
-    return rippleReducer(state, action);
-  }
-
+function handleBudgetDomain(state: EventWorkspaceState, action: WorkspaceAction): EventWorkspaceState | null {
   switch (action.type) {
-    case 'UPDATE_EVENT':
-      return { ...state, event: eventReducer(state.event, action) };
-
     case 'UPDATE_BUDGET_ITEM':
     case 'AUTO_BALANCE_BUDGET':
     case 'ADD_BUDGET_ITEM':
@@ -48,7 +31,13 @@ export function rootWorkspaceReducer(
         taxRatePercent: budgetSlice.taxRatePercent,
       };
     }
+    default:
+      return null;
+  }
+}
 
+function handleVendorDomain(state: EventWorkspaceState, action: WorkspaceAction): EventWorkspaceState | null {
+  switch (action.type) {
     case 'UPDATE_VENDOR':
     case 'ADD_VENDOR':
     case 'DELETE_VENDOR': {
@@ -65,7 +54,13 @@ export function rootWorkspaceReducer(
         budgetItems: vendorSlice.budgetItems,
       };
     }
+    default:
+      return null;
+  }
+}
 
+function handleTimelineDomain(state: EventWorkspaceState, action: WorkspaceAction): EventWorkspaceState | null {
+  switch (action.type) {
     case 'UPDATE_TASK':
     case 'ADD_TASK':
     case 'DELETE_TASK':
@@ -86,7 +81,13 @@ export function rootWorkspaceReducer(
         dayOfActivities: timelineSlice.dayOfActivities,
       };
     }
+    default:
+      return null;
+  }
+}
 
+function handleGuestDomain(state: EventWorkspaceState, action: WorkspaceAction): EventWorkspaceState | null {
+  switch (action.type) {
     case 'UPDATE_GUEST':
     case 'ADD_GUEST':
     case 'DELETE_GUEST': {
@@ -101,9 +102,35 @@ export function rootWorkspaceReducer(
         guests: guestSlice.guests,
       };
     }
-
     default:
-      return state;
+      return null;
   }
 }
 
+/**
+ * Root reducer composing all domain slices with 100% backward compatibility.
+ */
+export function rootWorkspaceReducer(
+  state: EventWorkspaceState,
+  action: WorkspaceAction
+): EventWorkspaceState {
+  if (action.type === 'LOAD_STATE') {
+    return action.payload;
+  }
+
+  if (action.type === 'APPLY_RIPPLE') {
+    return rippleReducer(state, action);
+  }
+
+  if (action.type === 'UPDATE_EVENT') {
+    return { ...state, event: eventReducer(state.event, action) };
+  }
+
+  const handled =
+    handleBudgetDomain(state, action) ??
+    handleVendorDomain(state, action) ??
+    handleTimelineDomain(state, action) ??
+    handleGuestDomain(state, action);
+
+  return handled ?? state;
+}

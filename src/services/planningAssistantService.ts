@@ -46,6 +46,52 @@ export const MODALITY_PROMPT_CHIPS: Record<EventType, string[]> = {
   ],
 };
 
+function isOfflineOrTestMode(apiKey?: string | null): boolean {
+  return import.meta.env.MODE === 'test' || !apiKey || apiKey === 'YOUR_GEMINI_API_KEY';
+}
+
+function buildAssistantPrompt(event: EventData, query: string): string {
+  return `You are AuraPlan AI planner for ${event.type}. Event: "${event.name}", City: "${event.city}", Guests: ${event.guestCount}, Budget: ${event.targetBudget}. Question: "${query}". Return ONLY a JSON object with schema: {"content": "detailed tactical advice", "suggestedActions": [{"type": "add_task", "label": string, "payload": {"task": {"title": string, "horizon": "1_week", "category": "Operations", "priority": "high"}}}]}`;
+}
+
+interface RawGeminiParsed {
+  content?: string;
+  suggestedActions?: AssistantAction[];
+}
+
+async function fetchGeminiAssistantJson(prompt: string, apiKey: string): Promise<RawGeminiParsed> {
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(8500),
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { responseMimeType: 'application/json' },
+      }),
+    }
+  );
+
+  if (!res.ok) throw new Error(`Gemini error: ${res.status}`);
+  const data = await res.json();
+  const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  return rawText ? JSON.parse(rawText) : {};
+}
+
+function assembleAssistantMessage(
+  parsed: RawGeminiParsed,
+  fallback: AssistantMessage
+): AssistantMessage {
+  return {
+    id: `ai-msg-${Date.now()}`,
+    role: 'assistant',
+    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    content: parsed.content || fallback.content,
+    suggestedActions: parsed.suggestedActions || fallback.suggestedActions,
+  };
+}
+
 export async function askPlanningAssistant(
   query: string,
   event: EventData,
@@ -54,38 +100,15 @@ export async function askPlanningAssistant(
   const sanitizedQuery = sanitizeText(query);
   const apiKey = getActiveApiKey();
 
-  const envMode = import.meta.env.MODE;
-  if (envMode === 'test' || !apiKey || apiKey === 'YOUR_GEMINI_API_KEY') {
+  if (isOfflineOrTestMode(apiKey)) {
     return getSmartLocalAssistantResponse(sanitizedQuery, event);
   }
 
   try {
-    const prompt = `You are AuraPlan AI planner for ${event.type}. Event: "${event.name}", City: "${event.city}", Guests: ${event.guestCount}, Budget: ${event.targetBudget}. Question: "${sanitizedQuery}". Return ONLY a JSON object with schema: {"content": "detailed tactical advice", "suggestedActions": [{"type": "add_task", "label": string, "payload": {"task": {"title": string, "horizon": "1_week", "category": "Operations", "priority": "high"}}}]}`;
-
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        signal: AbortSignal.timeout(8500),
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { responseMimeType: 'application/json' },
-        }),
-      }
-    );
-
-    if (!res.ok) throw new Error(`Gemini error: ${res.status}`);
-    const data = await res.json();
-    const parsed = JSON.parse(data.candidates?.[0]?.content?.parts?.[0]?.text || '{}');
-
-    return {
-      id: `ai-msg-${Date.now()}`,
-      role: 'assistant',
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      content: parsed.content || getSmartLocalAssistantResponse(sanitizedQuery, event).content,
-      suggestedActions: parsed.suggestedActions || getSmartLocalAssistantResponse(sanitizedQuery, event).suggestedActions,
-    };
+    const prompt = buildAssistantPrompt(event, sanitizedQuery);
+    const parsed = await fetchGeminiAssistantJson(prompt, apiKey as string);
+    const fallback = getSmartLocalAssistantResponse(sanitizedQuery, event);
+    return assembleAssistantMessage(parsed, fallback);
   } catch (err) {
     logger.warn('Gemini assistant error, using smart fallback', err);
     return getSmartLocalAssistantResponse(sanitizedQuery, event);

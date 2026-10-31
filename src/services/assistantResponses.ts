@@ -16,69 +16,53 @@ import {
   getFallbackResponse,
 } from './assistantDomainTemplates';
 
+type ResponseHandler = (event: EventData, timeStr: string) => AssistantMessage;
+
+interface IntentRule {
+  keywords: string[];
+  handler: ResponseHandler;
+}
+
+/** Exact-match greetings checked before keyword scan. */
+const GREETING_EXACT = new Set(['hi', 'hello', 'hey']);
+
+/** Substring keywords that trigger greeting intent. */
+const GREETING_KEYWORDS = ['how can u help', 'how can you help', 'what can you do', 'who are you', 'help me'];
+
+/** Ordered intent routing table — first match wins. */
+const INTENT_RULES: IntentRule[] = [
+  { keywords: ['sangeet', 'dance', 'music', 'dj', 'song', 'choreograph'], handler: getSangeetResponse },
+  { keywords: ['catering', 'plate', 'dietary', 'food', 'buffet', 'menu'], handler: getCateringResponse },
+  { keywords: ['rain', 'weather', 'contingency', 'outdoor', 'lawn'], handler: getWeatherResponse },
+  { keywords: ['buffer', 'baraat', 'varmala', 'transition', 'delay'], handler: getBufferResponse },
+  { keywords: ['save', 'cut cost', 'budget', 'expensive', 'negotiate'], handler: getCostSavingsResponse },
+  { keywords: ['decor', 'theme', 'flower', 'lighting', 'mandap', 'stage'], handler: getDecorResponse },
+  { keywords: ['photo', 'video', 'photographer', 'camera', 'drone'], handler: getPhotoResponse },
+  { keywords: ['permit', 'municipal', 'police', 'security', 'license'], handler: getComplianceResponse },
+  { keywords: ['cake', 'game', 'favor', 'adult', 'volunteer', 'sponsor'], handler: getModalitySpecificResponse },
+];
+
+function matchesGreeting(q: string): boolean {
+  return GREETING_EXACT.has(q) || GREETING_KEYWORDS.some((kw) => q.includes(kw));
+}
+
+function resolveIntent(q: string): ResponseHandler | null {
+  const rule = INTENT_RULES.find((r) => r.keywords.some((kw) => q.includes(kw)));
+  return rule?.handler ?? null;
+}
+
 export function getSmartLocalAssistantResponse(query: string, event: EventData): AssistantMessage {
   const q = query.toLowerCase().trim();
   const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-  // 1. Greetings & Capabilities
-  if (
-    q === 'hi' ||
-    q === 'hello' ||
-    q === 'hey' ||
-    q.includes('how can u help') ||
-    q.includes('how can you help') ||
-    q.includes('what can you do') ||
-    q.includes('who are you') ||
-    q.includes('help me')
-  ) {
+  if (matchesGreeting(q)) {
     return getGreetingResponse(event, timeStr);
   }
 
-  // 2. Sangeet, Music, Dance & Entertainment
-  if (q.includes('sangeet') || q.includes('dance') || q.includes('music') || q.includes('dj') || q.includes('song') || q.includes('choreograph')) {
-    return getSangeetResponse(event, timeStr);
+  const handler = resolveIntent(q);
+  if (handler) {
+    return handler(event, timeStr);
   }
 
-  // 3. Catering & Dietary Buffers
-  if (q.includes('catering') || q.includes('plate') || q.includes('dietary') || q.includes('food') || q.includes('buffet') || q.includes('menu')) {
-    return getCateringResponse(event, timeStr);
-  }
-
-  // 4. Weather & Rain Contingency
-  if (q.includes('rain') || q.includes('weather') || q.includes('contingency') || q.includes('outdoor') || q.includes('lawn')) {
-    return getWeatherResponse(event, timeStr);
-  }
-
-  // 5. Buffer Times Baraat to Varmala & Transitions
-  if (q.includes('buffer') || q.includes('baraat') || q.includes('varmala') || q.includes('transition') || q.includes('delay')) {
-    return getBufferResponse(event, timeStr);
-  }
-
-  // 6. Budget Optimization & Savings
-  if (q.includes('save') || q.includes('cut cost') || q.includes('budget') || q.includes('expensive') || q.includes('negotiate')) {
-    return getCostSavingsResponse(event, timeStr);
-  }
-
-  // 7. Decor, Mandap & Theme Concepts
-  if (q.includes('decor') || q.includes('theme') || q.includes('flower') || q.includes('lighting') || q.includes('mandap') || q.includes('stage')) {
-    return getDecorResponse(event, timeStr);
-  }
-
-  // 8. Photography & Video Shot List
-  if (q.includes('photo') || q.includes('video') || q.includes('photographer') || q.includes('camera') || q.includes('drone')) {
-    return getPhotoResponse(event, timeStr);
-  }
-
-  // 9. Permits, Security & Compliance
-  if (q.includes('permit') || q.includes('municipal') || q.includes('police') || q.includes('security') || q.includes('license')) {
-    return getComplianceResponse(event, timeStr);
-  }
-
-  // 10. Birthday / Community Specific Prompts
-  if (q.includes('cake') || q.includes('game') || q.includes('favor') || q.includes('adult') || q.includes('volunteer') || q.includes('sponsor')) {
-    return getModalitySpecificResponse(event, timeStr);
-  }
-
-  // 11. Intelligent Dynamic Fallback
   return getFallbackResponse(query, event, timeStr);
 }

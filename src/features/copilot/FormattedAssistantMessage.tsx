@@ -5,53 +5,67 @@ interface FormattedAssistantMessageProps {
   isUser?: boolean;
 }
 
+function isBoldItalic(part: string): boolean {
+  return part.startsWith('***') && part.endsWith('***') && part.length >= 6;
+}
+
+function isBold(part: string): boolean {
+  return part.startsWith('**') && part.endsWith('**') && part.length >= 4;
+}
+
+function isItalic(part: string): boolean {
+  return part.startsWith('*') && part.endsWith('*') && part.length >= 2;
+}
+
+function renderFormattedPart(part: string, index: number, isUser?: boolean): React.ReactNode {
+  if (isBoldItalic(part)) {
+    return (
+      <strong
+        key={index}
+        className={
+          isUser
+            ? 'font-bold underline underline-offset-2 italic'
+            : 'font-semibold italic text-stone-900 dark:text-white'
+        }
+      >
+        {part.slice(3, -3)}
+      </strong>
+    );
+  }
+  if (isBold(part)) {
+    return (
+      <strong
+        key={index}
+        className={
+          isUser
+            ? 'font-bold underline underline-offset-2'
+            : 'font-semibold text-stone-900 dark:text-white'
+        }
+      >
+        {part.slice(2, -2)}
+      </strong>
+    );
+  }
+  if (isItalic(part)) {
+    return (
+      <em
+        key={index}
+        className={
+          isUser
+            ? 'italic'
+            : 'italic text-stone-800 dark:text-zinc-200'
+        }
+      >
+        {part.slice(1, -1)}
+      </em>
+    );
+  }
+  return <span key={index}>{part}</span>;
+}
+
 const renderInlineSpans = (text: string, isUser?: boolean): React.ReactNode[] => {
   const parts = text.split(/(\*\*\*.*?\*\*\*|\*\*.*?\*\*|\*[^*]+?\*)/g);
-  return parts.map((part, index) => {
-    if (part.startsWith('***') && part.endsWith('***') && part.length >= 6) {
-      return (
-        <strong
-          key={index}
-          className={
-            isUser
-              ? 'font-bold underline underline-offset-2 italic'
-              : 'font-semibold italic text-stone-900 dark:text-white'
-          }
-        >
-          {part.slice(3, -3)}
-        </strong>
-      );
-    }
-    if (part.startsWith('**') && part.endsWith('**') && part.length >= 4) {
-      return (
-        <strong
-          key={index}
-          className={
-            isUser
-              ? 'font-bold underline underline-offset-2'
-              : 'font-semibold text-stone-900 dark:text-white'
-          }
-        >
-          {part.slice(2, -2)}
-        </strong>
-      );
-    }
-    if (part.startsWith('*') && part.endsWith('*') && part.length >= 2) {
-      return (
-        <em
-          key={index}
-          className={
-            isUser
-              ? 'italic'
-              : 'italic text-stone-800 dark:text-zinc-200'
-          }
-        >
-          {part.slice(1, -1)}
-        </em>
-      );
-    }
-    return <span key={index}>{part}</span>;
-  });
+  return parts.map((part, index) => renderFormattedPart(part, index, isUser));
 };
 
 export const FormattedAssistantMessage: React.FC<FormattedAssistantMessageProps> = ({

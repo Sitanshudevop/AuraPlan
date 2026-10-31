@@ -23,6 +23,56 @@ export const CATEGORY_LABELS: Record<BudgetCategory, string> = {
   buffer: 'Emergency Contingency',
 };
 
+interface CategoryLockButtonProps {
+  isLocked: boolean;
+  onToggle: () => void;
+}
+
+const CategoryLockButton: React.FC<CategoryLockButtonProps> = ({ isLocked, onToggle }) => (
+  <button
+    onClick={onToggle}
+    className={`p-1 rounded transition-colors mt-0.5 shrink-0 ${
+      isLocked
+        ? 'text-[#6E79F5] hover:text-[#5D68E2]'
+        : 'text-stone-400 hover:text-stone-600 dark:text-zinc-500 dark:hover:text-zinc-300'
+    }`}
+    title={isLocked ? 'Locked from auto-rebalancing' : 'Click to lock allocation'}
+    aria-label={isLocked ? 'Unlock category' : 'Lock category'}
+  >
+    {isLocked ? <Lock className="w-3.5 h-3.5 stroke-[1.5]" /> : <Unlock className="w-3.5 h-3.5 stroke-[1.5]" />}
+  </button>
+);
+
+interface ContractedCostCellProps {
+  actualContracted: number;
+  allocated: number;
+  vendorQuote: number;
+  currency: Currency;
+}
+
+const ContractedCostCell: React.FC<ContractedCostCellProps> = ({
+  actualContracted,
+  allocated,
+  vendorQuote,
+  currency,
+}) => {
+  const isOver = actualContracted > allocated;
+  const hasDistinctQuote = vendorQuote > 0 && vendorQuote !== actualContracted;
+
+  return (
+    <td className="py-3 px-4 text-right tabular-nums">
+      <div className={`font-medium ${isOver ? 'text-red-600 dark:text-red-400' : 'text-[#111113] dark:text-[#EDEDEF]'}`}>
+        {formatCurrency(actualContracted, currency)}
+      </div>
+      {hasDistinctQuote && (
+        <div className="text-[11px] text-stone-400 dark:text-zinc-500">
+          Quote: {formatCurrency(vendorQuote, currency)}
+        </div>
+      )}
+    </td>
+  );
+};
+
 const CategoryRowComponent: React.FC<CategoryRowProps> = ({
   item,
   totalBudget,
@@ -50,18 +100,10 @@ const CategoryRowComponent: React.FC<CategoryRowProps> = ({
               {isExpanded ? <ChevronDown className="w-3.5 h-3.5 stroke-[1.5]" /> : <ChevronRight className="w-3.5 h-3.5 stroke-[1.5]" />}
             </button>
 
-            <button
-              onClick={() => onUpdate({ isLocked: !item.isLocked })}
-              className={`p-1 rounded transition-colors mt-0.5 shrink-0 ${
-                item.isLocked
-                  ? 'text-[#6E79F5] hover:text-[#5D68E2]'
-                  : 'text-stone-400 hover:text-stone-600 dark:text-zinc-500 dark:hover:text-zinc-300'
-              }`}
-              title={item.isLocked ? 'Locked from auto-rebalancing' : 'Click to lock allocation'}
-              aria-label={item.isLocked ? 'Unlock category' : 'Lock category'}
-            >
-              {item.isLocked ? <Lock className="w-3.5 h-3.5 stroke-[1.5]" /> : <Unlock className="w-3.5 h-3.5 stroke-[1.5]" />}
-            </button>
+            <CategoryLockButton
+              isLocked={item.isLocked}
+              onToggle={() => onUpdate({ isLocked: !item.isLocked })}
+            />
 
             <div className="min-w-0">
               <div className="font-medium text-[#111113] dark:text-[#EDEDEF] flex items-center gap-1.5 leading-snug line-clamp-2">
@@ -99,16 +141,12 @@ const CategoryRowComponent: React.FC<CategoryRowProps> = ({
         </td>
 
         {/* Actual Contracted Cost */}
-        <td className="py-3 px-4 text-right tabular-nums">
-          <div className={`font-medium ${isOverAllocated ? 'text-red-600 dark:text-red-400' : 'text-[#111113] dark:text-[#EDEDEF]'}`}>
-            {formatCurrency(item.actualContracted, currency)}
-          </div>
-          {item.vendorQuote > 0 && item.vendorQuote !== item.actualContracted && (
-            <div className="text-[11px] text-stone-400 dark:text-zinc-500">
-              Quote: {formatCurrency(item.vendorQuote, currency)}
-            </div>
-          )}
-        </td>
+        <ContractedCostCell
+          actualContracted={item.actualContracted}
+          allocated={item.allocated}
+          vendorQuote={item.vendorQuote}
+          currency={currency}
+        />
 
         {/* Amount Paid */}
         <td className="py-3 px-4 text-right tabular-nums">
