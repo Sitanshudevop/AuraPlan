@@ -32,11 +32,12 @@ export const AssistantHeader: React.FC<AssistantHeaderProps> = ({
       <div className="flex items-center gap-2">
         <button
           onClick={onToggleKeyInput}
+          title={hasKey ? 'Connected to Google Gemini Live API' : 'Local Deterministic Mode Active (Zero Latency)'}
           className="text-xs font-mono px-2 py-1 rounded-md border border-stone-200/80 dark:border-white/[0.08] bg-stone-100 dark:bg-white/[0.04] text-stone-600 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF] transition-colors flex items-center gap-1.5"
           aria-label="Toggle Gemini API Key settings"
         >
           <StatusDot status={hasKey ? 'confirmed' : 'pending'} />
-          <span>{hasKey ? 'Gemini live' : 'Deterministic'}</span>
+          <span>{hasKey ? 'Gemini live' : 'Local (Zero Latency)'}</span>
         </button>
         <button
           onClick={onClose}
