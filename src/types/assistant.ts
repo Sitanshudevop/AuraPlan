@@ -18,3 +18,4 @@ export interface AssistantMessage {
   timestamp: string;
   suggestedActions?: AssistantAction[];
 }
+

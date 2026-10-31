@@ -19,6 +19,7 @@ import { MODALITY_PROMPT_CHIPS } from '../services/planningAssistantService';
 import { EventData } from '../types/event';
 
 const weddingEvent: EventData = {
+  id: 'ev-wedding-udaipur',
   name: 'Udaipur Royal Wedding',
   type: 'wedding',
   city: 'Udaipur',
@@ -26,9 +27,13 @@ const weddingEvent: EventData = {
   targetBudget: 15000000,
   guestCount: 250,
   currency: 'INR',
+  setting: 'outdoor',
+  culturalPreferences: 'Marwari Royal Vedic',
+  subEvents: [],
 };
 
 const birthdayEvent: EventData = {
+  id: 'ev-birthday-mumbai',
   name: 'Aarav 10th Birthday',
   type: 'birthday',
   city: 'Mumbai',
@@ -36,9 +41,13 @@ const birthdayEvent: EventData = {
   targetBudget: 500000,
   guestCount: 60,
   currency: 'INR',
+  setting: 'indoor',
+  culturalPreferences: 'Contemporary Superhero',
+  subEvents: [],
 };
 
 const communityEvent: EventData = {
+  id: 'ev-community-delhi',
   name: 'Diwali Charity Gala',
   type: 'community',
   city: 'Delhi',
@@ -46,6 +55,9 @@ const communityEvent: EventData = {
   targetBudget: 3500000,
   guestCount: 500,
   currency: 'INR',
+  setting: 'hybrid',
+  culturalPreferences: 'Pan-Indian Cultural',
+  subEvents: [],
 };
 
 describe('Planning Assistant Local Responses & Domain Templates', () => {
