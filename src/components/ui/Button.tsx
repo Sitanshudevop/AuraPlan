@@ -31,23 +31,31 @@ const sizeClasses = {
   lg: 'min-h-[44px] sm:min-h-0 h-10 px-4 text-sm font-medium gap-2 rounded-lg touch-manipulation',
 };
 
-export const Button: React.FC<ButtonProps> = ({
-  children,
-  variant = 'secondary',
-  size = 'md',
-  icon,
-  className = '',
-  disabled,
-  ...props
-}) => {
-  return (
-    <button
-      disabled={disabled}
-      className={`inline-flex items-center justify-center font-sans tracking-tight transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5560E6] focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#0B0B0C] disabled:opacity-40 disabled:pointer-events-none select-none ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
-      {...props}
-    >
-      {icon && <span className="shrink-0 [&>svg]:w-4 [&>svg]:h-4 [&>svg]:stroke-[1.5]">{icon}</span>}
-      {children}
-    </button>
-  );
-};
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      children,
+      variant = 'secondary',
+      size = 'md',
+      icon,
+      className = '',
+      disabled,
+      ...props
+    },
+    ref
+  ) => {
+    return (
+      <button
+        ref={ref}
+        disabled={disabled}
+        className={`inline-flex items-center justify-center font-sans tracking-tight transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5560E6] focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#0B0B0C] disabled:opacity-40 disabled:pointer-events-none select-none ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+        {...props}
+      >
+        {icon && <span className="shrink-0 [&>svg]:w-4 [&>svg]:h-4 [&>svg]:stroke-[1.5]">{icon}</span>}
+        {children}
+      </button>
+    );
+  }
+);
+
+Button.displayName = 'Button';

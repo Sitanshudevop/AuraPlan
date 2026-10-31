@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { RipplePresetId, RippleDiffResult } from '../../types/ripple';
@@ -6,7 +6,7 @@ import { generateRippleScenario } from '../../services/geminiService';
 import { Button } from '../../components/ui/Button';
 import { logger } from '../../utils/logger';
 import { useFocusTrap } from '../../hooks';
-import { X, RotateCcw, Check, Loader2 } from 'lucide-react';
+import { X, RotateCcw, Check, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
 import { RippleDiffSummary } from './RippleDiffSummary';
 import { RippleScenarioSelector } from './RippleScenarioSelector';
 
@@ -16,26 +16,36 @@ export const RippleSimulatorDrawer: React.FC = () => {
   const [selectedPreset, setSelectedPreset] = useState<RipplePresetId>('guest_surge_25');
   const [customPrompt, setCustomPrompt] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [diffResult, setDiffResult] = useState<RippleDiffResult | null>(null);
 
+  const reqIdRef = useRef(0);
   const handleClose = useCallback(() => setCopilotOpen(false), [setCopilotOpen]);
   const drawerRef = useFocusTrap<HTMLDivElement>(isCopilotOpen, handleClose);
 
   const runSimulation = useCallback(
     async (presetId: RipplePresetId) => {
       setSelectedPreset(presetId);
+      const currentReq = ++reqIdRef.current;
       setLoading(true);
+      setErrorMsg(null);
+
       try {
         const res = await generateRippleScenario(
           presetId,
           state,
           presetId === 'custom' ? customPrompt : undefined
         );
+        if (currentReq !== reqIdRef.current) return;
         setDiffResult(res);
       } catch (err) {
+        if (currentReq !== reqIdRef.current) return;
         logger.error('Ripple simulation failed', err);
+        setErrorMsg('Ripple simulation encountered an issue. Please try again.');
       } finally {
-        setLoading(false);
+        if (currentReq === reqIdRef.current) {
+          setLoading(false);
+        }
       }
     },
     [state, customPrompt]
@@ -49,10 +59,16 @@ export const RippleSimulatorDrawer: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isCopilotOpen && !diffResult) {
+    if (isCopilotOpen && !diffResult && !loading) {
       runSimulation('guest_surge_25');
     }
-  }, [isCopilotOpen, diffResult, runSimulation]);
+  }, [isCopilotOpen, diffResult, loading, runSimulation]);
+
+  useEffect(() => {
+    if (!isCopilotOpen) {
+      reqIdRef.current++;
+    }
+  }, [isCopilotOpen]);
 
   if (!isCopilotOpen) return null;
 
@@ -97,9 +113,33 @@ export const RippleSimulatorDrawer: React.FC = () => {
           />
 
           {loading ? (
-            <div className="py-16 flex flex-col items-center justify-center space-y-3">
+            <div
+              role="status"
+              aria-busy="true"
+              aria-live="polite"
+              className="py-16 flex flex-col items-center justify-center space-y-3"
+            >
               <Loader2 className="w-5 h-5 animate-spin text-accent" />
               <p className="text-xs text-muted tabular-nums">Calculating multi-module impacts...</p>
+            </div>
+          ) : errorMsg ? (
+            <div
+              role="alert"
+              className="p-4 bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/40 rounded-xl space-y-3 my-4"
+            >
+              <div className="flex items-center gap-2 text-rose-800 dark:text-rose-300 font-medium text-xs">
+                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                <span>{errorMsg}</span>
+              </div>
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => runSimulation(selectedPreset)}
+                icon={<RefreshCw className="w-3.5 h-3.5" />}
+                className="text-xs"
+              >
+                Try again
+              </Button>
             </div>
           ) : diffResult ? (
             <RippleDiffSummary diffResult={diffResult} currency={currency} />
