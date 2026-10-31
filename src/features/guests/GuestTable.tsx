@@ -80,7 +80,11 @@ export const GuestTable: React.FC<GuestTableProps> = ({
 
       {/* Guest Table */}
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs border-collapse">
+        <table
+          className="w-full text-left text-xs border-collapse"
+          aria-rowcount={filteredGuests.length}
+          aria-label="Guest attendance and table allocations"
+        >
           <thead className="bg-surface-raised border-b border-hairline text-xs font-medium text-muted sticky top-0">
             <tr>
               <th className="py-2.5 px-4 font-medium">Guest name</th>
@@ -99,13 +103,14 @@ export const GuestTable: React.FC<GuestTableProps> = ({
                 </td>
               </tr>
             ) : (
-              displayedGuests.map((guest) => (
+              displayedGuests.map((guest, idx) => (
                 <GuestTableRow
                   key={guest.id}
                   guest={guest}
                   zoneOptions={zoneOptions}
                   onUpdateGuest={onUpdateGuest}
                   onDeleteGuest={onDeleteGuest}
+                  rowIndex={idx + 1}
                 />
               ))
             )}

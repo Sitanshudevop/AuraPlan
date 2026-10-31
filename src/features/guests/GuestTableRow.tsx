@@ -40,6 +40,7 @@ interface GuestTableRowProps {
   zoneOptions: SelectOption[];
   onUpdateGuest: (id: string, partial: Partial<Guest>) => void;
   onDeleteGuest: (id: string) => void;
+  rowIndex?: number;
 }
 
 const GuestTableRowComponent: React.FC<GuestTableRowProps> = ({
@@ -47,11 +48,15 @@ const GuestTableRowComponent: React.FC<GuestTableRowProps> = ({
   zoneOptions,
   onUpdateGuest,
   onDeleteGuest,
+  rowIndex,
 }) => {
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   return (
-    <tr className="h-14 hover:bg-stone-50/50 dark:hover:bg-white/[0.02] transition-colors">
+    <tr
+      className="h-14 hover:bg-stone-50/50 dark:hover:bg-white/[0.02] transition-colors"
+      aria-rowindex={rowIndex}
+    >
       <td className="py-2 px-4">
         <div className="font-medium text-foreground">{guest.name}</div>
         <div className="flex items-center gap-1.5 text-[11px] text-muted mt-0.5">

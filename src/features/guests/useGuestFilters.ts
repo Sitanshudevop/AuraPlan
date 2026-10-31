@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useDeferredValue } from 'react';
 import { Guest } from '../../types/guest';
 
 export interface UseGuestFiltersResult {
@@ -12,15 +12,16 @@ export interface UseGuestFiltersResult {
 export function useGuestFilters(guests: Guest[]): UseGuestFiltersResult {
   const [search, setSearch] = useState('');
   const [rsvpFilter, setRsvpFilter] = useState<string>('all');
+  const deferredSearch = useDeferredValue(search);
 
   const filteredGuests = useMemo(() => {
-    const query = search.toLowerCase();
+    const query = deferredSearch.trim().toLowerCase();
     return guests.filter((g) => {
       const matchesSearch = !query || g.name.toLowerCase().includes(query);
       const matchesRsvp = rsvpFilter === 'all' || g.rsvp === rsvpFilter;
       return matchesSearch && matchesRsvp;
     });
-  }, [guests, search, rsvpFilter]);
+  }, [guests, deferredSearch, rsvpFilter]);
 
   return {
     search,
@@ -30,4 +31,3 @@ export function useGuestFilters(guests: Guest[]): UseGuestFiltersResult {
     filteredGuests,
   };
 }
-

@@ -103,4 +103,34 @@ describe('GuestsTab, Dietary Matrix & Zone Capacity', () => {
     expect(screen.getByText('Guest Number 51')).toBeInTheDocument();
     expect(screen.getByText('Guest Number 65')).toBeInTheDocument();
   });
+
+  it('handles 1,000+ guest rosters with deferred filtering and accessible rowcount semantics', () => {
+    const largeRoster: Guest[] = Array.from({ length: 1000 }, (_, i) => ({
+      id: `roster-${i + 1}`,
+      name: `Attendee ${i + 1}`,
+      group: i % 10 === 0 ? 'vip' : 'general',
+      rsvp: i % 2 === 0 ? 'confirmed' : 'pending',
+      plusOnes: 1,
+      dietary: 'vegetarian',
+    }));
+
+    const mockZones: ZoneCapacity[] = [
+      { id: 'z-hall', name: 'Grand Hall', maxCapacity: 1200, assignedCount: 1000, type: 'zone' },
+    ];
+
+    const { container } = render(
+      <GuestTable
+        guests={largeRoster}
+        zones={mockZones}
+        onUpdateGuest={() => {}}
+        onDeleteGuest={() => {}}
+      />
+    );
+
+    const table = container.querySelector('table');
+    expect(table).toHaveAttribute('aria-rowcount', '1000');
+
+    const firstRow = container.querySelector('tbody tr');
+    expect(firstRow).toHaveAttribute('aria-rowindex', '1');
+  });
 });
