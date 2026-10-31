@@ -31,7 +31,7 @@ export const ChecklistItemCard: React.FC<ChecklistItemCardProps> = ({
           <h4 className="text-sm font-medium text-[#111113] dark:text-[#EDEDEF] leading-snug">
             {req.roleTitle}
           </h4>
-          <div className="text-[11px] text-stone-400 dark:text-zinc-500 mt-0.5">
+          <div className="text-[11px] text-stone-500 dark:text-zinc-500 mt-0.5">
             {formatCategory(req.category)} · {req.priority}
           </div>
         </div>
@@ -52,7 +52,7 @@ export const ChecklistItemCard: React.FC<ChecklistItemCardProps> = ({
               <span className="font-medium text-[#111113] dark:text-[#EDEDEF] truncate block">
                 {matchedVendor.name}
               </span>
-              <span className="text-[11px] text-stone-400 dark:text-zinc-500 tabular-nums">
+              <span className="text-[11px] text-stone-500 dark:text-zinc-500 tabular-nums">
                 {formatCurrency(matchedVendor.contractedPrice || matchedVendor.estimatedPrice, currency)}
               </span>
             </div>
@@ -66,7 +66,7 @@ export const ChecklistItemCard: React.FC<ChecklistItemCardProps> = ({
           </>
         ) : (
           <>
-            <span className="text-xs text-stone-400 dark:text-zinc-500 tabular-nums">
+            <span className="text-xs text-stone-500 dark:text-zinc-500 tabular-nums">
               Est. {formatCurrency(req.defaultEstimate, currency)}
             </span>
             <Button

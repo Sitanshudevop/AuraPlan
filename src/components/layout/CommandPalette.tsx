@@ -60,13 +60,13 @@ export const CommandPalette: React.FC = () => {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-3 px-4 py-3 border-b border-stone-200/80 dark:border-white/[0.08]">
-          <Search className="w-4 h-4 text-stone-400 dark:text-zinc-500 stroke-[1.5] shrink-0" />
+          <Search className="w-4 h-4 text-stone-500 dark:text-zinc-500 stroke-[1.5] shrink-0" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Type a command, search vendor or task (↑↓ to navigate, ↵ to run)..."
-            className="flex-1 bg-transparent text-sm text-[#111113] dark:text-[#EDEDEF] placeholder:text-stone-400 dark:placeholder:text-zinc-500 outline-none"
+            className="flex-1 bg-transparent text-sm text-[#111113] dark:text-[#EDEDEF] placeholder:text-stone-500 dark:placeholder:text-zinc-500 outline-none"
             autoFocus
             aria-label="Search workspace commands, vendors, or tasks"
             aria-autocomplete="list"
@@ -108,12 +108,12 @@ export const CommandPalette: React.FC = () => {
                   }`}
                 >
                   <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                    <span className={isSelected ? 'text-[#6E79F5] shrink-0' : 'text-stone-400 dark:text-zinc-500 shrink-0'}>
+                    <span className={isSelected ? 'text-[#6E79F5] shrink-0' : 'text-stone-500 dark:text-zinc-500 shrink-0'}>
                       {item.icon}
                     </span>
                     <span className="truncate">{item.title}</span>
                   </div>
-                  <span className="text-[11px] text-stone-400 dark:text-zinc-500 shrink-0">
+                  <span className="text-[11px] text-stone-500 dark:text-zinc-500 shrink-0">
                     {item.category}
                   </span>
                 </button>

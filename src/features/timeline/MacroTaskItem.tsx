@@ -29,13 +29,13 @@ export const MacroTaskItem: React.FC<MacroTaskItemProps> = ({ task, onToggle, on
           <span
             className={`block leading-snug break-words ${
               task.completed
-                ? 'text-stone-400 dark:text-[#8B8B93]'
+                ? 'text-stone-500 dark:text-[#8B8B93]'
                 : 'text-[#111113] dark:text-[#EDEDEF] font-medium'
             }`}
           >
             {task.title}
           </span>
-          <div className="flex flex-wrap items-center gap-2 text-xs text-stone-400 dark:text-zinc-500 mt-0.5">
+          <div className="flex flex-wrap items-center gap-2 text-xs text-stone-500 dark:text-zinc-500 mt-0.5">
             <span className="tabular-nums">Due {task.dueDate}</span>
             <span>·</span>
             <span>{task.assignee}</span>
@@ -51,13 +51,13 @@ export const MacroTaskItem: React.FC<MacroTaskItemProps> = ({ task, onToggle, on
         ) : task.priority === 'high' ? (
           <StatusDot status="amber" label="High" />
         ) : (
-          <span className="text-xs text-stone-400 dark:text-zinc-500">Normal</span>
+          <span className="text-xs text-stone-500 dark:text-zinc-500">Normal</span>
         )}
 
         <button
           type="button"
           onClick={() => onDelete(task.id)}
-          className="p-1 text-stone-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+          className="p-1 text-stone-500 hover:text-red-600 dark:hover:text-red-400 transition-colors"
           aria-label={`Delete task ${task.title}`}
           title="Delete task"
         >

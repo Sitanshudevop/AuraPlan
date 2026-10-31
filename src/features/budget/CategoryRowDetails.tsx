@@ -24,14 +24,14 @@ export const CategoryRowDetails: React.FC<CategoryRowDetailsProps> = ({
       <td colSpan={4} className="py-4 px-6 sm:px-12">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pb-3">
           <div className="space-y-1">
-            <span className="text-xs text-stone-400 dark:text-zinc-500">Initial quote</span>
+            <span className="text-xs text-stone-500 dark:text-zinc-500">Initial quote</span>
             <div className="font-medium tabular-nums text-stone-700 dark:text-[#EDEDEF]">
               {formatCurrency(item.vendorQuote, currency)}
             </div>
           </div>
 
           <div className="space-y-1">
-            <span className="text-xs text-stone-400 dark:text-zinc-500">Variance vs target</span>
+            <span className="text-xs text-stone-500 dark:text-zinc-500">Variance vs target</span>
             <div
               className={`font-medium tabular-nums ${
                 variance > 0 ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-400'
@@ -43,7 +43,7 @@ export const CategoryRowDetails: React.FC<CategoryRowDetailsProps> = ({
           </div>
 
           <div className="space-y-1">
-            <span className="text-xs text-stone-400 dark:text-zinc-500">Rebalance protection</span>
+            <span className="text-xs text-stone-500 dark:text-zinc-500">Rebalance protection</span>
             <div className="text-stone-600 dark:text-[#8B8B93]">
               {item.isLocked ? 'Locked from auto-rebalance' : 'Eligible for auto-allocation'}
             </div>

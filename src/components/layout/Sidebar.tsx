@@ -62,24 +62,24 @@ export const Sidebar: React.FC = () => {
           <div className="space-y-1.5">
             <div className="flex items-start justify-between gap-1.5">
               <div className="min-w-0 flex-1">
-                <div
+                <h1
                   className="text-sm font-semibold tracking-tight line-clamp-2 leading-snug text-[#111113] dark:text-[#EDEDEF]"
                   title={state.event.name}
                 >
                   {state.event.name}
-                </div>
+                </h1>
                 <div className="text-xs text-stone-500 dark:text-[#8B8B93] mt-0.5 truncate">
                   <span className="sr-only">{state.event.type.toUpperCase()} MODE</span>
                   <span>{modalityLabel} · {daysLeft} days to go</span>
                 </div>
-                <div className="flex items-center gap-1 text-xs text-stone-400 dark:text-zinc-500 mt-1 truncate">
+                <div className="flex items-center gap-1 text-xs text-stone-500 dark:text-zinc-500 mt-1 truncate">
                   <MapPin className="w-3 h-3 stroke-[1.5] shrink-0" />
                   <span className="truncate">{state.event.city}</span>
                 </div>
               </div>
               <button
                 onClick={() => setEditEventModalOpen(true)}
-                className="p-1 rounded text-stone-400 hover:text-stone-700 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors shrink-0"
+                className="p-1 rounded text-stone-500 hover:text-stone-700 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors shrink-0"
                 title="Edit Event Details"
                 aria-label="Edit event details"
               >
@@ -113,13 +113,13 @@ export const Sidebar: React.FC = () => {
               } ${isCollapsed ? 'justify-center px-0' : ''}`}
               title={`${item.label} (${item.shortcut})`}
             >
-              <span className={`shrink-0 transition-colors ${isActive ? 'text-[#6E79F5]' : 'text-stone-400 group-hover:text-stone-600 dark:text-zinc-500 dark:group-hover:text-zinc-300'}`}>
+              <span className={`shrink-0 transition-colors ${isActive ? 'text-[#6E79F5]' : 'text-stone-500 group-hover:text-stone-600 dark:text-zinc-500 dark:group-hover:text-zinc-300'}`}>
                 {item.icon}
               </span>
               {!isCollapsed && (
                 <div className="flex items-center justify-between flex-1 min-w-0">
                   <span className="text-[13.5px] whitespace-nowrap">{item.label}</span>
-                  <kbd className="text-[10px] text-stone-400 dark:text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <kbd className="text-[10px] text-stone-500 dark:text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity">
                     {item.shortcut}
                   </kbd>
                 </div>
@@ -130,7 +130,7 @@ export const Sidebar: React.FC = () => {
       </nav>
 
       {/* Bottom: Collapse Button & Status */}
-      <div className="p-2.5 border-t border-stone-200/80 dark:border-white/[0.08] flex items-center justify-between text-xs text-stone-400 dark:text-zinc-500">
+      <div className="p-2.5 border-t border-stone-200/80 dark:border-white/[0.08] flex items-center justify-between text-xs text-stone-500 dark:text-zinc-500">
         {!isCollapsed && (
           <span className="text-[11px] font-normal truncate">
             AuraPlan Workspace
@@ -138,7 +138,7 @@ export const Sidebar: React.FC = () => {
         )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-1.5 text-stone-400 hover:text-stone-700 dark:text-zinc-500 dark:hover:text-zinc-200 rounded-lg hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors ml-auto"
+          className="p-1.5 text-stone-500 hover:text-stone-700 dark:text-zinc-500 dark:hover:text-zinc-200 rounded-lg hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors ml-auto"
           aria-label={isCollapsed ? 'Expand navigation' : 'Collapse navigation'}
         >
           {isCollapsed ? <ChevronRight className="w-4 h-4 stroke-[1.5]" /> : <ChevronLeft className="w-4 h-4 stroke-[1.5]" />}

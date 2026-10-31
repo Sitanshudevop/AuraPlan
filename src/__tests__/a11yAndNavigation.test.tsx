@@ -21,7 +21,9 @@ describe('A11y, Navigation & 1-Click Judge Presets Integration', () => {
       render(<App />);
 
       // Initial Preset: Udaipur Royal Wedding
-      expect(screen.getByRole('heading', { level: 1, name: /Udaipur Royal Heritage Wedding/i })).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByRole('heading', { level: 1, name: /Udaipur Royal Heritage Wedding/i })).toBeInTheDocument();
+      });
       expect(screen.getByText('WEDDING MODE')).toBeInTheDocument();
 
       // Switch to Preset 2: Midnight Botanical Gala (Birthday Mode)

@@ -72,7 +72,7 @@ export function useCommandPaletteSearch({
       id: `vendor-${v.id}`,
       title: `Vendor: ${v.name} (${v.category.toUpperCase()} • ${v.status.replace('_', ' ')})`,
       category: 'Vendors',
-      icon: <Briefcase className="w-3.5 h-3.5 text-stone-400" />,
+      icon: <Briefcase className="w-3.5 h-3.5 text-stone-500" />,
       action: () => setActiveTab('vendors'),
     }));
 
@@ -80,7 +80,7 @@ export function useCommandPaletteSearch({
       id: `task-${t.id}`,
       title: `Task: ${t.title} [${t.priority.toUpperCase()}]`,
       category: 'Tasks',
-      icon: <CheckCircle className="w-3.5 h-3.5 text-stone-400" />,
+      icon: <CheckCircle className="w-3.5 h-3.5 text-stone-500" />,
       action: () => setActiveTab('timeline'),
     }));
 

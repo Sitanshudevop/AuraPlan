@@ -29,7 +29,7 @@ export const Toast: React.FC = () => {
       <span className="truncate max-w-sm">{currentMessage}</span>
       <button
         onClick={() => setVisible(false)}
-        className="p-0.5 text-stone-400 hover:text-stone-700 dark:hover:text-zinc-200 ml-1"
+        className="p-0.5 text-stone-500 hover:text-stone-700 dark:hover:text-zinc-200 ml-1"
         aria-label="Dismiss toast"
       >
         <X className="w-3.5 h-3.5" />

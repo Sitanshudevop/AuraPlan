@@ -86,7 +86,7 @@ export const Select: React.FC<SelectProps> = ({
           )}
           <span className="truncate">{selectedOption ? selectedOption.label : placeholder}</span>
         </span>
-        <ChevronDown className={`w-3.5 h-3.5 text-stone-400 dark:text-zinc-500 shrink-0 transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-3.5 h-3.5 text-stone-500 dark:text-zinc-500 shrink-0 transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (

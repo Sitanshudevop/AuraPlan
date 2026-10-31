@@ -60,14 +60,14 @@ export const VendorQuoteTable: React.FC<VendorQuoteTableProps> = ({
                   <div className="font-medium text-[#111113] dark:text-[#EDEDEF]">
                     {vendor.name}
                   </div>
-                  <div className="text-[11px] text-stone-400 dark:text-zinc-500">
+                  <div className="text-[11px] text-stone-500 dark:text-zinc-500">
                     {formatCategory(vendor.category)} · {vendor.location}
                   </div>
                 </td>
 
                 <td className="py-3 px-4 tabular-nums text-stone-700 dark:text-[#EDEDEF]">
                   <span className="font-medium">{vendor.rating.toFixed(1)}</span>
-                  <span className="text-[11px] text-stone-400 dark:text-zinc-500 ml-1">({vendor.ratingCount})</span>
+                  <span className="text-[11px] text-stone-500 dark:text-zinc-500 ml-1">({vendor.ratingCount})</span>
                 </td>
 
                 <td className="py-3 px-4 text-right tabular-nums text-stone-600 dark:text-[#8B8B93]">
@@ -78,7 +78,7 @@ export const VendorQuoteTable: React.FC<VendorQuoteTableProps> = ({
                   {vendor.contractedPrice > 0 ? (
                     formatCurrency(vendor.contractedPrice, currency)
                   ) : (
-                    <span className="text-stone-400 dark:text-zinc-500 font-normal italic">Pending</span>
+                    <span className="text-stone-500 dark:text-zinc-500 font-normal italic">Pending</span>
                   )}
                 </td>
 
@@ -108,7 +108,7 @@ export const VendorQuoteTable: React.FC<VendorQuoteTableProps> = ({
                       <button
                         type="button"
                         onClick={() => onDeleteVendor(vendor.id)}
-                        className="p-1 text-stone-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                        className="p-1 text-stone-500 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                         aria-label={`Delete vendor ${vendor.name}`}
                         title="Delete vendor"
                       >

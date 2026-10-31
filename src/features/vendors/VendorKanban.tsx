@@ -80,7 +80,7 @@ export const VendorKanban: React.FC<VendorKanbanProps> = ({
       {/* Mobile Column View (< 640px) */}
       <div className="sm:hidden flex-1 min-h-0 overflow-y-auto space-y-2 pr-1 scrollbar-thin">
         {activeMobileVendors.length === 0 ? (
-          <div className="py-12 text-center text-xs text-stone-400 dark:text-zinc-500">
+          <div className="py-12 text-center text-xs text-stone-500 dark:text-zinc-500">
             No vendors in this stage
           </div>
         ) : (

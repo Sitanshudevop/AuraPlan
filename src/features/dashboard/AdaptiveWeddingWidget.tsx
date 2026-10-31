@@ -33,7 +33,7 @@ export const AdaptiveWeddingWidget: React.FC = () => {
             Multi-day ceremony sequence with VIP family traditions
           </p>
         </div>
-        <span className="text-xs text-stone-400 dark:text-zinc-500">
+        <span className="text-xs text-stone-500 dark:text-zinc-500">
           {state.event.subEvents.length} ceremonies
         </span>
       </div>
@@ -42,7 +42,7 @@ export const AdaptiveWeddingWidget: React.FC = () => {
       <div className="relative flex items-center">
         <button
           onClick={() => scrollTabs('left')}
-          className="p-1 rounded-md text-stone-400 hover:text-stone-700 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] shrink-0 mr-1 transition-colors"
+          className="p-1 rounded-md text-stone-500 hover:text-stone-700 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] shrink-0 mr-1 transition-colors"
           aria-label="Scroll ceremonies left"
         >
           <ChevronLeft className="w-4 h-4 stroke-[1.5]" />
@@ -72,7 +72,7 @@ export const AdaptiveWeddingWidget: React.FC = () => {
 
         <button
           onClick={() => scrollTabs('right')}
-          className="p-1 rounded-md text-stone-400 hover:text-stone-700 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] shrink-0 ml-1 transition-colors"
+          className="p-1 rounded-md text-stone-500 hover:text-stone-700 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] shrink-0 ml-1 transition-colors"
           aria-label="Scroll ceremonies right"
         >
           <ChevronRight className="w-4 h-4 stroke-[1.5]" />
@@ -106,7 +106,7 @@ export const AdaptiveWeddingWidget: React.FC = () => {
             </div>
           </div>
           {currentSubEvent.notes && (
-            <p className="text-[11px] text-stone-400 dark:text-zinc-500 italic pt-0.5">
+            <p className="text-[11px] text-stone-500 dark:text-zinc-500 italic pt-0.5">
               "{currentSubEvent.notes}"
             </p>
           )}

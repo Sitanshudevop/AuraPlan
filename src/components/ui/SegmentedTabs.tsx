@@ -40,7 +40,7 @@ export const SegmentedTabs: React.FC<SegmentedTabsProps> = ({
               {tab.icon && <span className="shrink-0">{tab.icon}</span>}
               <span>{tab.label}</span>
               {tab.count !== undefined && (
-                <span className="text-[11px] font-mono tabular-nums text-stone-400 dark:text-zinc-500">
+                <span className="text-[11px] font-mono tabular-nums text-stone-500 dark:text-zinc-500">
                   {tab.count}
                 </span>
               )}
@@ -72,7 +72,7 @@ export const SegmentedTabs: React.FC<SegmentedTabsProps> = ({
                 className={`text-xs px-1.5 py-0.2 rounded font-mono tabular-nums ${
                   isActive
                     ? 'bg-stone-200/70 dark:bg-white/[0.1] text-stone-800 dark:text-[#EDEDEF]'
-                    : 'text-stone-400 dark:text-zinc-500'
+                    : 'text-stone-500 dark:text-zinc-500'
                 }`}
               >
                 {tab.count}

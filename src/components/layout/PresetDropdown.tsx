@@ -35,9 +35,9 @@ export const PresetDropdown: React.FC = () => {
         aria-expanded={presetOpen}
         className="h-8 flex items-center gap-1.5 px-2.5 text-xs font-medium rounded-lg bg-stone-100 dark:bg-white/[0.04] hover:bg-stone-200/70 dark:hover:bg-white/[0.06] text-stone-800 dark:text-[#EDEDEF] border border-stone-200/70 dark:border-white/[0.06] transition-colors"
       >
-        <span className="text-stone-400 dark:text-zinc-500 hidden sm:inline font-normal">Preset:</span>
+        <span className="text-stone-500 dark:text-zinc-500 hidden sm:inline font-normal">Preset:</span>
         <span className="font-medium truncate max-w-[140px] sm:max-w-[180px]">{currentPreset.title}</span>
-        <ChevronDown className={`w-3.5 h-3.5 text-stone-400 dark:text-zinc-500 stroke-[1.5] transition-transform ${presetOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-3.5 h-3.5 text-stone-500 dark:text-zinc-500 stroke-[1.5] transition-transform ${presetOpen ? 'rotate-180' : ''}`} />
       </button>
 
       <div
@@ -45,7 +45,7 @@ export const PresetDropdown: React.FC = () => {
           presetOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
         }`}
       >
-        <div className="px-2 py-1 text-[11px] font-medium text-stone-400 dark:text-zinc-500">
+        <div className="px-2 py-1 text-[11px] font-medium text-stone-500 dark:text-zinc-500">
           Event Presets
         </div>
         {PRESET_OPTIONS.map((p) => {
@@ -66,7 +66,7 @@ export const PresetDropdown: React.FC = () => {
             >
               <div>
                 <div className="font-medium">{p.title}</div>
-                <div className="text-[11px] text-stone-400 dark:text-zinc-500 mt-0.5">{p.stats}</div>
+                <div className="text-[11px] text-stone-500 dark:text-zinc-500 mt-0.5">{p.stats}</div>
               </div>
               {isActive && <Check className="w-3.5 h-3.5 shrink-0 text-[#6E79F5]" />}
             </button>

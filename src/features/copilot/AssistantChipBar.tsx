@@ -27,7 +27,7 @@ export const AssistantChipBar: React.FC<AssistantChipBarProps> = ({
     <>
       {showKeyInput && (
         <div className="p-3 bg-stone-100/80 dark:bg-[#161618] border-b border-stone-200/80 dark:border-white/[0.08] flex items-center gap-2 text-xs">
-          <Key className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+          <Key className="w-3.5 h-3.5 text-stone-500 shrink-0" />
           <input
             type="password"
             placeholder="Paste Gemini API key..."

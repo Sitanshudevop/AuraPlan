@@ -47,7 +47,7 @@ export const DayOfRunOfShowView: React.FC = () => {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-xs tabular-nums text-stone-400 dark:text-zinc-500">
+            <span className="text-xs tabular-nums text-stone-500 dark:text-zinc-500">
               {sortedActivities.length} scheduled events
             </span>
             <Button

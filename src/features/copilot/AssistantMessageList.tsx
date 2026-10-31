@@ -46,9 +46,9 @@ export const AssistantMessageList: React.FC<AssistantMessageListProps> = ({
                           isDone ? (
                             <Check className="w-3 h-3 text-emerald-500" />
                           ) : act.type === 'add_task' ? (
-                            <CalendarPlus className="w-3 h-3 text-stone-400" />
+                            <CalendarPlus className="w-3 h-3 text-stone-500" />
                           ) : (
-                            <Wallet className="w-3 h-3 text-stone-400" />
+                            <Wallet className="w-3 h-3 text-stone-500" />
                           )
                         }
                       >
@@ -60,7 +60,7 @@ export const AssistantMessageList: React.FC<AssistantMessageListProps> = ({
               </div>
             )}
           </div>
-          <span className="text-[10px] text-stone-400 dark:text-zinc-500 mt-1 tabular-nums px-1">{m.timestamp}</span>
+          <span className="text-[10px] text-stone-500 dark:text-zinc-500 mt-1 tabular-nums px-1">{m.timestamp}</span>
         </div>
       ))}
 

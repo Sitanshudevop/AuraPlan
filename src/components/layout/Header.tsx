@@ -39,7 +39,7 @@ export const Header: React.FC = () => {
           <span className="font-semibold text-sm tracking-tight text-[#111113] dark:text-[#EDEDEF]">
             Vow & Venue
           </span>
-          <span className="text-xs text-stone-400 dark:text-zinc-500 hidden md:inline">by AuraPlan</span>
+          <span className="text-xs text-stone-500 dark:text-zinc-500 hidden md:inline">by AuraPlan</span>
         </div>
 
         <div className="h-3.5 w-px bg-stone-200 dark:bg-white/[0.08] shrink-0" />
@@ -55,11 +55,11 @@ export const Header: React.FC = () => {
           aria-label="Search or run command"
         >
           <div className="flex items-center gap-2">
-            <Search className="w-3.5 h-3.5 text-stone-400 dark:text-zinc-500 stroke-[1.5]" />
+            <Search className="w-3.5 h-3.5 text-stone-500 dark:text-zinc-500 stroke-[1.5]" />
             <span className="hidden sm:inline">Search workspace...</span>
             <span className="sm:hidden">Search...</span>
           </div>
-          <span className="hidden sm:inline text-xs text-stone-400 dark:text-zinc-500 font-sans">
+          <span className="hidden sm:inline text-xs text-stone-500 dark:text-zinc-500 font-sans">
             ⌘K
           </span>
         </button>

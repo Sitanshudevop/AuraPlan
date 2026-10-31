@@ -16,7 +16,7 @@ export const ThemePaletteTab: React.FC<ThemePaletteTabProps> = ({
 }) => {
   return (
     <div className="space-y-2 pt-1">
-      <div className="text-xs text-stone-400 dark:text-zinc-500">
+      <div className="text-xs text-stone-500 dark:text-zinc-500">
         Click swatch to copy hex code
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -37,7 +37,7 @@ export const ThemePaletteTab: React.FC<ThemePaletteTabProps> = ({
               <span className="text-xs font-medium text-[#111113] dark:text-[#EDEDEF] block truncate">
                 {color.name}
               </span>
-              <span className="text-[11px] text-stone-400 dark:text-zinc-500 tabular-nums">
+              <span className="text-[11px] text-stone-500 dark:text-zinc-500 tabular-nums">
                 {copiedHex === color.hex ? 'Copied' : color.hex}
               </span>
             </div>

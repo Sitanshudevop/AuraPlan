@@ -60,7 +60,7 @@ export const UpcomingMilestonesCard: React.FC<UpcomingMilestonesCardProps> = ({
               <div className="text-[11px] text-stone-500 dark:text-[#8B8B93] truncate">
                 {pm.vendorName}
               </div>
-              <div className="text-[11px] text-stone-400 dark:text-zinc-500 tabular-nums">
+              <div className="text-[11px] text-stone-500 dark:text-zinc-500 tabular-nums">
                 Due {formatFriendlyDate(pm.dueDate)}
               </div>
             </div>

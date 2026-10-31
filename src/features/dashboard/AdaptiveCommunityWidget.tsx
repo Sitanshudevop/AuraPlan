@@ -21,7 +21,7 @@ export const AdaptiveCommunityWidget: React.FC = () => {
             Sponsors dynamically offset gross budget expenses
           </p>
         </div>
-        <span className="text-xs text-stone-400 dark:text-zinc-500">
+        <span className="text-xs text-stone-500 dark:text-zinc-500">
           Community Experience
         </span>
       </div>
@@ -54,7 +54,7 @@ export const AdaptiveCommunityWidget: React.FC = () => {
           <span className="text-xs font-medium text-stone-700 dark:text-[#EDEDEF]">
             Active Corporate Partners
           </span>
-          <span className="text-xs text-stone-400 dark:text-zinc-500 tabular-nums">
+          <span className="text-xs text-stone-500 dark:text-zinc-500 tabular-nums">
             {state.sponsorships.length} partners confirmed
           </span>
         </div>

@@ -32,7 +32,7 @@ export const AssistantChatInput: React.FC<AssistantChatInputProps> = ({
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask anything (e.g. weather contingency, buffer times)..."
-          className="flex-1 text-xs px-3 py-2 bg-white dark:bg-[#161618] border border-stone-200/80 dark:border-white/[0.08] rounded-md focus:outline-none focus:ring-1 focus:ring-[#6E79F5] text-[#111113] dark:text-[#EDEDEF] placeholder:text-stone-400 dark:placeholder:text-zinc-500"
+          className="flex-1 text-xs px-3 py-2 bg-white dark:bg-[#161618] border border-stone-200/80 dark:border-white/[0.08] rounded-md focus:outline-none focus:ring-1 focus:ring-[#6E79F5] text-[#111113] dark:text-[#EDEDEF] placeholder:text-stone-500 dark:placeholder:text-zinc-500"
         />
         <Button
           type="submit"

@@ -36,7 +36,7 @@ export const ThemeDecorTab: React.FC<ThemeDecorTabProps> = ({
             <div className="pr-2 min-w-0 flex-1">
               <div className="font-medium text-[#111113] dark:text-[#EDEDEF]">{dc.title}</div>
               <p className="text-xs text-stone-500 dark:text-[#8B8B93] mt-0.5 leading-relaxed">{dc.description}</p>
-              <div className="text-[11px] text-stone-400 dark:text-zinc-500 mt-1">Milestone: {dc.timelineTask}</div>
+              <div className="text-[11px] text-stone-500 dark:text-zinc-500 mt-1">Milestone: {dc.timelineTask}</div>
             </div>
             <div className="text-right shrink-0 space-y-1">
               <div className="font-semibold text-[#111113] dark:text-[#EDEDEF] tabular-nums">

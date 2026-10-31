@@ -31,9 +31,9 @@ export const WelcomeHero: React.FC<WelcomeHeroProps> = ({
         <div className="text-xs font-normal text-stone-500 dark:text-[#8B8B93]">
           {getGreetingTime()} · Namaste
         </div>
-        <h1 className="text-2xl font-semibold tracking-tight text-[#111113] dark:text-[#EDEDEF]">
+        <h2 className="text-2xl font-semibold tracking-tight text-[#111113] dark:text-[#EDEDEF]">
           {state.event.name}
-        </h1>
+        </h2>
         <p className="text-sm text-stone-500 dark:text-[#8B8B93] tabular-nums">
           {daysLeft} days to go · {taskCompletionPct}% of tasks complete · {signedVendors} of {totalVendors} vendors contracted
         </p>

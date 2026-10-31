@@ -28,7 +28,7 @@ export const RunOfShowTableRow: React.FC<RunOfShowTableRowProps> = ({
         <div className="font-medium">
           {activity.startTime} – {activity.endTime}
         </div>
-        <span className="text-[11px] text-stone-400 dark:text-zinc-500">
+        <span className="text-[11px] text-stone-500 dark:text-zinc-500">
           {activity.durationMinutes}m window
         </span>
       </td>
@@ -36,7 +36,7 @@ export const RunOfShowTableRow: React.FC<RunOfShowTableRowProps> = ({
       <td className="py-3 px-4">
         <div className="font-medium text-[#111113] dark:text-[#EDEDEF]">{activity.title}</div>
         {activity.notes && (
-          <div className="text-[11px] text-stone-400 dark:text-zinc-500 truncate max-w-sm">
+          <div className="text-[11px] text-stone-500 dark:text-zinc-500 truncate max-w-sm">
             {activity.notes}
           </div>
         )}
@@ -65,7 +65,7 @@ export const RunOfShowTableRow: React.FC<RunOfShowTableRowProps> = ({
           <button
             type="button"
             onClick={() => onDeleteActivity(activity.id)}
-            className="p-1 text-stone-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+            className="p-1 text-stone-500 hover:text-red-600 dark:hover:text-red-400 transition-colors"
             aria-label={`Delete activity ${activity.title}`}
             title="Delete activity"
           >

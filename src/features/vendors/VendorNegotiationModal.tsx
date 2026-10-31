@@ -120,7 +120,7 @@ export const VendorNegotiationModal: React.FC<VendorNegotiationModalProps> = ({
             <ul className="space-y-1.5">
               {data.vettingQuestions.map((q, i) => (
                 <li key={i} className="flex items-start gap-2 text-stone-700 dark:text-zinc-300">
-                  <span className="font-mono font-bold text-stone-400">{i + 1}.</span>
+                  <span className="font-mono font-bold text-stone-500">{i + 1}.</span>
                   <span>{q}</span>
                 </li>
               ))}

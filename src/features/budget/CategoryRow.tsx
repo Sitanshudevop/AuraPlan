@@ -34,7 +34,7 @@ const CategoryLockButton: React.FC<CategoryLockButtonProps> = ({ isLocked, onTog
     className={`p-1 rounded transition-colors mt-0.5 shrink-0 ${
       isLocked
         ? 'text-[#6E79F5] hover:text-[#5D68E2]'
-        : 'text-stone-400 hover:text-stone-600 dark:text-zinc-500 dark:hover:text-zinc-300'
+        : 'text-stone-500 hover:text-stone-600 dark:text-zinc-500 dark:hover:text-zinc-300'
     }`}
     title={isLocked ? 'Locked from auto-rebalancing' : 'Click to lock allocation'}
     aria-label={isLocked ? 'Unlock category' : 'Lock category'}
@@ -65,7 +65,7 @@ const ContractedCostCell: React.FC<ContractedCostCellProps> = ({
         {formatCurrency(actualContracted, currency)}
       </div>
       {hasDistinctQuote && (
-        <div className="text-[11px] text-stone-400 dark:text-zinc-500">
+        <div className="text-[11px] text-stone-500 dark:text-zinc-500">
           Quote: {formatCurrency(vendorQuote, currency)}
         </div>
       )}
@@ -93,7 +93,7 @@ const CategoryRowComponent: React.FC<CategoryRowProps> = ({
           <div className="flex items-start gap-2.5">
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="p-1 rounded text-stone-400 hover:text-stone-700 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors mt-0.5 shrink-0"
+              className="p-1 rounded text-stone-500 hover:text-stone-700 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors mt-0.5 shrink-0"
               aria-expanded={isExpanded}
               aria-label={`Toggle details for ${item.name}`}
             >
@@ -112,7 +112,7 @@ const CategoryRowComponent: React.FC<CategoryRowProps> = ({
                   <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" title="Actual cost exceeds allocation" />
                 )}
               </div>
-              <div className="text-[11px] text-stone-400 dark:text-zinc-500 mt-0.5">
+              <div className="text-[11px] text-stone-500 dark:text-zinc-500 mt-0.5">
                 {CATEGORY_LABELS[item.category] || item.category}
               </div>
             </div>
@@ -124,7 +124,7 @@ const CategoryRowComponent: React.FC<CategoryRowProps> = ({
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs tabular-nums text-stone-700 dark:text-[#EDEDEF]">
               <span className="font-medium">{formatCurrency(item.allocated, currency)}</span>
-              <span className="text-[11px] text-stone-400 dark:text-zinc-500">{allocationPercent.toFixed(1)}%</span>
+              <span className="text-[11px] text-stone-500 dark:text-zinc-500">{allocationPercent.toFixed(1)}%</span>
             </div>
             <input
               type="range"
@@ -153,7 +153,7 @@ const CategoryRowComponent: React.FC<CategoryRowProps> = ({
           <div className="font-medium text-[#111113] dark:text-[#EDEDEF]">
             {formatCurrency(item.amountPaid, currency)}
           </div>
-          <div className="text-[11px] text-stone-400 dark:text-zinc-500">
+          <div className="text-[11px] text-stone-500 dark:text-zinc-500">
             {paidPercent}% settled
           </div>
         </td>

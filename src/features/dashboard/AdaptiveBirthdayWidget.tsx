@@ -42,7 +42,7 @@ export const AdaptiveBirthdayWidget: React.FC = () => {
             Artisanal cake tiering, soundscape playlist, and party favor estimator
           </p>
         </div>
-        <span className="text-xs text-stone-400 dark:text-zinc-500">
+        <span className="text-xs text-stone-500 dark:text-zinc-500">
           Birthday Experience
         </span>
       </div>

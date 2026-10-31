@@ -42,16 +42,16 @@ export const HorizonAccordionSection: React.FC<HorizonAccordionSectionProps> = (
       >
         <div className="flex items-center gap-2">
           {isCollapsed ? (
-            <ChevronRight className="w-4 h-4 text-stone-400 stroke-[1.5] shrink-0" />
+            <ChevronRight className="w-4 h-4 text-stone-500 stroke-[1.5] shrink-0" />
           ) : (
-            <ChevronDown className="w-4 h-4 text-stone-400 stroke-[1.5] shrink-0" />
+            <ChevronDown className="w-4 h-4 text-stone-500 stroke-[1.5] shrink-0" />
           )}
           <h3 className="text-sm font-medium tracking-tight text-[#111113] dark:text-[#EDEDEF]">
             {HORIZON_LABELS[horizon]}
           </h3>
         </div>
 
-        <span className="text-xs tabular-nums text-stone-400 dark:text-zinc-500">
+        <span className="text-xs tabular-nums text-stone-500 dark:text-zinc-500">
           {completedCount} of {tasks.length} done {isAllCompleted ? '· Complete' : ''}
         </span>
       </button>

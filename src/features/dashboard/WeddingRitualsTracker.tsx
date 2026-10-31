@@ -34,7 +34,7 @@ export const WeddingRitualsTracker: React.FC = () => {
         <span className="text-xs font-medium text-stone-700 dark:text-[#EDEDEF]">
           Traditional Ceremonies & VIP Protocol
         </span>
-        <span className="text-xs text-stone-400 dark:text-zinc-500 tabular-nums">
+        <span className="text-xs text-stone-500 dark:text-zinc-500 tabular-nums">
           {rituals.filter((r) => r.done).length} of {rituals.length} complete
         </span>
       </div>
@@ -58,7 +58,7 @@ export const WeddingRitualsTracker: React.FC = () => {
               )}
               <span>{r.name}</span>
             </div>
-            <span className="text-[11px] text-stone-400 dark:text-zinc-500">
+            <span className="text-[11px] text-stone-500 dark:text-zinc-500">
               {r.done ? 'Verified' : 'Pending'}
             </span>
           </button>

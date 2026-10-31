@@ -64,7 +64,7 @@ export const TaxAndCateringCalc: React.FC = () => {
 
           <div className="flex items-center justify-between pt-2 border-t border-stone-200/60 dark:border-zinc-800/60">
             <div>
-              <span className="text-[10px] text-stone-400 uppercase font-semibold">Total Catering Math:</span>
+              <span className="text-[10px] text-stone-500 uppercase font-semibold">Total Catering Math:</span>
               <div className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">
                 {formatCurrency(calculatedCateringTotal, currency)}
               </div>

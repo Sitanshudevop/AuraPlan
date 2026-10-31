@@ -51,7 +51,7 @@ export const VendorCardActionMenu: React.FC<VendorCardActionMenuProps> = ({
       <button
         type="button"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className="p-1 rounded text-stone-400 hover:text-stone-700 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
+        className="p-1 rounded text-stone-500 hover:text-stone-700 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
         aria-label={`Actions for ${vendor.name}`}
         title="Vendor actions"
       >

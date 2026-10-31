@@ -45,7 +45,7 @@ export const PersonalizedActivitiesView: React.FC<Props> = ({
             Add experiential moments directly into your run-of-show and budget ledger
           </p>
         </div>
-        <span className="text-xs text-stone-400 dark:text-zinc-500">
+        <span className="text-xs text-stone-500 dark:text-zinc-500">
           {activities.length} ideas available
         </span>
       </div>
@@ -62,7 +62,7 @@ export const PersonalizedActivitiesView: React.FC<Props> = ({
             >
               <div className="space-y-1.5">
                 {/* Category as muted text line above title */}
-                <div className="flex items-center justify-between text-xs text-stone-400 dark:text-zinc-500">
+                <div className="flex items-center justify-between text-xs text-stone-500 dark:text-zinc-500">
                   <span className="capitalize">{act.category}</span>
                   <span className="tabular-nums">{act.durationMinutes} mins · {act.location}</span>
                 </div>
@@ -86,7 +86,7 @@ export const PersonalizedActivitiesView: React.FC<Props> = ({
 
               {/* Bottom Row: Lead on Left, Price + Actions on Right */}
               <div className="pt-3 border-t border-stone-100 dark:border-white/[0.04] flex flex-wrap items-center justify-between gap-3">
-                <span className="text-xs text-stone-400 dark:text-zinc-500 truncate">
+                <span className="text-xs text-stone-500 dark:text-zinc-500 truncate">
                   Lead: {act.poc}
                 </span>
 
