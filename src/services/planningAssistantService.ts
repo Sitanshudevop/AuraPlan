@@ -1,29 +1,14 @@
 import { EventData, EventType } from '../types/event';
 import { EventWorkspaceState } from '../types/state';
-import { TimelineHorizon, Priority } from '../types/timeline';
-import { BudgetCategory } from '../types/budget';
 import { sanitizeText } from '../utils/security';
 import { logger } from '../utils/logger';
 import { getSmartLocalAssistantResponse } from './assistantResponses';
 import { getActiveApiKey } from './geminiService';
+import { AssistantAction, AssistantMessage } from '../types/assistant';
 
-export interface AssistantAction {
-  type: 'add_task' | 'add_budget' | 'add_vendor';
-  label: string;
-  payload: {
-    task?: { title: string; horizon: TimelineHorizon; category: string; priority: Priority };
-    budget?: { name: string; category: BudgetCategory; allocated: number };
-    vendor?: { name: string; category: BudgetCategory; estimatedPrice: number; deliverables: string[] };
-  };
-}
+export type { AssistantAction, AssistantMessage };
 
-export interface AssistantMessage {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: string;
-  suggestedActions?: AssistantAction[];
-}
+
 
 export const MODALITY_PROMPT_CHIPS: Record<EventType, string[]> = {
   wedding: [

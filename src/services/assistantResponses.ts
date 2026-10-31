@@ -1,5 +1,5 @@
 import { EventData } from '../types/event';
-import { AssistantMessage } from './planningAssistantService';
+import { AssistantMessage } from '../types/assistant';
 import {
   getGreetingResponse,
   getSangeetResponse,

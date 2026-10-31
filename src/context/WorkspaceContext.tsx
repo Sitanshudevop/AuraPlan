@@ -10,7 +10,6 @@ import { useWorkspacePersistence } from './workspaceStorageSync';
 import { useWorkspaceOverlays } from './useWorkspaceOverlays';
 import { useWorkspaceDispatchers } from './useWorkspaceDispatchers';
 
-export * from '../state/sliceHooks';
 
 const WorkspaceContext = createContext<WorkspaceContextType | null>(null);
 

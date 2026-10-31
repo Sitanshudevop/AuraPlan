@@ -1,24 +1,9 @@
 import React, { useState, useRef, useEffect, useId } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
 import { useSelectKeyboard } from './useSelectKeyboard';
+import { SelectProps } from './selectTypes';
 
-export interface SelectOption {
-  value: string;
-  label: string;
-  dotColor?: string;
-  description?: string;
-}
-
-export interface SelectProps {
-  value: string;
-  onChange: (value: string) => void;
-  options: SelectOption[];
-  placeholder?: string;
-  variant?: 'input' | 'ghost' | 'compact';
-  ariaLabel?: string;
-  className?: string;
-  disabled?: boolean;
-}
+export type { SelectOption, SelectProps } from './selectTypes';
 
 export const Select: React.FC<SelectProps> = ({
   value,

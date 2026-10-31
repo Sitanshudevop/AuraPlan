@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SelectOption } from './Select';
+import { SelectOption } from './selectTypes';
 
 interface UseSelectKeyboardProps {
   options: SelectOption[];
