@@ -14,6 +14,46 @@ export function escapeIcsText(text: string | null | undefined): string {
     .replace(/\r?\n/g, '\\n');
 }
 
+/**
+ * Folds a single iCalendar content line according to RFC 5545 section 3.1.
+ * Lines MUST NOT exceed 75 octets (bytes), excluding CRLF.
+ * Continuation lines start with a single space (0x20).
+ * Multi-byte UTF-8 characters are NEVER split across fold boundaries.
+ */
+export function foldIcsLine(line: string, maxOctets = 75): string {
+  const encoder = new TextEncoder();
+  const lineBytes = encoder.encode(line);
+
+  if (lineBytes.length <= maxOctets) {
+    return line;
+  }
+
+  const codePoints = Array.from(line);
+  const foldedLines: string[] = [];
+  let currentSegment = '';
+  let currentOctets = 0;
+  let allowedOctets = maxOctets;
+
+  for (const char of codePoints) {
+    const charOctets = encoder.encode(char).length;
+    if (currentOctets + charOctets > allowedOctets && currentSegment.length > 0) {
+      foldedLines.push(currentSegment);
+      currentSegment = ` ${char}`;
+      currentOctets = 1 + charOctets;
+      allowedOctets = maxOctets;
+    } else {
+      currentSegment += char;
+      currentOctets += charOctets;
+    }
+  }
+
+  if (currentSegment.length > 0) {
+    foldedLines.push(currentSegment);
+  }
+
+  return foldedLines.join('\r\n');
+}
+
 export function generateIcsCalendar(
   event: EventData,
   tasks: MacroTask[],
@@ -23,7 +63,7 @@ export function generateIcsCalendar(
   const now = new Date();
   const stamp = `${now.getUTCFullYear()}${pad(now.getUTCMonth() + 1)}${pad(now.getUTCDate())}T${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}00Z`;
 
-  const ics = [
+  const ics: string[] = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
     'PRODID:-//AuraPlan//Vow and Venue Calendar//EN',
@@ -64,7 +104,7 @@ export function generateIcsCalendar(
   });
 
   ics.push('END:VCALENDAR');
-  return ics.join('\r\n');
+  return ics.map((line) => foldIcsLine(line)).join('\r\n');
 }
 
 export function downloadIcsFile(event: EventData, tasks: MacroTask[], activities: DayOfActivity[]): void {

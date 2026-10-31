@@ -2,14 +2,15 @@
  * Utility for CSV escaping and construction with defense against CSV Formula Injection (CWE-1236).
  */
 
-const FORMULA_PREFIX_REGEX = /^[=+\-@\t\r]/;
+const FORMULA_PREFIX_REGEX = /^([\s\u00A0]*[=+\-@|%]|[\t\r\n])/;
 
 /**
  * Escapes an individual CSV cell according to RFC 4180 and formula injection security principles.
  * - Numbers and booleans remain unadulterated primitives (e.g., negative amounts remain valid numbers).
- * - Text fields starting with formula operators (=, +, -, @, \t, \r) are prefixed with a single quote (')
+ * - Text fields starting with formula operators (=, +, -, @, |, %) or control characters (\t, \r, \n)
+ *   (including when preceded by leading whitespace) are prefixed with a single quote (')
  *   to neutralize formula execution in spreadsheet software (Excel, Google Sheets, LibreOffice).
- * - Fields containing quotes, commas, or newlines are wrapped in double quotes, with internal quotes escaped.
+ * - Fields containing quotes, commas, newlines, tabs, or starts with single quote are wrapped in double quotes.
  */
 export function escapeCsvCell(value: unknown): string {
   if (value === null || value === undefined) {
@@ -26,13 +27,13 @@ export function escapeCsvCell(value: unknown): string {
 
   let str = String(value);
 
-  // Neutralize formula injection for text starting with unsafe characters
+  // Neutralize formula injection for text starting with unsafe characters or whitespace + formula operator
   if (FORMULA_PREFIX_REGEX.test(str)) {
     str = `'${str}`;
   }
 
-  // Quote field if it contains commas, double quotes, newlines, or was prefixed
-  if (/[",\r\n]/.test(str) || str.startsWith("'")) {
+  // Quote field if it contains commas, double quotes, newlines, tabs, or starts with single quote
+  if (/[",\r\n\t]/.test(str) || str.startsWith("'")) {
     return `"${str.replace(/"/g, '""')}"`;
   }
 
@@ -50,4 +51,3 @@ export function buildCsv(
   const rowLines = rows.map((row) => row.map((cell) => escapeCsvCell(cell)).join(','));
   return [headerLine, ...rowLines].join('\r\n');
 }
-

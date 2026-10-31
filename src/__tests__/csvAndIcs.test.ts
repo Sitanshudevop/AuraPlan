@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { escapeCsvCell, buildCsv } from '../utils/csv';
-import { escapeIcsText, generateIcsCalendar } from '../features/timeline/IcsGenerator';
+import { escapeIcsText, generateIcsCalendar, foldIcsLine } from '../features/timeline/IcsGenerator';
 import { EventData } from '../types/event';
 import { MacroTask, DayOfActivity } from '../types/timeline';
 
@@ -12,6 +12,15 @@ describe('CSV Security and Formatting (RFC 4180 & CWE-1236)', () => {
     expect(escapeCsvCell('@cmd|/C calc')).toBe(`"'@cmd|/C calc"`);
     expect(escapeCsvCell('\tmalicious')).toBe(`"'\tmalicious"`);
     expect(escapeCsvCell('\rmalicious')).toBe(`"'\rmalicious"`);
+  });
+
+  it('neutralizes formula injection with leading whitespace, pipe, percent, and newline', () => {
+    expect(escapeCsvCell('   =1+1')).toBe(`"'   =1+1"`);
+    expect(escapeCsvCell('  +2+3')).toBe(`"'  +2+3"`);
+    expect(escapeCsvCell('\t@cmd')).toBe(`"'\t@cmd"`);
+    expect(escapeCsvCell('|cmd|/C calc')).toBe(`"'|cmd|/C calc"`);
+    expect(escapeCsvCell('%1+1')).toBe(`"'%1+1"`);
+    expect(escapeCsvCell('\n=DANGEROUS()')).toBe(`"'\n=DANGEROUS()"`);
   });
 
   it('preserves valid numbers and booleans as safe primitives', () => {
@@ -49,12 +58,45 @@ describe('CSV Security and Formatting (RFC 4180 & CWE-1236)', () => {
   });
 });
 
-describe('iCalendar RFC 5545 Text Escaping', () => {
+describe('iCalendar RFC 5545 Text Escaping & Octet Folding', () => {
   it('escapes backslashes, semicolons, commas, and newlines', () => {
     expect(escapeIcsText('Hello, World; Welcome\\Home')).toBe('Hello\\, World\\; Welcome\\\\Home');
     expect(escapeIcsText('Line 1\nLine 2\r\nLine 3')).toBe('Line 1\\nLine 2\\nLine 3');
     expect(escapeIcsText('')).toBe('');
     expect(escapeIcsText(null as unknown as string)).toBe('');
+  });
+
+  it('folds lines exceeding 75 octets without breaking multibyte UTF-8 characters', () => {
+    const encoder = new TextEncoder();
+    const longLine = 'DESCRIPTION:This is a very long celebration description that definitely exceeds seventy-five octets in length and requires strict RFC 5545 folding.';
+    const folded = foldIcsLine(longLine);
+    const segments = folded.split('\r\n');
+
+    expect(segments.length).toBeGreaterThan(1);
+    segments.forEach((seg, index) => {
+      expect(encoder.encode(seg).length).toBeLessThanOrEqual(75);
+      if (index > 0) {
+        expect(seg.startsWith(' ')).toBe(true);
+      }
+    });
+
+    // Verify round-trip unfolding
+    const unfolded = folded.replace(/\r\n /g, '');
+    expect(unfolded).toBe(longLine);
+  });
+
+  it('safely folds multibyte Hindi and Emoji characters without mid-character corruption', () => {
+    const encoder = new TextEncoder();
+    const multiByteLine = 'SUMMARY:विवाह समारोह एवं संगीत संध्या उत्सव 🌸 🎉 🪔 🏰 - Detailed Royal Wedding Event Schedule';
+    const folded = foldIcsLine(multiByteLine, 50); // fold at 50 octets to force boundary crossing
+    const segments = folded.split('\r\n');
+
+    segments.forEach((seg) => {
+      expect(encoder.encode(seg).length).toBeLessThanOrEqual(50);
+    });
+
+    const unfolded = folded.replace(/\r\n /g, '');
+    expect(unfolded).toBe(multiByteLine);
   });
 
   it('generates compliant VCALENDAR text structure with escaped values', () => {
