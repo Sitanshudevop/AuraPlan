@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from '../../components/ui/Card';
 import { StatusDot } from '../../components/ui/StatusDot';
-import { formatCurrency } from '../../utils/formatters';
+import { formatCurrency, formatDate } from '../../utils/formatters';
 import { Currency } from '../../types/event';
 import { PaymentMilestone } from '../../types/budget';
 import { ArrowRight } from 'lucide-react';
@@ -13,13 +13,7 @@ interface UpcomingMilestonesCardProps {
 }
 
 const formatFriendlyDate = (dateStr: string): string => {
-  try {
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return dateStr;
-    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-  } catch {
-    return dateStr;
-  }
+  return formatDate(dateStr, 'en-GB');
 };
 
 export const UpcomingMilestonesCard: React.FC<UpcomingMilestonesCardProps> = ({

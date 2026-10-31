@@ -2,7 +2,17 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
 import { NewEventModal } from '../components/modals/NewEventModal';
 import { HeaderActionsMenu } from '../components/layout/HeaderActionsMenu';
-import { WorkspaceProvider } from '../context/WorkspaceContext';
+import { WorkspaceProvider, useWorkspace } from '../context/WorkspaceContext';
+
+function NewEventModalTriggerHelper() {
+  const { setNewEventModalOpen } = useWorkspace();
+  return (
+    <>
+      <button onClick={() => setNewEventModalOpen(true)}>Open Modal</button>
+      <NewEventModal />
+    </>
+  );
+}
 
 describe('NewEventModal and HeaderActionsMenu Interactions', () => {
   beforeEach(() => {
@@ -83,13 +93,13 @@ describe('NewEventModal and HeaderActionsMenu Interactions', () => {
     fireEvent.click(menuBtn);
 
     // Click toggle dark mode
-    const darkBtn = screen.getByRole('button', { name: /Toggle dark mode/i });
+    const darkBtn = screen.getByRole('button', { name: /Switch to (dark|light) mode/i });
     fireEvent.click(darkBtn);
     expect(handleToggleDark).toHaveBeenCalled();
 
     // Click export JSON
     fireEvent.click(menuBtn);
-    const exportBtn = screen.getByRole('button', { name: /Export Workspace JSON Backup/i });
+    const exportBtn = screen.getByRole('button', { name: /Export workspace JSON/i });
     fireEvent.click(exportBtn);
     expect(handleExportJson).toHaveBeenCalled();
 
@@ -100,15 +110,3 @@ describe('NewEventModal and HeaderActionsMenu Interactions', () => {
     expect(menuBtn).toHaveAttribute('aria-expanded', 'false');
   });
 });
-
-import { useWorkspace } from '../context/WorkspaceContext';
-
-function NewEventModalTriggerHelper() {
-  const { setNewEventModalOpen } = useWorkspace();
-  return (
-    <>
-      <button onClick={() => setNewEventModalOpen(true)}>Open Modal</button>
-      <NewEventModal />
-    </>
-  );
-}

@@ -47,24 +47,59 @@ export function formatPercent(value: number): string {
   return `${value.toFixed(1)}%`;
 }
 
+function isValidCalendarDate(year: number, month: number, day: number): boolean {
+  if (month < 1 || month > 12 || day < 1 || day > 31) return false;
+  const d = new Date(Date.UTC(year, month - 1, day));
+  return d.getUTCFullYear() === year && d.getUTCMonth() === month - 1 && d.getUTCDate() === day;
+}
+
 /**
- * Calculates days remaining until target event date.
+ * Safely parses calendar components (year, month, day) from YYYY-MM-DD or ISO date-time strings.
  */
-export function getDaysRemaining(targetDateStr: string): number {
-  const target = new Date(targetDateStr);
-  const now = new Date();
-  const diffTime = target.getTime() - now.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+export function parseDateComponents(dateStr: string): { year: number; month: number; day: number } | null {
+  if (!dateStr || typeof dateStr !== 'string') return null;
+  const match = dateStr.trim().match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) return null;
+
+  const year = parseInt(match[1], 10);
+  const month = parseInt(match[2], 10);
+  const day = parseInt(match[3], 10);
+
+  if (!isValidCalendarDate(year, month, day)) return null;
+  return { year, month, day };
+}
+
+/**
+ * Calculates days remaining until target event date as an integer.
+ * - Identical result at any hour of the day (00:00 to 23:59)
+ * - Immune to timezone offsets and 23/25-hour Daylight Saving Time transitions
+ * - Returns 0 if target is today or in the past
+ * - Returns 0 for invalid inputs
+ *
+ * @param targetDateStr - Target calendar date string (YYYY-MM-DD or ISO string)
+ * @param now - Reference date for calculation (defaults to current Date)
+ */
+export function getDaysRemaining(targetDateStr: string, now: Date = new Date()): number {
+  const target = parseDateComponents(targetDateStr);
+  if (!target) return 0;
+
+  const targetUtc = Date.UTC(target.year, target.month - 1, target.day);
+  const nowUtc = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+
+  const diffDays = Math.round((targetUtc - nowUtc) / 86400000);
   return diffDays > 0 ? diffDays : 0;
 }
 
 /**
- * Formats ISO date string to a human readable format e.g. "Nov 14, 2026"
+ * Formats a calendar date string (YYYY-MM-DD or ISO string) to human-readable format.
+ * Prevents UTC midnight off-by-one shifts in negative timezone offsets.
  */
-export function formatDate(dateStr: string): string {
+export function formatDate(dateStr: string, locale = 'en-US'): string {
   try {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('en-US', {
+    const comp = parseDateComponents(dateStr);
+    if (!comp) return dateStr;
+    const d = new Date(comp.year, comp.month - 1, comp.day);
+    return d.toLocaleDateString(locale, {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
