@@ -11,7 +11,7 @@
 
 ## 2. SIX JUDGING PARAMETERS (100/100 ENFORCEMENT)
 - CODE QUALITY (100/100): Strict TypeScript (`strict: true`, zero `any` types, explicit interfaces). Modular folder structure (`src/types`, `src/schemas`, `src/services`, `src/hooks`, `src/features`, `src/components/ui`). Max 250 lines per file.
-- SECURITY (100/100): Validate all user inputs and AI JSON responses with `zod`. Strip HTML/script tags using a dedicated sanitizer utility (`sanitizeInput`). Never use `dangerouslySetInnerHTML` or `eval`. Implement request rate-limiting/debouncing and a 100% functional deterministic local fallback engine if `VITE_GEMINI_API_KEY` is absent or rate-limited.
+- SECURITY (100/100): Validate all user inputs and AI JSON responses with `zod`. Strip HTML/script tags using a dedicated sanitizer utility (`sanitizeInput`). Never use `dangerouslySetInnerHTML` or `eval`. Implement request rate-limiting/debouncing and a 100% functional deterministic local fallback engine if `GEMINI_API_KEY` is absent or rate-limited.
 - EFFICIENCY (100/100): Wrap heavy calculations in `useMemo`, callbacks in `useCallback`, and lazy-load feature tabs via `React.lazy` + `<Suspense>` with accessible skeleton loaders. Sync state to versioned `localStorage`.
 - ACCESSIBILITY (100/100): WCAG 2.1 AA compliance (minimum 4.5:1 contrast). Semantic HTML landmarks (`<header>`, `<nav>`, `<main>`, `<aside>`, `<section>`). Full keyboard support (`Tab`, `Shift+Tab`, `Enter`, `Space`, `Escape` to close modals/drawers). Include a "Skip to main content" link and `aria-live="polite"` screen-reader announcer for dynamic budget/AI updates.
 - TESTING (100/100): Write comprehensive unit and integration tests using Vitest and React Testing Library in `src/__tests__/`.

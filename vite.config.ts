@@ -1,9 +1,9 @@
 /// <reference types="vitest" />
-import { defineConfig, type Plugin } from 'vite';
+import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { handleGeminiProxyRequest } from './server/geminiProxy.js';
 
-function geminiDevProxyPlugin(): Plugin {
+function geminiDevProxyPlugin(serverApiKey?: string): Plugin {
   const handler = async (
     req: { method?: string; url?: string; headers: Record<string, string | string[] | undefined>; on: (event: string, callback: (chunk?: unknown) => void) => void },
     res: { statusCode: number; setHeader: (name: string, value: string) => void; end: (chunk?: string) => void },
@@ -38,8 +38,7 @@ function geminiDevProxyPlugin(): Plugin {
           body: bodyBuffer.length > 0 ? bodyBuffer : undefined,
         });
 
-        const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
-        const webRes = await handleGeminiProxyRequest(webReq, apiKey);
+        const webRes = await handleGeminiProxyRequest(webReq, serverApiKey);
         res.statusCode = webRes.status;
         webRes.headers.forEach((value, key) => {
           res.setHeader(key, value);
@@ -63,38 +62,43 @@ function geminiDevProxyPlugin(): Plugin {
   };
 }
 
-export default defineConfig({
-  plugins: [react(), geminiDevProxyPlugin()],
-  build: {
-    rollupOptions: {
-      onwarn(warning, warn) {
-        if (warning.code === 'INVALID_ANNOTATION') return;
-        warn(warning);
-      },
-      output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-zod': ['zod'],
-          'vendor-icons': ['lucide-react'],
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  const serverGeminiKey = env.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+
+  return {
+    plugins: [react(), geminiDevProxyPlugin(serverGeminiKey)],
+    build: {
+      rollupOptions: {
+        onwarn(warning, warn) {
+          if (warning.code === 'INVALID_ANNOTATION') return;
+          warn(warning);
+        },
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom'],
+            'vendor-zod': ['zod'],
+            'vendor-icons': ['lucide-react'],
+          },
         },
       },
     },
-  },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: './src/test/setup.ts',
-    testTimeout: 15000,
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules/', 'src/test/setup.ts', 'dist/**', '**/*.d.ts', 'server/**'],
-      thresholds: {
-        statements: 89,
-        branches: 78,
-        functions: 84,
-        lines: 90,
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      setupFiles: './src/test/setup.ts',
+      testTimeout: 15000,
+      coverage: {
+        provider: 'v8',
+        reporter: ['text', 'json', 'html'],
+        exclude: ['node_modules/', 'src/test/setup.ts', 'dist/**', '**/*.d.ts', 'server/**'],
+        thresholds: {
+          statements: 89,
+          branches: 78,
+          functions: 84,
+          lines: 90,
+        },
       },
     },
-  },
+  };
 });

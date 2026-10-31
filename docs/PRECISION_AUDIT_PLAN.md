@@ -1110,7 +1110,7 @@ Currently, all domain entities in `src/schemas/eventSchemas.ts` enforce Zod sche
    - Direct `innerHTML` / `outerHTML`: **0 occurrences**.
    - React text nodes safely escape all dynamic content in `FormattedAssistantMessage.tsx`.
 3. **Deterministic Local Fallback Parity**:
-   - 100% of AI endpoints fall back to rich local deterministic generators when `VITE_GEMINI_API_KEY` is absent or rate-limited.
+   - 100% of AI endpoints fall back to rich local deterministic generators when `GEMINI_API_KEY` is absent or rate-limited.
 
 ---
 

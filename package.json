@@ -15,7 +15,8 @@
     "typecheck:api": "tsc -p tsconfig.api.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "check:no-client-secrets": "node scripts/checkNoClientSecrets.cjs"
   },
   "dependencies": {
     "lucide-react": "^1.16.0",

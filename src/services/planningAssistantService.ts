@@ -33,7 +33,7 @@ export const MODALITY_PROMPT_CHIPS: Record<EventType, string[]> = {
 
 function isOfflineOrTestMode(apiKey?: string | null): boolean {
   if (import.meta.env.MODE === 'test' && !apiKey) return true;
-  return !apiKey || apiKey === 'YOUR_GEMINI_API_KEY';
+  return !apiKey || apiKey.length < 6;
 }
 
 function buildAssistantPrompt(event: EventData, query: string): string {
