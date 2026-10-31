@@ -21,22 +21,25 @@ export const RippleSimulatorDrawer: React.FC = () => {
   const handleClose = useCallback(() => setCopilotOpen(false), [setCopilotOpen]);
   const drawerRef = useFocusTrap<HTMLDivElement>(isCopilotOpen, handleClose);
 
-  const runSimulation = async (presetId: RipplePresetId) => {
-    setSelectedPreset(presetId);
-    setLoading(true);
-    try {
-      const res = await generateRippleScenario(
-        presetId,
-        state,
-        presetId === 'custom' ? customPrompt : undefined
-      );
-      setDiffResult(res);
-    } catch (err) {
-      logger.error('Ripple simulation failed', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const runSimulation = useCallback(
+    async (presetId: RipplePresetId) => {
+      setSelectedPreset(presetId);
+      setLoading(true);
+      try {
+        const res = await generateRippleScenario(
+          presetId,
+          state,
+          presetId === 'custom' ? customPrompt : undefined
+        );
+        setDiffResult(res);
+      } catch (err) {
+        logger.error('Ripple simulation failed', err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [state, customPrompt]
+  );
 
   const handleApply = () => {
     if (diffResult) {
@@ -49,7 +52,7 @@ export const RippleSimulatorDrawer: React.FC = () => {
     if (isCopilotOpen && !diffResult) {
       runSimulation('guest_surge_25');
     }
-  }, [isCopilotOpen]);
+  }, [isCopilotOpen, diffResult, runSimulation]);
 
   if (!isCopilotOpen) return null;
 

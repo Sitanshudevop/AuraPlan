@@ -42,7 +42,7 @@ export function useThemeIdeation({
   useEffect(() => {
     setVibePrompt(state.event.culturalPreferences || '');
     setIdea(getLocalThemeIdea(state.event.type, state.event.culturalPreferences));
-  }, [state.event.type, state.event.id]);
+  }, [state.event.type, state.event.id, state.event.culturalPreferences]);
 
   const handleAddToPlan = (
     title: string,

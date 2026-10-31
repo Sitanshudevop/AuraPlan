@@ -12,9 +12,7 @@ describe('Server Gemini Proxy (handleGeminiProxyRequest)', () => {
   });
 
   it('rejects non-POST HTTP methods with 405 Method Not Allowed', async () => {
-    const req = new Request('http://localhost/api/gemini', {
-      method: 'GET',
-    });
+    const req = new Request('http://localhost/api/gemini', { method: 'GET' });
     const res = await handleGeminiProxyRequest(req, 'test-api-key-12345');
     expect(res.status).toBe(405);
     const body = await res.json();
@@ -74,10 +72,7 @@ describe('Server Gemini Proxy (handleGeminiProxyRequest)', () => {
 
     const req = new Request('http://localhost/api/gemini', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-gemini-api-key': 'user-custom-api-key-999',
-      },
+      headers: { 'Content-Type': 'application/json', 'x-gemini-api-key': 'user-custom-api-key-999' },
       body: JSON.stringify({ prompt: 'Test with user key' }),
     });
 
@@ -139,15 +134,8 @@ describe('AI Output Validation & Security Schemas (SEC-02)', () => {
   it('rejects invalid action types', () => {
     const invalid = {
       content: 'Some advice',
-      suggestedActions: [
-        {
-          type: 'delete_database',
-          label: 'Dangerous action',
-          payload: {},
-        },
-      ],
+      suggestedActions: [{ type: 'delete_database', label: 'Dangerous action', payload: {} }],
     };
-
     expect(() => rawAssistantResponseSchema.parse(invalid)).toThrow();
   });
 });
