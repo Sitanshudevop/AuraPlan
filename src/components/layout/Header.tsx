@@ -51,7 +51,7 @@ export const Header: React.FC = () => {
       <div className="flex-1 max-w-sm mx-3 sm:mx-6">
         <button
           onClick={() => setCommandPaletteOpen(true)}
-          className="w-full h-8 flex items-center justify-between px-3 text-xs text-stone-700 dark:text-[#EDEDEF] bg-stone-100/80 dark:bg-white/[0.04] hover:bg-stone-200/70 dark:hover:bg-white/[0.06] rounded-lg border border-stone-200/70 dark:border-white/[0.06] transition-colors"
+          className="w-full h-8 min-h-[44px] sm:min-h-0 flex items-center justify-between px-3 text-xs text-stone-700 dark:text-[#EDEDEF] bg-stone-100/80 dark:bg-white/[0.04] hover:bg-stone-200/70 dark:hover:bg-white/[0.06] rounded-lg border border-stone-200/70 dark:border-white/[0.06] transition-colors"
           aria-keyshortcuts="Meta+K Control+K"
         >
           <div className="flex items-center gap-2">
@@ -69,7 +69,7 @@ export const Header: React.FC = () => {
       <div className="flex items-center gap-1.5 shrink-0">
         <button
           onClick={() => setCurrency(currency === 'INR' ? 'USD' : 'INR')}
-          className="h-8 px-2.5 flex items-center gap-1 text-xs font-medium rounded-lg text-stone-700 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] border border-stone-200/70 dark:border-white/[0.06] transition-colors tabular-nums"
+          className="h-8 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 px-2.5 flex items-center gap-1 text-xs font-medium rounded-lg text-stone-700 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] border border-stone-200/70 dark:border-white/[0.06] transition-colors tabular-nums"
           title={`Toggle currency (Current: ${currency})`}
           aria-label={`${currency} — Toggle currency between INR and USD`}
         >
@@ -78,7 +78,7 @@ export const Header: React.FC = () => {
 
         <button
           onClick={() => setAssistantOpen(true)}
-          className="h-8 px-2.5 flex items-center gap-1.5 text-xs font-medium rounded-lg text-stone-700 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] border border-transparent transition-colors"
+          className="h-8 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 px-2.5 flex items-center gap-1.5 text-xs font-medium rounded-lg text-stone-700 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] border border-transparent transition-colors"
           title="Open AI Planning Assistant"
         >
           <Bot className="w-3.5 h-3.5 stroke-[1.5]" aria-hidden="true" />

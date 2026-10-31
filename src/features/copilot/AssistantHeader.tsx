@@ -41,7 +41,7 @@ export const AssistantHeader: React.FC<AssistantHeaderProps> = ({
         </button>
         <button
           onClick={onClose}
-          className="p-1.5 text-stone-500 hover:text-stone-700 dark:hover:text-[#EDEDEF] rounded-md transition-colors"
+          className="p-1.5 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center text-stone-500 hover:text-stone-700 dark:hover:text-[#EDEDEF] rounded-md transition-colors"
           aria-label="Close assistant"
         >
           <X className="w-4 h-4" />

@@ -46,7 +46,7 @@ export const AuditDrawer: React.FC = () => {
           </div>
           <button
             onClick={handleClose}
-            className="p-1.5 text-muted hover:text-foreground rounded-md transition-colors"
+            className="p-1.5 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center text-muted hover:text-foreground rounded-md transition-colors"
             aria-label="Close audit drawer"
           >
             <X className="w-4 h-4" />

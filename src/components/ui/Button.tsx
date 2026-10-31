@@ -25,7 +25,7 @@ const variantClasses = {
 };
 
 const sizeClasses = {
-  xs: 'min-h-[36px] sm:min-h-0 h-7 px-2 text-xs gap-1 rounded-md touch-manipulation',
+  xs: 'min-h-[44px] sm:min-h-0 h-7 px-2 text-xs gap-1 rounded-md touch-manipulation',
   sm: 'min-h-[44px] sm:min-h-0 h-8 px-2.5 text-xs font-medium gap-1.5 rounded-lg touch-manipulation',
   md: 'min-h-[44px] sm:min-h-0 h-9 px-3.5 text-sm font-medium gap-2 rounded-lg touch-manipulation',
   lg: 'min-h-[44px] sm:min-h-0 h-10 px-4 text-sm font-medium gap-2 rounded-lg touch-manipulation',

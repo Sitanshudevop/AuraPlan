@@ -31,7 +31,7 @@ export const SegmentedTabs: React.FC<SegmentedTabsProps> = ({
             <button
               key={tab.id}
               onClick={() => onChange(tab.id)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] sm:min-h-0 text-xs font-medium rounded-md transition-colors ${
                 isActive
                   ? 'bg-white dark:bg-[#161618] text-[#111113] dark:text-[#EDEDEF] shadow-xs'
                   : 'text-stone-500 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF]'
@@ -59,7 +59,7 @@ export const SegmentedTabs: React.FC<SegmentedTabsProps> = ({
           <button
             key={tab.id}
             onClick={() => onChange(tab.id)}
-            className={`flex items-center gap-2 pb-2.5 text-sm font-medium transition-colors relative whitespace-nowrap ${
+            className={`flex items-center gap-2 pb-2.5 min-h-[44px] sm:min-h-0 text-sm font-medium transition-colors relative whitespace-nowrap ${
               isActive
                 ? 'text-[#111113] dark:text-[#EDEDEF]'
                 : 'text-stone-500 dark:text-[#8B8B93] hover:text-stone-800 dark:hover:text-[#EDEDEF]'
