@@ -30,11 +30,12 @@ export default {
           'muted-light': '#6E6E77',
           'muted-dark': '#8B8B93',
         },
-        // Single Refined Accent
+        // Single Refined Accent (WCAG AA 4.91:1 compliant)
         accent: {
-          DEFAULT: '#6E79F5',
-          hover: '#5D68E2',
-          subtle: 'rgba(110, 121, 245, 0.12)',
+          DEFAULT: '#5560E6',
+          hover: '#4752D8',
+          text: '#434FDE',
+          subtle: 'rgba(85, 96, 230, 0.12)',
         },
         // Semantic Status (6px dots / quiet text only)
         status: {

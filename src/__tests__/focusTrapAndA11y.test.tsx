@@ -148,5 +148,25 @@ describe('Accessibility & Focus Management (WCAG 2.1 AA)', () => {
       const inactiveNavBtn = screen.getByRole('button', { name: /Smart Budget Engine/i });
       expect(inactiveNavBtn).not.toHaveAttribute('aria-current');
     });
+
+    it('verifies primary button theme contrast meets WCAG 2.1 AA (minimum 4.5:1 ratio)', () => {
+      // Relative luminance calculation according to WCAG 2.1 specifications
+      const getLuminance = (r: number, g: number, b: number) => {
+        const a = [r, g, b].map((v) => {
+          v /= 255;
+          return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        });
+        return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+      };
+
+      const lumWhite = getLuminance(255, 255, 255);
+      // Primary button fill #5560E6: rgb(85, 96, 230)
+      const lumIndigo = getLuminance(85, 96, 230);
+      const contrast = (lumWhite + 0.05) / (lumIndigo + 0.05);
+
+      // Must exceed 4.5:1 WCAG AA minimum
+      expect(contrast).toBeGreaterThanOrEqual(4.5);
+      expect(Number(contrast.toFixed(2))).toBeGreaterThanOrEqual(4.8);
+    });
   });
 });

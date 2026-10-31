@@ -44,20 +44,27 @@ export const GuestTable: React.FC<GuestTableProps> = ({
       {/* Search & Filter Toolbar */}
       <div className="p-3 sm:px-4 border-b border-hairline flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-surface">
         <div className="relative flex-1 max-w-xs">
-          <Search className="w-3.5 h-3.5 text-muted absolute left-3 top-1/2 -translate-y-1/2" />
+          <label htmlFor="guest-search-input" className="sr-only">
+            Search attendees by name, group, or dietary tag
+          </label>
+          <Search className="w-3.5 h-3.5 text-muted absolute left-3 top-1/2 -translate-y-1/2" aria-hidden="true" />
           <input
+            id="guest-search-input"
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search attendees..."
+            aria-label="Search attendees by name, group, or dietary tag"
             className="w-full text-xs pl-8 pr-3 py-1.5 bg-surface-raised border border-hairline rounded-md text-foreground placeholder:text-muted focus:outline-none focus:ring-1 focus:ring-accent"
           />
         </div>
 
-        <div className="flex items-center gap-1 overflow-x-auto">
+        <div className="flex items-center gap-1 overflow-x-auto" role="toolbar" aria-label="RSVP Status Filters">
           {['all', 'confirmed', 'pending', 'declined'].map((status) => (
             <button
               key={status}
+              type="button"
+              aria-pressed={rsvpFilter === status}
               onClick={() => setRsvpFilter(status)}
               className={`text-xs px-2.5 py-1 rounded-md font-medium transition-colors capitalize ${
                 rsvpFilter === status

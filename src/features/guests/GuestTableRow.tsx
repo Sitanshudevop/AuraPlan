@@ -109,15 +109,19 @@ const GuestTableRowComponent: React.FC<GuestTableRowProps> = ({
           <div className="inline-flex items-center gap-1.5 animate-fade-in">
             <span className="text-[10px] text-rose-500 font-medium">Delete?</span>
             <button
+              type="button"
               onClick={() => onDeleteGuest(guest.id)}
               className="px-1.5 py-0.5 bg-rose-500 text-white rounded text-[10px] font-medium hover:bg-rose-600 transition-colors"
+              aria-label={`Confirm deletion of ${guest.name}`}
             >
               Confirm
             </button>
             <button
+              type="button"
               onClick={() => setConfirmDelete(false)}
-              className="p-1 text-muted hover:text-foreground rounded-md transition-colors"
+              className="p-1 text-muted hover:text-foreground rounded-md transition-colors min-w-[32px] min-h-[32px] flex items-center justify-center"
               title="Cancel"
+              aria-label={`Cancel deletion of ${guest.name}`}
             >
               <X className="w-3.5 h-3.5" />
             </button>
