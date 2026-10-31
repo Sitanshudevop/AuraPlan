@@ -31,5 +31,28 @@ export default tseslint.config(
       'no-console': ['warn', { allow: ['warn', 'error', 'info', 'debug'] }],
       'complexity': ['warn', 12],
     },
+  },
+  {
+    files: ['api/**/*.ts', 'server/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['**/src/**', '../src/**', './src/**'],
+              message: 'Server and API handlers must not import browser-only modules from src/**.',
+            },
+          ],
+        },
+      ],
+      'no-restricted-globals': [
+        'error',
+        { name: 'window', message: 'Browser window is not available in server context.' },
+        { name: 'document', message: 'DOM document is not available in server context.' },
+        { name: 'localStorage', message: 'localStorage is not available in server context.' },
+        { name: 'sessionStorage', message: 'sessionStorage is not available in server context.' },
+      ],
+    },
   }
 );

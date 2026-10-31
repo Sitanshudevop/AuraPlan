@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
-import { handleGeminiProxyRequest } from './server/geminiProxy';
+import { handleGeminiProxyRequest } from './server/geminiProxy.js';
 
 function geminiDevProxyPlugin(): Plugin {
   const handler = async (

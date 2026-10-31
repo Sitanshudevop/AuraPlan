@@ -173,7 +173,9 @@ export async function handleGeminiProxyRequest(
 
     return makeJsonResponse({ text: rawText });
   } catch (err: unknown) {
-    const isTimeout = err instanceof Error && err.name === 'TimeoutError';
+    const isTimeout =
+      err instanceof Error &&
+      (err.name === 'TimeoutError' || err.name === 'AbortError');
     return makeJsonResponse(
       { error: isTimeout ? 'Upstream AI request timed out' : 'Upstream communication error' },
       isTimeout ? 504 : 502
