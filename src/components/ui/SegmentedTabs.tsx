@@ -1,6 +1,6 @@
 import React from 'react';
 
-export interface TabOption {
+interface TabOption {
   id: string;
   label: string;
   count?: number;

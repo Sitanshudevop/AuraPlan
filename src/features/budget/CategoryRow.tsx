@@ -8,7 +8,7 @@ import { areCategoryRowPropsEqual, CategoryRowProps } from './categoryRowPropsCo
 
 export type { CategoryRowProps };
 
-export const CATEGORY_LABELS: Record<BudgetCategory, string> = {
+const CATEGORY_LABELS: Record<BudgetCategory, string> = {
   venue: 'Venue & Grounds',
   catering: 'Catering & Bar',
   decor: 'Decor & Florals',

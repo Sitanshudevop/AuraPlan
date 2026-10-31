@@ -15,7 +15,7 @@ export interface BudgetItem {
   vendorId?: string;
 }
 
-export type MilestoneStatus = 'paid' | 'partial' | 'overdue' | 'pending';
+type MilestoneStatus = 'paid' | 'partial' | 'overdue' | 'pending';
 
 export interface PaymentMilestone {
   id: string;
@@ -28,8 +28,8 @@ export interface PaymentMilestone {
   category: BudgetCategory;
 }
 
-export type SponsorshipTier = 'platinum' | 'gold' | 'silver' | 'community';
-export type SponsorshipStatus = 'pledged' | 'confirmed' | 'received';
+type SponsorshipTier = 'platinum' | 'gold' | 'silver' | 'community';
+type SponsorshipStatus = 'pledged' | 'confirmed' | 'received';
 
 export interface SponsorshipInflow {
   id: string;

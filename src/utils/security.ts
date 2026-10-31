@@ -2,9 +2,9 @@
  * Security & Sanitization Utility Suite
  * Implements strict input sanitization, API rate limiting, and credential masking.
  */
-import { aiRateLimiter, SlidingRateLimiter } from './rateLimiter';
+import { aiRateLimiter } from './rateLimiter';
 
-export { aiRateLimiter, SlidingRateLimiter };
+export { aiRateLimiter };
 
 /**
  * Removes dangerous tags (<script>, <iframe>, <object>, <embed>) and their enclosed contents.
@@ -79,7 +79,9 @@ export function sanitizeText(input: string): string {
 /**
  * Primary alias for input sanitization across forms and schemas.
  */
-export const sanitizeInput = sanitizeText;
+export function sanitizeInput(input: string): string {
+  return sanitizeText(input);
+}
 
 /**
  * Keys blocked to defend against prototype pollution attacks

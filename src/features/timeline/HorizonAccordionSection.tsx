@@ -3,7 +3,7 @@ import { TimelineHorizon, MacroTask } from '../../types/timeline';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { MacroTaskItem } from './MacroTaskItem';
 
-export const HORIZON_LABELS: Record<TimelineHorizon, string> = {
+const HORIZON_LABELS: Record<TimelineHorizon, string> = {
   '6_months': '6+ months out — Architectural milestones',
   '3_months': '3 months out — Core design & sourcing',
   '1_month': '1 month out — Operational refinement',

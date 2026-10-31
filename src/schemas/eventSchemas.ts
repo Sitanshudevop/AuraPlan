@@ -14,17 +14,10 @@ import {
 } from './domainSchemas';
 
 export {
-  sanitizedString,
-  isoDateString,
-  subEventSchema,
   budgetItemSchema,
   paymentMilestoneSchema,
-  sponsorshipInflowSchema,
   vendorSchema,
   macroTaskSchema,
-  dayOfActivitySchema,
-  guestSchema,
-  zoneCapacitySchema,
 };
 
 export const eventDataSchema = z.object({

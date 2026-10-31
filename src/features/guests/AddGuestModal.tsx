@@ -12,7 +12,7 @@ export interface AddGuestModalProps {
   zones: ZoneCapacity[];
 }
 
-export const GUEST_GROUP_OPTIONS: SelectOption[] = [
+const GUEST_GROUP_OPTIONS: SelectOption[] = [
   { value: 'bride', label: 'Bride side' },
   { value: 'groom', label: 'Groom side' },
   { value: 'vip', label: 'VIP guest' },
@@ -20,13 +20,13 @@ export const GUEST_GROUP_OPTIONS: SelectOption[] = [
   { value: 'general', label: 'General attendee' },
 ];
 
-export const GUEST_RSVP_OPTIONS: SelectOption[] = [
+const GUEST_RSVP_OPTIONS: SelectOption[] = [
   { value: 'confirmed', label: 'Confirmed', dotColor: 'bg-emerald-500' },
   { value: 'pending', label: 'Pending', dotColor: 'bg-amber-500' },
   { value: 'declined', label: 'Declined', dotColor: 'bg-rose-500' },
 ];
 
-export const GUEST_DIETARY_OPTIONS: SelectOption[] = [
+const GUEST_DIETARY_OPTIONS: SelectOption[] = [
   { value: 'regular', label: 'Regular' },
   { value: 'vegetarian', label: 'Vegetarian', dotColor: 'bg-emerald-500' },
   { value: 'jain', label: 'Jain (no root veg)', dotColor: 'bg-amber-500' },

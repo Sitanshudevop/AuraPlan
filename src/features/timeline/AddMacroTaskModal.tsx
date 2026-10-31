@@ -12,7 +12,7 @@ interface AddMacroTaskModalProps {
   defaultDate: string;
 }
 
-export const MACRO_HORIZON_OPTIONS: SelectOption[] = [
+const MACRO_HORIZON_OPTIONS: SelectOption[] = [
   { value: '6_months', label: '6+ months out (architectural)' },
   { value: '3_months', label: '3 months out (design & sourcing)' },
   { value: '1_month', label: '1 month out (operational)' },
@@ -20,7 +20,7 @@ export const MACRO_HORIZON_OPTIONS: SelectOption[] = [
   { value: 'day_before', label: 'Day before (final readiness)' },
 ];
 
-export const MACRO_PRIORITY_OPTIONS: SelectOption[] = [
+const MACRO_PRIORITY_OPTIONS: SelectOption[] = [
   { value: 'critical', label: 'Critical', dotColor: 'bg-rose-500' },
   { value: 'high', label: 'High priority', dotColor: 'bg-amber-500' },
   { value: 'normal', label: 'Standard priority', dotColor: 'bg-stone-400' },

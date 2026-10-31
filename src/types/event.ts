@@ -4,7 +4,7 @@ export type EventType = EventTypeKey;
 export type Currency = CurrencyKey;
 export type EventSetting = EventSettingKey;
 
-export interface SubEvent {
+interface SubEvent {
   id: string;
   name: string;
   date: string;

@@ -13,7 +13,7 @@ export interface DecorConcept {
   category: 'decor' | 'av_photo' | 'venue';
 }
 
-export interface MenuItemConcept {
+interface MenuItemConcept {
   id: string;
   name: string;
   category: string;
@@ -21,7 +21,7 @@ export interface MenuItemConcept {
   estimatedCostPerHead: number;
 }
 
-export interface EngagementActivity {
+interface EngagementActivity {
   id: string;
   title: string;
   description: string;

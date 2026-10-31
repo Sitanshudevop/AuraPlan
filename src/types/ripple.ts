@@ -7,7 +7,7 @@ export type RipplePresetId =
   | 'inflation_spike_20'
   | 'custom';
 
-export interface BudgetAdjustment {
+interface BudgetAdjustment {
   category: BudgetCategory;
   categoryLabel: string;
   oldAllocated: number;
@@ -16,7 +16,7 @@ export interface BudgetAdjustment {
   reason: string;
 }
 
-export interface NewVendorItem {
+interface NewVendorItem {
   id: string;
   name: string;
   category: BudgetCategory;
@@ -24,7 +24,7 @@ export interface NewVendorItem {
   justification: string;
 }
 
-export interface TimelineModItem {
+interface TimelineModItem {
   id: string;
   title: string;
   action: 'add' | 'shift' | 'modify';

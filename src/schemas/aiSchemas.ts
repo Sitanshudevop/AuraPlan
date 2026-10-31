@@ -3,13 +3,23 @@ import { sanitizeText } from '../utils/security';
 
 const sanitizedString = z.string().transform((val) => sanitizeText(val));
 
-export const colorSwatchSchema = z.object({
+const budgetCategoryEnum = z.enum([
+  'venue',
+  'catering',
+  'decor',
+  'av_photo',
+  'entertainment',
+  'logistics',
+  'buffer',
+]);
+
+const colorSwatchSchema = z.object({
   name: sanitizedString,
   hex: z.string().regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/),
   role: sanitizedString,
 });
 
-export const decorConceptSchema = z.object({
+const decorConceptSchema = z.object({
   id: z.string(),
   title: sanitizedString,
   description: sanitizedString,
@@ -18,7 +28,7 @@ export const decorConceptSchema = z.object({
   category: z.enum(['decor', 'av_photo', 'venue']),
 });
 
-export const menuItemConceptSchema = z.object({
+const menuItemConceptSchema = z.object({
   id: z.string(),
   name: sanitizedString,
   category: sanitizedString,
@@ -26,7 +36,7 @@ export const menuItemConceptSchema = z.object({
   estimatedCostPerHead: z.number().nonnegative(),
 });
 
-export const engagementActivitySchema = z.object({
+const engagementActivitySchema = z.object({
   id: z.string(),
   title: sanitizedString,
   description: sanitizedString,
@@ -46,8 +56,8 @@ export const themeIdeaSchema = z.object({
   activities: z.array(engagementActivitySchema),
 });
 
-export const budgetAdjustmentSchema = z.object({
-  category: z.enum(['venue', 'catering', 'decor', 'av_photo', 'entertainment', 'logistics', 'buffer']),
+const budgetAdjustmentSchema = z.object({
+  category: budgetCategoryEnum,
   categoryLabel: sanitizedString,
   oldAllocated: z.number().nonnegative(),
   newAllocated: z.number().nonnegative(),
@@ -55,15 +65,15 @@ export const budgetAdjustmentSchema = z.object({
   reason: sanitizedString,
 });
 
-export const newVendorItemSchema = z.object({
+const newVendorItemSchema = z.object({
   id: z.string(),
   name: sanitizedString,
-  category: z.enum(['venue', 'catering', 'decor', 'av_photo', 'entertainment', 'logistics', 'buffer']),
+  category: budgetCategoryEnum,
   estimatedCost: z.number().nonnegative(),
   justification: sanitizedString,
 });
 
-export const timelineModItemSchema = z.object({
+const timelineModItemSchema = z.object({
   id: z.string(),
   title: sanitizedString,
   action: z.enum(['add', 'shift', 'modify']),
@@ -89,27 +99,27 @@ export const vendorVetSchema = z.object({
   hiddenCostRedFlags: z.array(sanitizedString),
 });
 
-export const assistantTaskActionPayloadSchema = z.object({
+const assistantTaskActionPayloadSchema = z.object({
   title: sanitizedString,
   horizon: z.enum(['6_months', '3_months', '1_month', '1_week', 'day_before']),
   category: sanitizedString,
   priority: z.enum(['critical', 'high', 'normal']),
 });
 
-export const assistantBudgetActionPayloadSchema = z.object({
+const assistantBudgetActionPayloadSchema = z.object({
   name: sanitizedString,
-  category: z.enum(['venue', 'catering', 'decor', 'av_photo', 'entertainment', 'logistics', 'buffer']),
+  category: budgetCategoryEnum,
   allocated: z.number().nonnegative(),
 });
 
-export const assistantVendorActionPayloadSchema = z.object({
+const assistantVendorActionPayloadSchema = z.object({
   name: sanitizedString,
-  category: z.enum(['venue', 'catering', 'decor', 'av_photo', 'entertainment', 'logistics', 'buffer']),
+  category: budgetCategoryEnum,
   estimatedPrice: z.number().nonnegative(),
   deliverables: z.array(sanitizedString),
 });
 
-export const assistantActionSchema = z.object({
+const assistantActionSchema = z.object({
   type: z.enum(['add_task', 'add_budget', 'add_vendor']),
   label: sanitizedString,
   payload: z.object({

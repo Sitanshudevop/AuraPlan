@@ -13,7 +13,7 @@ interface VendorKanbanProps {
   onOpenNegotiation: (vendor: Vendor) => void;
 }
 
-export const KANBAN_COLUMNS: { id: VendorStatus; title: string }[] = [
+const KANBAN_COLUMNS: { id: VendorStatus; title: string }[] = [
   { id: 'shortlisted', title: 'Shortlisted' },
   { id: 'contacted', title: 'Contacted' },
   { id: 'quote_received', title: 'Quote Received' },
@@ -21,7 +21,7 @@ export const KANBAN_COLUMNS: { id: VendorStatus; title: string }[] = [
   { id: 'paid', title: 'Paid in Full' },
 ];
 
-export const NEXT_STATUS_MAP: Record<VendorStatus, VendorStatus | null> = {
+const NEXT_STATUS_MAP: Record<VendorStatus, VendorStatus | null> = {
   shortlisted: 'contacted',
   contacted: 'quote_received',
   quote_received: 'contract_signed',

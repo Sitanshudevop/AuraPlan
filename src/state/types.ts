@@ -39,7 +39,7 @@ export type GuestAction =
 export type RippleAction =
   | { type: 'APPLY_RIPPLE'; payload: RippleDiffResult };
 
-export type RootAction =
+export type WorkspaceAction =
   | { type: 'LOAD_STATE'; payload: EventWorkspaceState }
   | EventAction
   | BudgetAction
@@ -48,12 +48,7 @@ export type RootAction =
   | GuestAction
   | RippleAction;
 
-export type WorkspaceAction = RootAction;
 
 /**
  * Compile-time exhaustiveness check helper.
  */
-export function assertNever(x: never): never {
-  throw new Error(`Unexpected object in exhaustive check: ${JSON.stringify(x)}`);
-}
-

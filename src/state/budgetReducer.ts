@@ -10,7 +10,7 @@ export interface BudgetSliceState {
 /**
  * Auto-balances unlocked budget items proportionally to meet the target budget.
  */
-export function autoBalanceBudgetItems(
+function autoBalanceBudgetItems(
   items: BudgetItem[],
   targetBudget: number
 ): BudgetItem[] {

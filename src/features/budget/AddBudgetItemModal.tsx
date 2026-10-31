@@ -15,7 +15,7 @@ interface AddBudgetItemModalProps {
   remainingBudget?: number;
 }
 
-export const BUDGET_CATEGORY_OPTIONS: SelectOption[] = [
+const BUDGET_CATEGORY_OPTIONS: SelectOption[] = [
   { value: 'venue', label: 'Venue & grounds' },
   { value: 'catering', label: 'Catering & bar' },
   { value: 'decor', label: 'Decor & florals' },

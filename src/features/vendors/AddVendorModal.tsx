@@ -15,7 +15,7 @@ interface AddVendorModalProps {
   currency: Currency;
 }
 
-export const VENDOR_CATEGORY_OPTIONS: SelectOption[] = [
+const VENDOR_CATEGORY_OPTIONS: SelectOption[] = [
   { value: 'venue', label: 'Venue & grounds' },
   { value: 'catering', label: 'Catering & bar' },
   { value: 'decor', label: 'Decor & florals' },
@@ -25,7 +25,7 @@ export const VENDOR_CATEGORY_OPTIONS: SelectOption[] = [
   { value: 'buffer', label: 'Contingency services' },
 ];
 
-export const VENDOR_STATUS_OPTIONS: SelectOption[] = [
+const VENDOR_STATUS_OPTIONS: SelectOption[] = [
   { value: 'shortlisted', label: 'Shortlisted', dotColor: 'bg-stone-400' },
   { value: 'contacted', label: 'Contacted', dotColor: 'bg-stone-400' },
   { value: 'quote_received', label: 'Quote received', dotColor: 'bg-amber-500' },

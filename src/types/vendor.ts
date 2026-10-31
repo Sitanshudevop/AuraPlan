@@ -3,7 +3,7 @@ import type { VendorStageKey } from '../constants';
 
 export type VendorStatus = VendorStageKey;
 
-export interface QuoteItem {
+interface QuoteItem {
   title: string;
   cost: number;
 }

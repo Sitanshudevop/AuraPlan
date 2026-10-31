@@ -4,13 +4,13 @@ import { Badge } from '../../components/ui/Badge';
 import { Select, SelectOption } from '../../components/ui/Select';
 import { Trash2, X } from 'lucide-react';
 
-export const RSVP_OPTIONS: SelectOption[] = [
+const RSVP_OPTIONS: SelectOption[] = [
   { value: 'confirmed', label: 'Confirmed', dotColor: 'bg-emerald-500' },
   { value: 'pending', label: 'Pending', dotColor: 'bg-amber-500' },
   { value: 'declined', label: 'Declined', dotColor: 'bg-rose-500' },
 ];
 
-export const DIETARY_OPTIONS: SelectOption[] = [
+const DIETARY_OPTIONS: SelectOption[] = [
   { value: 'regular', label: 'Regular' },
   { value: 'vegetarian', label: 'Vegetarian', dotColor: 'bg-emerald-500' },
   { value: 'jain', label: 'Jain', dotColor: 'bg-amber-500' },
@@ -19,13 +19,13 @@ export const DIETARY_OPTIONS: SelectOption[] = [
   { value: 'nut_free', label: 'Nut-free', dotColor: 'bg-rose-500' },
 ];
 
-export const getGroupBadge = (group: GuestGroup): 'indigo' | 'amber' | 'stone' => {
+const getGroupBadge = (group: GuestGroup): 'indigo' | 'amber' | 'stone' => {
   if (group === 'vip' || group === 'speaker_sponsor') return 'indigo';
   if (group === 'bride') return 'amber';
   return 'stone';
 };
 
-export const formatGroupName = (group: GuestGroup): string => {
+const formatGroupName = (group: GuestGroup): string => {
   switch (group) {
     case 'bride': return 'Bride side';
     case 'groom': return 'Groom side';

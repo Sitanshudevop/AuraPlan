@@ -20,7 +20,7 @@ export async function rateLimitDebounce(): Promise<void> {
  * One-time migration: moves any legacy key stored in localStorage into sessionStorage
  * and deletes it immediately from localStorage to prevent unencrypted disk persistence.
  */
-export function migrateLegacyStorageKey(): void {
+function migrateLegacyStorageKey(): void {
   if (migrated || typeof window === 'undefined') return;
   migrated = true;
   try {

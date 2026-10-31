@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type StatusTone =
+type StatusTone =
   | 'green'
   | 'amber'
   | 'red'

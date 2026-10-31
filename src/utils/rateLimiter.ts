@@ -2,7 +2,7 @@
  * Sliding Window Rate Limiter
  * Enforces a strict maximum of requests within a defined time window.
  */
-export class SlidingRateLimiter {
+class SlidingRateLimiter {
   private timestamps: number[] = [];
   private readonly maxRequests: number;
   private readonly windowMs: number;

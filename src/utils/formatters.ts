@@ -109,7 +109,7 @@ export function formatDate(dateStr: string, locale = 'en-US'): string {
   }
 }
 
-export const CATEGORY_DISPLAY_MAP: Record<string, string> = {
+const CATEGORY_DISPLAY_MAP: Record<string, string> = {
   ...CATEGORY_LABELS,
 };
 
