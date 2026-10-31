@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 import { EventWorkspaceState } from '../types/state';
 import { WorkspaceAction } from '../state/types';
 import { EventData } from '../types/event';
@@ -25,10 +25,29 @@ export function useCrudDispatchers({
   const updateDayOfActivity = useCallback((id: string, partial: Partial<DayOfActivity>): void => dispatch({ type: 'UPDATE_ACTIVITY', payload: { id, partial } }), [dispatch]);
   const updateGuest = useCallback((id: string, partial: Partial<Guest>): void => dispatch({ type: 'UPDATE_GUEST', payload: { id, partial } }), [dispatch]);
 
+  const budgetAnnounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (budgetAnnounceTimerRef.current) {
+        clearTimeout(budgetAnnounceTimerRef.current);
+      }
+    };
+  }, []);
+
+  const debouncedBudgetAnnounce = useCallback((msg: string) => {
+    if (budgetAnnounceTimerRef.current) {
+      clearTimeout(budgetAnnounceTimerRef.current);
+    }
+    budgetAnnounceTimerRef.current = setTimeout(() => {
+      announce(msg);
+    }, 250);
+  }, [announce]);
+
   const updateBudgetItem = useCallback((id: string, partial: Partial<BudgetItem>): void => {
     dispatch({ type: 'UPDATE_BUDGET_ITEM', payload: { id, partial } });
-    announce('Budget item updated');
-  }, [dispatch, announce]);
+    debouncedBudgetAnnounce('Budget item updated');
+  }, [dispatch, debouncedBudgetAnnounce]);
 
   const autoBalanceBudget = useCallback((): void => {
     pushHistory(state);
