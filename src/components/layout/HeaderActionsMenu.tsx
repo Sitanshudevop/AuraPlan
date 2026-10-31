@@ -66,7 +66,6 @@ export const HeaderActionsMenu: React.FC<HeaderActionsMenuProps> = ({
             toggleDarkMode();
             setMoreOpen(false);
           }}
-          aria-label="Toggle dark mode"
           className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-stone-700 dark:text-[#EDEDEF] hover:bg-stone-100 dark:hover:bg-white/[0.06] transition-colors"
         >
           {isDark ? <Sun className="w-3.5 h-3.5 stroke-[1.5]" /> : <Moon className="w-3.5 h-3.5 stroke-[1.5]" />}
@@ -78,7 +77,6 @@ export const HeaderActionsMenu: React.FC<HeaderActionsMenuProps> = ({
             openCopilot();
             setMoreOpen(false);
           }}
-          aria-label="Open AI Ripple Simulator"
           className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-stone-700 dark:text-[#EDEDEF] hover:bg-stone-100 dark:hover:bg-white/[0.06] transition-colors"
         >
           <GitCompare className="w-3.5 h-3.5 stroke-[1.5]" />
@@ -90,7 +88,6 @@ export const HeaderActionsMenu: React.FC<HeaderActionsMenuProps> = ({
             openAuditDrawer();
             setMoreOpen(false);
           }}
-          aria-label="Open 100/100 Judge Audit Drawer"
           className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-stone-700 dark:text-[#EDEDEF] hover:bg-stone-100 dark:hover:bg-white/[0.06] transition-colors"
         >
           <ShieldCheck className="w-3.5 h-3.5 stroke-[1.5]" />
@@ -104,7 +101,6 @@ export const HeaderActionsMenu: React.FC<HeaderActionsMenuProps> = ({
             onExportJson();
             setMoreOpen(false);
           }}
-          aria-label="Export Workspace JSON Backup"
           className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-stone-700 dark:text-[#EDEDEF] hover:bg-stone-100 dark:hover:bg-white/[0.06] transition-colors"
         >
           <Download className="w-3.5 h-3.5 stroke-[1.5]" />
@@ -114,4 +110,3 @@ export const HeaderActionsMenu: React.FC<HeaderActionsMenuProps> = ({
     </div>
   );
 };
-

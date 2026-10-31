@@ -52,14 +52,14 @@ export const Header: React.FC = () => {
         <button
           onClick={() => setCommandPaletteOpen(true)}
           className="w-full h-8 flex items-center justify-between px-3 text-xs text-stone-700 dark:text-[#EDEDEF] bg-stone-100/80 dark:bg-white/[0.04] hover:bg-stone-200/70 dark:hover:bg-white/[0.06] rounded-lg border border-stone-200/70 dark:border-white/[0.06] transition-colors"
-          aria-label="Search workspace or run command (⌘K)"
+          aria-keyshortcuts="Meta+K Control+K"
         >
           <div className="flex items-center gap-2">
-            <Search className="w-3.5 h-3.5 text-stone-600 dark:text-zinc-400 stroke-[1.5]" />
+            <Search className="w-3.5 h-3.5 text-stone-600 dark:text-zinc-400 stroke-[1.5]" aria-hidden="true" />
             <span className="hidden sm:inline">Search workspace...</span>
             <span className="sm:hidden">Search...</span>
           </div>
-          <span className="hidden sm:inline text-xs text-stone-600 dark:text-zinc-400 font-sans">
+          <span className="hidden sm:inline text-xs text-stone-600 dark:text-zinc-400 font-sans" aria-hidden="true">
             ⌘K
           </span>
         </button>
@@ -71,7 +71,7 @@ export const Header: React.FC = () => {
           onClick={() => setCurrency(currency === 'INR' ? 'USD' : 'INR')}
           className="h-8 px-2.5 flex items-center gap-1 text-xs font-medium rounded-lg text-stone-700 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] border border-stone-200/70 dark:border-white/[0.06] transition-colors tabular-nums"
           title={`Toggle currency (Current: ${currency})`}
-          aria-label="Toggle currency between INR and USD"
+          aria-label={`${currency} — Toggle currency between INR and USD`}
         >
           <span>{currency}</span>
         </button>
@@ -80,9 +80,8 @@ export const Header: React.FC = () => {
           onClick={() => setAssistantOpen(true)}
           className="h-8 px-2.5 flex items-center gap-1.5 text-xs font-medium rounded-lg text-stone-700 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] border border-transparent transition-colors"
           title="Open AI Planning Assistant"
-          aria-label="AI Assistant (Open AI Planning Assistant)"
         >
-          <Bot className="w-3.5 h-3.5 stroke-[1.5]" />
+          <Bot className="w-3.5 h-3.5 stroke-[1.5]" aria-hidden="true" />
           <span className="hidden sm:inline">AI Assistant</span>
         </button>
 
@@ -90,9 +89,8 @@ export const Header: React.FC = () => {
           onClick={() => setNewEventModalOpen(true)}
           className="h-8 px-2.5 hidden sm:inline-flex items-center gap-1.5 text-xs font-medium rounded-lg text-stone-700 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] border border-stone-200/70 dark:border-white/[0.06] transition-colors"
           title="New Event"
-          aria-label="New Event"
         >
-          <Plus className="w-3.5 h-3.5 stroke-[1.5]" />
+          <Plus className="w-3.5 h-3.5 stroke-[1.5]" aria-hidden="true" />
           <span>New Event</span>
         </button>
 

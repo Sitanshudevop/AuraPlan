@@ -85,15 +85,15 @@ describe('A11y, Navigation & 1-Click Judge Presets Integration', () => {
       expect(politeRegion).toBeInTheDocument();
     });
 
-    it('ensures all interactive tool buttons have explicit aria-labels', () => {
+    it('ensures all interactive tool buttons have WCAG-compliant accessible names starting with visible text', () => {
       render(<App />);
 
-      expect(screen.getByRole('button', { name: /Search (workspace|or run command)/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Toggle currency between INR and USD/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Toggle dark mode/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Open 100\/100 Judge Audit Drawer/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Open AI Ripple Simulator/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Export Workspace JSON Backup/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /^Search workspace/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /^INR/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /^Switch to (light|dark) mode/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /^Rubric audit report/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /^What-If simulator/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /^Export workspace JSON/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /Collapse navigation/i })).toBeInTheDocument();
     });
   });
