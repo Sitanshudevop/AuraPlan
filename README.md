@@ -61,6 +61,8 @@ Event management is fundamentally fragmented: organizers juggle spreadsheet budg
 
 - **Client Key Isolation**: Zero API keys are bundled into client assets (`define` and `envPrefix: ['GEMINI_']` removed from Vite; bundle scan confirms 0 occurrences of API key strings).
 - **Ephemeral Custom Key Storage (F8)**: If a user enters a custom Gemini API key in the Planning Assistant, it is stored strictly in transient browser sessionStorage (or volatile memory) for the active browser session and never written to permanent disk storage or localStorage. Any legacy keys in localStorage are automatically migrated and purged on startup.
+- **Serverless Rate Limiting & Edge Production Boundaries (F4)**:
+  The built-in sliding-window rate limiter in `server/geminiProxy.ts` operates per-instance in ephemeral serverless isolates, backed by hard defense-in-depth boundaries (50 KB payload cap, 30,000 character prompt limit, model allowlist). For high-scale production deployments spanning many concurrent serverless instances, it is recommended to pair this with edge-layer rate limiting (Vercel Firewall / Cloudflare WAF rules) and project-level spending/quota caps in Google AI Studio to guarantee global budget protection.
 - **Graceful Deterministic Fallback**: When offline or if the API key is not configured, AuraPlan automatically falls back to an in-memory deterministic synthesis engine (`smartSynthesizer.ts` & `assistantResponses.ts`), providing instant, realistic responses without external network dependencies.
 
 ---

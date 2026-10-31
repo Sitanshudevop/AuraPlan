@@ -20,8 +20,20 @@ export type ProxyRequestBody = z.infer<typeof proxyRequestSchema>;
 const MAX_BODY_BYTES = 51200; // 50 KB max payload
 
 /**
- * Best-effort in-memory sliding window rate limiter.
- * Note: In serverless environments, in-memory limits are per execution instance.
+ * Best-effort in-memory sliding window rate limiter (F4).
+ *
+ * Serverless Environment & Threat Model Boundaries:
+ * - Scope: In serverless runtimes (e.g., Vercel / AWS Lambda), execution isolates scale horizontally.
+ *   Each runtime instance maintains its own in-memory rateLimitMap.
+ * - Defense-in-Depth Protections:
+ *   1. Hard payload cap: MAX_BODY_BYTES = 50 KB (413 Payload Too Large) prevents memory exhaustion.
+ *   2. Prompt length limit: 30,000 characters in proxyRequestSchema prevents upstream token flooding.
+ *   3. Strict Model Allowlist: only permitted models ('gemini-1.5-flash', etc.) can be queried.
+ *   4. Client IP extraction: inspects 'x-forwarded-for' and 'x-real-ip' headers.
+ * - Multi-Tenant Production Guidance:
+ *   For high-scale multi-instance production deployments, pair this per-instance rate limiter with:
+ *   (a) Edge Rate Limiting: Cloudflare WAF / Vercel Firewall rate-limiting rules at the edge layer.
+ *   (b) Upstream Quota Caps: Project-level budget and requests-per-minute caps in Google AI Studio / GCP Console.
  */
 interface RateLimitBucket {
   count: number;
