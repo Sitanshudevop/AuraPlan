@@ -5,10 +5,10 @@ import { logger } from '../utils/logger';
 import { getSmartLocalAssistantResponse } from './assistantResponses';
 import { getActiveApiKey } from './geminiService';
 import { AssistantAction, AssistantMessage } from '../types/assistant';
+import { callGeminiProxy } from './geminiClient';
+import { rawAssistantResponseSchema } from '../schemas/aiSchemas';
 
 export type { AssistantAction, AssistantMessage };
-
-
 
 export const MODALITY_PROMPT_CHIPS: Record<EventType, string[]> = {
   wedding: [
@@ -44,26 +44,6 @@ interface RawGeminiParsed {
   suggestedActions?: AssistantAction[];
 }
 
-async function fetchGeminiAssistantJson(prompt: string, apiKey: string): Promise<RawGeminiParsed> {
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      signal: AbortSignal.timeout(8500),
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { responseMimeType: 'application/json' },
-      }),
-    }
-  );
-
-  if (!res.ok) throw new Error(`Gemini error: ${res.status}`);
-  const data = await res.json();
-  const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-  return rawText ? JSON.parse(rawText) : {};
-}
-
 function assembleAssistantMessage(
   parsed: RawGeminiParsed,
   fallback: AssistantMessage
@@ -73,7 +53,7 @@ function assembleAssistantMessage(
     role: 'assistant',
     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     content: parsed.content || fallback.content,
-    suggestedActions: parsed.suggestedActions || fallback.suggestedActions,
+    suggestedActions: (parsed.suggestedActions as AssistantAction[]) || fallback.suggestedActions,
   };
 }
 
@@ -91,7 +71,7 @@ export async function askPlanningAssistant(
 
   try {
     const prompt = buildAssistantPrompt(event, sanitizedQuery);
-    const parsed = await fetchGeminiAssistantJson(prompt, apiKey as string);
+    const parsed = await callGeminiProxy(prompt, rawAssistantResponseSchema, { customKey: apiKey });
     const fallback = getSmartLocalAssistantResponse(sanitizedQuery, event);
     return assembleAssistantMessage(parsed, fallback);
   } catch (err) {

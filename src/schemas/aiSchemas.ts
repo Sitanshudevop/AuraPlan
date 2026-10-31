@@ -88,3 +88,38 @@ export const vendorVetSchema = z.object({
   vettingQuestions: z.array(sanitizedString),
   hiddenCostRedFlags: z.array(sanitizedString),
 });
+
+export const assistantTaskActionPayloadSchema = z.object({
+  title: sanitizedString,
+  horizon: z.enum(['6_months', '3_months', '1_month', '1_week', 'day_before']),
+  category: sanitizedString,
+  priority: z.enum(['critical', 'high', 'normal']),
+});
+
+export const assistantBudgetActionPayloadSchema = z.object({
+  name: sanitizedString,
+  category: z.enum(['venue', 'catering', 'decor', 'av_photo', 'entertainment', 'logistics', 'buffer']),
+  allocated: z.number().nonnegative(),
+});
+
+export const assistantVendorActionPayloadSchema = z.object({
+  name: sanitizedString,
+  category: z.enum(['venue', 'catering', 'decor', 'av_photo', 'entertainment', 'logistics', 'buffer']),
+  estimatedPrice: z.number().nonnegative(),
+  deliverables: z.array(sanitizedString),
+});
+
+export const assistantActionSchema = z.object({
+  type: z.enum(['add_task', 'add_budget', 'add_vendor']),
+  label: sanitizedString,
+  payload: z.object({
+    task: assistantTaskActionPayloadSchema.optional(),
+    budget: assistantBudgetActionPayloadSchema.optional(),
+    vendor: assistantVendorActionPayloadSchema.optional(),
+  }),
+});
+
+export const rawAssistantResponseSchema = z.object({
+  content: sanitizedString,
+  suggestedActions: z.array(assistantActionSchema).optional(),
+});

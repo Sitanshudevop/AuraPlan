@@ -19,11 +19,6 @@ export function getActiveApiKey(): string | undefined {
       return custom.trim();
     }
   }
-  const metaEnv = import.meta.env as unknown as Record<string, string | undefined>;
-  const envKey = metaEnv.VITE_GEMINI_API_KEY || metaEnv.GEMINI_API_KEY;
-  if (typeof envKey === 'string' && envKey.trim().length > 5 && envKey !== 'YOUR_GEMINI_API_KEY') {
-    return envKey.trim();
-  }
   return undefined;
 }
 
@@ -53,8 +48,7 @@ export function getAiEngineStatus(): { isConfigured: boolean; label: string; mas
   const configured = isGeminiKeyConfigured();
   return {
     isConfigured: configured,
-    label: configured ? 'Gemini Flash 3.5 (Active)' : 'AuraPlan Deterministic Intelligence Engine (Active)',
+    label: configured ? 'Gemini Flash 1.5 (Custom Key Active)' : 'AuraPlan Server AI & Local Fallback Engine (Active)',
     maskedKey: getSafeMaskedKey(),
   };
 }
-

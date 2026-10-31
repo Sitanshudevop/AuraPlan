@@ -7,7 +7,7 @@ import { getLocalThemeIdea, getLocalVendorVet } from './deterministicFallback';
 import { calculateDeterministicRipple } from './rippleEngine';
 import { NewEventFormInput, synthesizePlanLocally } from './planSynthesizer';
 import { sanitizeText, aiRateLimiter } from '../utils/security';
-import { callGeminiJson } from './geminiApi';
+import { callGeminiProxy } from './geminiClient';
 import {
   rateLimitDebounce,
   getActiveApiKey,
@@ -41,8 +41,8 @@ export async function generateThemeIdea(
     return themeCache.get(cacheKey)!;
   }
 
-  const apiKey = getActiveApiKey();
-  if (import.meta.env.MODE === 'test' || !apiKey || !aiRateLimiter.checkRateLimit().allowed) {
+  const customKey = getActiveApiKey();
+  if ((import.meta.env.MODE === 'test' && !customKey) || !aiRateLimiter.checkRateLimit().allowed) {
     const fallback = getLocalThemeIdea(eventType, cleanVibe);
     themeCache.set(cacheKey, fallback);
     return fallback;
@@ -61,7 +61,7 @@ export async function generateThemeIdea(
       "activities": [{"id": "ea-1", "title": string, "description": string, "estimatedCost": number, "timelineTask": string, "durationMinutes": number}]
     }`;
 
-    const validated = await callGeminiJson(apiKey, prompt, themeIdeaSchema);
+    const validated = await callGeminiProxy(prompt, themeIdeaSchema, { customKey });
     themeCache.set(cacheKey, validated);
     return validated;
   } catch {
@@ -84,8 +84,8 @@ export async function generateVendorVet(
     return vendorVetCache.get(cacheKey)!;
   }
 
-  const apiKey = getActiveApiKey();
-  if (import.meta.env.MODE === 'test' || !apiKey || !aiRateLimiter.checkRateLimit().allowed) {
+  const customKey = getActiveApiKey();
+  if ((import.meta.env.MODE === 'test' && !customKey) || !aiRateLimiter.checkRateLimit().allowed) {
     const fallback = getLocalVendorVet(cleanName, cleanCat, contractedPrice);
     vendorVetCache.set(cacheKey, fallback);
     return fallback;
@@ -93,7 +93,7 @@ export async function generateVendorVet(
 
   try {
     const prompt = `Generate vendor vetting & negotiation scripts for vendor "${cleanName}" in category "${cleanCat}" with budget target ₹${contractedPrice}. Return ONLY JSON with keys: whatsappOutreachScript, emailOutreachScript, vettingQuestions (array of 5), hiddenCostRedFlags (array of 4).`;
-    const validated = await callGeminiJson(apiKey, prompt, vendorVetSchema);
+    const validated = await callGeminiProxy(prompt, vendorVetSchema, { customKey });
     vendorVetCache.set(cacheKey, validated);
     return validated;
   } catch {
@@ -110,15 +110,19 @@ export async function generateRippleScenario(
 ): Promise<RippleDiffResult> {
   await rateLimitDebounce();
   const cleanPrompt = customPrompt ? sanitizeText(customPrompt) : undefined;
-  const apiKey = getActiveApiKey();
+  const customKey = getActiveApiKey();
 
-  if (import.meta.env.MODE === 'test' || !apiKey || presetId !== 'custom' || !aiRateLimiter.checkRateLimit().allowed) {
+  if (
+    presetId !== 'custom' ||
+    (import.meta.env.MODE === 'test' && !customKey) ||
+    !aiRateLimiter.checkRateLimit().allowed
+  ) {
     return calculateDeterministicRipple(presetId, state, cleanPrompt);
   }
 
   try {
     const prompt = `Simulate ripple effect for event "${state.event.name}" (Guests: ${state.event.guestCount}, Budget: ${state.event.targetBudget}). Scenario: "${cleanPrompt}". Return JSON schema matching rippleDiffResult with scenarioTitle, scenarioDescription, budgetAdjustments, newVendors, timelineModifications, netBudgetImpact, guestCountImpact, summaryRationale.`;
-    return await callGeminiJson(apiKey, prompt, rippleDiffResultSchema);
+    return await callGeminiProxy(prompt, rippleDiffResultSchema, { customKey });
   } catch {
     return calculateDeterministicRipple(presetId, state, cleanPrompt);
   }
