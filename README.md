@@ -55,7 +55,7 @@ auraplan/
 - **Frontend Core**: React 18.3, TypeScript 5.6 (Strict Mode), Vite 5.4.
 - **Styling & Design System**: Tailwind CSS 3.4 with custom Obsidian/Alabaster tokens, hairline borders, and `tabular-nums` typography.
 - **Validation & Security**: Zod runtime schema parsing with sanitization transforms and CSV/ICS injection protection.
-- **Icons & Micro-Interactions**: Lucide React 1.16 + Canvas Confetti.
+- **Icons & Micro-Interactions**: Lucide React 1.16 with responsive SVG iconography and accessible micro-interactions.
 - **AI Intelligence**: Google Gemini 3.8 Flash integration with a 100% functional deterministic local fallback engine for offline reliability.
 
 ---
