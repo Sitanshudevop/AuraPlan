@@ -1,17 +1,12 @@
 import React, { useState } from 'react';
-import { BudgetItem, BudgetCategory } from '../../types/budget';
-import { Currency } from '../../types/event';
+import { BudgetCategory } from '../../types/budget';
 import { formatCurrency } from '../../utils/formatters';
-import { Lock, Unlock, ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { CategoryRowDetails } from './CategoryRowDetails';
+import { CategoryLockButton, ContractedCostCell } from './CategoryRowSubcomponents';
+import { areCategoryRowPropsEqual, CategoryRowProps } from './categoryRowPropsComparator';
 
-interface CategoryRowProps {
-  item: BudgetItem;
-  totalBudget: number;
-  currency: Currency;
-  onUpdate: (partial: Partial<BudgetItem>) => void;
-  onDelete?: () => void;
-}
+export type { CategoryRowProps };
 
 export const CATEGORY_LABELS: Record<BudgetCategory, string> = {
   venue: 'Venue & Grounds',
@@ -21,56 +16,6 @@ export const CATEGORY_LABELS: Record<BudgetCategory, string> = {
   entertainment: 'Entertainment & Music',
   logistics: 'Logistics & Shuttles',
   buffer: 'Emergency Contingency',
-};
-
-interface CategoryLockButtonProps {
-  isLocked: boolean;
-  onToggle: () => void;
-}
-
-const CategoryLockButton: React.FC<CategoryLockButtonProps> = ({ isLocked, onToggle }) => (
-  <button
-    onClick={onToggle}
-    className={`p-1 rounded transition-colors mt-0.5 shrink-0 ${
-      isLocked
-        ? 'text-[#6E79F5] hover:text-[#5D68E2]'
-        : 'text-stone-500 hover:text-stone-600 dark:text-zinc-500 dark:hover:text-zinc-300'
-    }`}
-    title={isLocked ? 'Locked from auto-rebalancing' : 'Click to lock allocation'}
-    aria-label={isLocked ? 'Unlock category' : 'Lock category'}
-  >
-    {isLocked ? <Lock className="w-3.5 h-3.5 stroke-[1.5]" /> : <Unlock className="w-3.5 h-3.5 stroke-[1.5]" />}
-  </button>
-);
-
-interface ContractedCostCellProps {
-  actualContracted: number;
-  allocated: number;
-  vendorQuote: number;
-  currency: Currency;
-}
-
-const ContractedCostCell: React.FC<ContractedCostCellProps> = ({
-  actualContracted,
-  allocated,
-  vendorQuote,
-  currency,
-}) => {
-  const isOver = actualContracted > allocated;
-  const hasDistinctQuote = vendorQuote > 0 && vendorQuote !== actualContracted;
-
-  return (
-    <td className="py-3 px-4 text-right tabular-nums">
-      <div className={`font-medium ${isOver ? 'text-red-600 dark:text-red-400' : 'text-[#111113] dark:text-[#EDEDEF]'}`}>
-        {formatCurrency(actualContracted, currency)}
-      </div>
-      {hasDistinctQuote && (
-        <div className="text-[11px] text-stone-500 dark:text-zinc-500">
-          Quote: {formatCurrency(vendorQuote, currency)}
-        </div>
-      )}
-    </td>
-  );
 };
 
 const CategoryRowComponent: React.FC<CategoryRowProps> = ({
@@ -83,7 +28,10 @@ const CategoryRowComponent: React.FC<CategoryRowProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const isOverAllocated = item.actualContracted > item.allocated;
   const allocationPercent = totalBudget > 0 ? (item.allocated / totalBudget) * 100 : 0;
-  const paidPercent = item.actualContracted > 0 ? Math.min(100, Math.round((item.amountPaid / item.actualContracted) * 100)) : 0;
+  const paidPercent =
+    item.actualContracted > 0
+      ? Math.min(100, Math.round((item.amountPaid / item.actualContracted) * 100))
+      : 0;
 
   return (
     <>
@@ -97,7 +45,11 @@ const CategoryRowComponent: React.FC<CategoryRowProps> = ({
               aria-expanded={isExpanded}
               aria-label={`Toggle details for ${item.name}`}
             >
-              {isExpanded ? <ChevronDown className="w-3.5 h-3.5 stroke-[1.5]" /> : <ChevronRight className="w-3.5 h-3.5 stroke-[1.5]" />}
+              {isExpanded ? (
+                <ChevronDown className="w-3.5 h-3.5 stroke-[1.5]" />
+              ) : (
+                <ChevronRight className="w-3.5 h-3.5 stroke-[1.5]" />
+              )}
             </button>
 
             <CategoryLockButton
@@ -109,7 +61,10 @@ const CategoryRowComponent: React.FC<CategoryRowProps> = ({
               <div className="font-medium text-[#111113] dark:text-[#EDEDEF] flex items-center gap-1.5 leading-snug line-clamp-2">
                 <span>{item.name}</span>
                 {isOverAllocated && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" title="Actual cost exceeds allocation" />
+                  <span
+                    className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0"
+                    title="Actual cost exceeds allocation"
+                  />
                 )}
               </div>
               <div className="text-[11px] text-stone-500 dark:text-zinc-500 mt-0.5">
@@ -124,7 +79,9 @@ const CategoryRowComponent: React.FC<CategoryRowProps> = ({
           <div className="space-y-1">
             <div className="flex items-center justify-between text-xs tabular-nums text-stone-700 dark:text-[#EDEDEF]">
               <span className="font-medium">{formatCurrency(item.allocated, currency)}</span>
-              <span className="text-[11px] text-stone-500 dark:text-zinc-500">{allocationPercent.toFixed(1)}%</span>
+              <span className="text-[11px] text-stone-500 dark:text-zinc-500">
+                {allocationPercent.toFixed(1)}%
+              </span>
             </div>
             <input
               type="range"
@@ -163,19 +120,6 @@ const CategoryRowComponent: React.FC<CategoryRowProps> = ({
         <CategoryRowDetails item={item} currency={currency} onUpdate={onUpdate} onDelete={onDelete} />
       )}
     </>
-  );
-};
-
-const areCategoryRowPropsEqual = (prev: CategoryRowProps, next: CategoryRowProps): boolean => {
-  return (
-    prev.item.id === next.item.id &&
-    prev.item.allocated === next.item.allocated &&
-    prev.item.actualContracted === next.item.actualContracted &&
-    prev.item.amountPaid === next.item.amountPaid &&
-    prev.item.vendorQuote === next.item.vendorQuote &&
-    prev.item.isLocked === next.item.isLocked &&
-    prev.currency === next.currency &&
-    prev.totalBudget === next.totalBudget
   );
 };
 
