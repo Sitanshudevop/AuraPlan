@@ -153,7 +153,7 @@ export async function handleGeminiProxyRequest(
     const upstreamUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(activeKey)}`;
     const upstreamResponse = await fetch(upstreamUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': activeKey },
       signal: AbortSignal.timeout(9000),
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
