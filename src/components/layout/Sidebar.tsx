@@ -105,6 +105,7 @@ export const Sidebar: React.FC = () => {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
+              aria-label={item.label}
               aria-current={isActive ? 'page' : undefined}
               className={`group relative w-full min-h-[44px] md:h-9 flex items-center gap-2.5 px-2.5 rounded-lg text-sm transition-colors text-left ${
                 isActive

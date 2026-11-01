@@ -17,42 +17,34 @@ export function sortActivitiesChronologically(activities: DayOfActivity[]): DayO
  */
 export function detectScheduleConflicts(activities: DayOfActivity[]): ScheduleConflict[] {
   const conflicts: ScheduleConflict[] = [];
+  const parsed = activities.map((act) => ({
+    act,
+    start: timeToMinutes(act.startTime),
+    end: timeToMinutes(act.endTime),
+    locLower: act.locationZone ? act.locationZone.toLowerCase() : '',
+    pocLower: act.poc ? act.poc.toLowerCase() : '',
+  }));
 
-  for (let i = 0; i < activities.length; i++) {
-    for (let j = i + 1; j < activities.length; j++) {
-      const act1 = activities[i];
-      const act2 = activities[j];
-
-      const start1 = timeToMinutes(act1.startTime);
-      const end1 = timeToMinutes(act1.endTime);
-      const start2 = timeToMinutes(act2.startTime);
-      const end2 = timeToMinutes(act2.endTime);
+  for (let i = 0; i < parsed.length; i++) {
+    const item1 = parsed[i];
+    for (let j = i + 1; j < parsed.length; j++) {
+      const item2 = parsed[j];
 
       // Check if time windows overlap
-      const isOverlapping = Math.max(start1, start2) < Math.min(end1, end2);
-
-      if (isOverlapping) {
-        if (
-          act1.locationZone &&
-          act2.locationZone &&
-          act1.locationZone.toLowerCase() === act2.locationZone.toLowerCase()
-        ) {
+      if (Math.max(item1.start, item2.start) < Math.min(item1.end, item2.end)) {
+        if (item1.locLower && item1.locLower === item2.locLower) {
           conflicts.push({
-            activity1: act1,
-            activity2: act2,
+            activity1: item1.act,
+            activity2: item2.act,
             reason: 'location',
-            conflictDetail: `Zone double-booking: Both activities require "${act1.locationZone}" between ${act1.startTime} and ${act2.endTime}.`,
+            conflictDetail: `Zone double-booking: Both activities require "${item1.act.locationZone}" between ${item1.act.startTime} and ${item2.act.endTime}.`,
           });
-        } else if (
-          act1.poc &&
-          act2.poc &&
-          act1.poc.toLowerCase() === act2.poc.toLowerCase()
-        ) {
+        } else if (item1.pocLower && item1.pocLower === item2.pocLower) {
           conflicts.push({
-            activity1: act1,
-            activity2: act2,
+            activity1: item1.act,
+            activity2: item2.act,
             reason: 'poc',
-            conflictDetail: `POC conflict: "${act1.poc}" is assigned simultaneously to both activities.`,
+            conflictDetail: `POC conflict: "${item1.act.poc}" is assigned simultaneously to both activities.`,
           });
         }
       }

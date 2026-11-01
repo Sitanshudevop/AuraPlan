@@ -98,12 +98,12 @@ export default defineConfig(({ mode }) => {
       coverage: {
         provider: 'v8',
         reporter: ['text', 'json', 'html'],
-        exclude: ['node_modules/', 'src/test/setup.ts', 'dist/**', '**/*.d.ts', 'server/**'],
+        exclude: ['node_modules/', 'src/test/setup.ts', 'dist/**', '**/*.d.ts'],
         thresholds: {
-          statements: 89,
-          branches: 78,
-          functions: 84,
-          lines: 90,
+          statements: 90,
+          branches: 79,
+          functions: 84.5,
+          lines: 91,
         },
       },
     },

@@ -58,7 +58,7 @@ export function stripHtmlTags(text: string): string {
 export function sanitizeText(input: string): string {
   if (!input || typeof input !== 'string') return '';
 
-  let clean = input;
+  let clean = input.replace(/[\0\u202A-\u202E\u2066-\u2069]/g, '');
   let previous = '';
   let passes = 0;
 
@@ -92,18 +92,19 @@ const FORBIDDEN_OBJECT_KEYS = new Set(['__proto__', 'constructor', 'prototype'])
  * Sanitizes an object deeply by applying sanitizeText to all string properties,
  * while proactively blocking and omitting prototype pollution keys.
  */
-export function sanitizeObject<T>(obj: T): T {
+export function sanitizeObject<T>(obj: T, maxDepth = 30, depth = 0): T {
+  if (depth > maxDepth) return obj;
   if (typeof obj === 'string') {
     return sanitizeText(obj) as unknown as T;
   }
   if (Array.isArray(obj)) {
-    return obj.map((item) => sanitizeObject(item)) as unknown as T;
+    return obj.map((item) => sanitizeObject(item, maxDepth, depth + 1)) as unknown as T;
   }
   if (obj !== null && typeof obj === 'object') {
     const result: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(obj)) {
       if (!FORBIDDEN_OBJECT_KEYS.has(key)) {
-        result[key] = sanitizeObject(value);
+        result[key] = sanitizeObject(value, maxDepth, depth + 1);
       }
     }
     return result as T;

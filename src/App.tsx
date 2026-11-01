@@ -8,7 +8,7 @@ import { TabSkeleton } from './components/ui/Skeleton';
 
 import { DashboardTab } from './features/dashboard/DashboardTab';
 
-// Lazy-loaded secondary feature tabs with zero-lag chunking
+// Lazy-loaded feature tabs with zero-lag chunking
 const BudgetTab = lazy(() =>
   import('./features/budget/BudgetTab').then((m) => ({ default: m.BudgetTab }))
 );
@@ -48,11 +48,10 @@ const MainWorkspaceContent: React.FC = () => {
     <div className="flex-1 flex flex-col min-w-0 min-h-0 overflow-hidden">
       <main
         id="main-content"
-        className={`flex-1 w-full min-h-0 min-w-0 ${
-          isVendors
-            ? 'p-4 sm:p-5 lg:p-6 max-w-none flex flex-col overflow-hidden'
-            : 'p-4 sm:p-6 lg:p-8 max-w-[1200px] mx-auto overflow-y-auto overflow-x-hidden space-y-8'
-        }`}
+        className={`flex-1 w-full min-h-0 min-w-0 ${isVendors
+          ? 'p-4 sm:p-5 lg:p-6 max-w-none flex flex-col overflow-hidden'
+          : 'p-4 sm:p-6 lg:p-8 max-w-[1200px] mx-auto overflow-y-auto overflow-x-hidden space-y-8'
+          }`}
         tabIndex={-1}
       >
         <Suspense fallback={<TabSkeleton />}>
@@ -79,13 +78,8 @@ const WorkspaceOverlays: React.FC = () => {
 
   // Prefetch non-critical modals and drawers on browser idle so interaction is instant
   React.useEffect(() => {
-    if (process.env.NODE_ENV === 'test') return;
+    if (import.meta.env.MODE === 'test') return;
     const prefetch = () => {
-      import('./features/budget/BudgetTab');
-      import('./features/timeline/TimelineTab');
-      import('./features/vendors/VendorsTab');
-      import('./features/ideation/IdeationTab');
-      import('./features/guests/GuestsTab');
       import('./features/copilot/PlanningAssistantDrawer');
       import('./features/ideation/RippleSimulatorDrawer');
       import('./features/audit/AuditDrawer');
