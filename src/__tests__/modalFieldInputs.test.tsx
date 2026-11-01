@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { VendorContactFields } from '../features/vendors/VendorContactFields';
 import { BudgetItemFinancialFields } from '../features/budget/BudgetItemFinancialFields';
 import { EventBasicInfoFields } from '../components/modals/EventBasicInfoFields';

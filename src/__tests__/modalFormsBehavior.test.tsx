@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
-import React from 'react';
 import { AddBudgetItemModal } from '../features/budget/AddBudgetItemModal';
 import { AddVendorModal } from '../features/vendors/AddVendorModal';
 import { AddGuestModal } from '../features/guests/AddGuestModal';

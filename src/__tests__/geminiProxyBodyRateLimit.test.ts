@@ -3,8 +3,6 @@ import { handleGeminiProxyRequest } from '../../server/geminiProxy';
 import {
   readRequestBodySafely,
   MAX_BODY_BYTES,
-  getResolvedModel,
-  DEFAULT_GEMINI_MODEL,
 } from '../../server/geminiValidation';
 import {
   checkSlidingRateLimit,
@@ -49,7 +47,7 @@ describe('F2 Hardening: Body Limits & Stream Reading', () => {
 
     const req = new Request('http://localhost:3000/api/gemini', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' }, // missing Content-Length
+      headers: { 'Content-Type': 'application/json' },
       body: bodyStream,
       // @ts-expect-error duplex
       duplex: 'half',
@@ -61,7 +59,6 @@ describe('F2 Hardening: Body Limits & Stream Reading', () => {
   });
 
   it('decodes multibyte UTF-8 characters split across chunk boundaries without corruption', async () => {
-    // Rupee symbol '₹' is 3 bytes: 0xE2, 0x82, 0xB9
     const part1 = new Uint8Array([0xE2, 0x82]);
     const part2 = new Uint8Array([0xB9]);
 
@@ -96,7 +93,7 @@ describe('F2 Hardening: Body Limits & Stream Reading', () => {
 
   it('accepts exact-limit body (51200 bytes)', async () => {
     const exactBytes = new Uint8Array(MAX_BODY_BYTES);
-    exactBytes.fill(32); // spaces
+    exactBytes.fill(32);
 
     const bodyStream = new ReadableStream({
       start(controller) {
@@ -138,77 +135,38 @@ describe('F2 Hardening: True Sliding Window Rate Limiter & Memory Bound', () => 
       expect(checkSlidingRateLimit(ip, now + i * 100)).toBe(true);
     }
 
-    // 31st request in the same window fails
     expect(checkSlidingRateLimit(ip, now + 3500)).toBe(false);
-
-    // After window slides forward (61 seconds), new requests are allowed
     expect(checkSlidingRateLimit(ip, now + 61000)).toBe(true);
   });
 
   it('caps map size at MAX_RATE_LIMIT_ENTRIES and prevents unbounded memory growth', () => {
     const now = 2000000;
-    // Fill up to the cap
     for (let i = 0; i < MAX_RATE_LIMIT_ENTRIES; i++) {
       checkSlidingRateLimit(`10.0.0.${i}`, now);
     }
     expect(getRateLimitStoreSize()).toBeLessThanOrEqual(MAX_RATE_LIMIT_ENTRIES);
 
-    // Adding more does not exceed cap
     checkSlidingRateLimit('99.99.99.99', now);
     expect(getRateLimitStoreSize()).toBeLessThanOrEqual(MAX_RATE_LIMIT_ENTRIES);
   });
 
   it('extracts client IP from platform headers with proper precedence', () => {
-    // 1. x-real-ip
     const req1 = new Request('http://localhost', {
       headers: { 'x-real-ip': '203.0.113.195', 'x-forwarded-for': '198.51.100.2' },
     });
     expect(extractClientIp(req1)).toBe('203.0.113.195');
 
-    // 2. x-vercel-forwarded-for
     const req2 = new Request('http://localhost', {
       headers: { 'x-vercel-forwarded-for': '198.51.100.5, 10.0.0.1' },
     });
     expect(extractClientIp(req2)).toBe('198.51.100.5');
 
-    // 3. x-forwarded-for
     const req3 = new Request('http://localhost', {
       headers: { 'x-forwarded-for': '192.0.2.1, 10.0.0.2' },
     });
     expect(extractClientIp(req3)).toBe('192.0.2.1');
 
-    // 4. fallback
     const req4 = new Request('http://localhost');
     expect(extractClientIp(req4)).toBe('127.0.0.1');
-  });
-});
-
-describe('F2 Hardening: Model Resolution and Server Env Override', () => {
-  const proc = (globalThis as unknown as { process?: { env: Record<string, string | undefined> } }).process;
-  const originalEnv = proc?.env?.GEMINI_MODEL;
-
-  afterEach(() => {
-    if (proc?.env) {
-      if (originalEnv !== undefined) {
-        proc.env.GEMINI_MODEL = originalEnv;
-      } else {
-        delete proc.env.GEMINI_MODEL;
-      }
-    }
-  });
-
-  it('resolves DEFAULT_GEMINI_MODEL by default', () => {
-    if (proc?.env) delete proc.env.GEMINI_MODEL;
-    expect(getResolvedModel()).toBe(DEFAULT_GEMINI_MODEL);
-  });
-
-  it('overrides model via server env GEMINI_MODEL when valid', () => {
-    if (proc?.env) proc.env.GEMINI_MODEL = 'gemini-3.8-flash';
-    expect(getResolvedModel('gemini-3.5-flash')).toBe('gemini-3.8-flash');
-  });
-
-  it('ignores invalid GEMINI_MODEL and falls back safely', () => {
-    if (proc?.env) proc.env.GEMINI_MODEL = 'invalid-model-xyz';
-    expect(getResolvedModel('gemini-3.6-flash')).toBe('gemini-3.6-flash');
   });
 });

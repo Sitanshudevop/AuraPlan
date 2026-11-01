@@ -13,13 +13,11 @@ describe('Stress & Scalability Performance Benchmark Suite (F7)', () => {
     const guests: Guest[] = Array.from({ length: 5000 }, (_, i) => ({
       id: `guest-${i}`,
       name: `Guest ${i}`,
-      group: i % 2 === 0 ? 'family' : 'friends',
-      rsvp: i % 3 === 0 ? 'confirmed' : i % 3 === 1 ? 'declined' : 'pending',
+      group: (['bride', 'groom', 'vip', 'general'] as const)[i % 4],
+      rsvp: (['confirmed', 'declined', 'pending'] as const)[i % 3],
       plusOnes: i % 4,
-      tableNumber: (i % 50) + 1,
-      assignedZoneId: `zone-${i % 5}`,
-      dietary: i % 2 === 0 ? 'vegetarian' : 'non-veg',
-      transportRequired: i % 5 === 0,
+      tableOrZoneId: `zone-${i % 5}`,
+      dietary: (['vegetarian', 'vegan', 'regular'] as const)[i % 3],
     }));
 
     const mockZones: ZoneCapacity[] = Array.from({ length: 5 }, (_, i) => ({
@@ -40,11 +38,14 @@ describe('Stress & Scalability Performance Benchmark Suite (F7)', () => {
 
     // 2. Zone capacity aggregation
     const zoneUsage = guests.reduce((acc, g) => {
-      if (g.assignedZoneId) {
-        acc[g.assignedZoneId] = (acc[g.assignedZoneId] || 0) + 1 + g.plusOnes;
+      if (g.tableOrZoneId) {
+        acc[g.tableOrZoneId] = (acc[g.tableOrZoneId] || 0) + 1 + g.plusOnes;
       }
       return acc;
     }, {} as Record<string, number>);
+    mockZones.forEach((z) => {
+      z.assignedCount = zoneUsage[z.id] || 0;
+    });
 
     // 3. Per head calculation for 5,000 guests
     const perHead = calculatePerHeadBudget(50000000, 5000);
@@ -64,7 +65,7 @@ describe('Stress & Scalability Performance Benchmark Suite (F7)', () => {
 
     const balanced = budgetReducer(
       { budgetItems, includeTaxInTotals: false, taxRatePercent: 18 },
-      { type: 'AUTO_BALANCE_BUDGET', payload: { targetBudget: cateringTotal } },
+      { type: 'AUTO_BALANCE_BUDGET' },
       cateringTotal
     );
 
@@ -83,8 +84,8 @@ describe('Stress & Scalability Performance Benchmark Suite (F7)', () => {
     const vendors: Vendor[] = Array.from({ length: 200 }, (_, i) => ({
       id: `v-${i}`,
       name: `Vendor ${i}`,
-      category: ['catering', 'photography', 'venue', 'music', 'decor'][i % 5],
-      status: ['lead', 'contacted', 'shortlisted', 'contract_signed', 'deposit_paid'][i % 5] as any,
+      category: (['catering', 'av_photo', 'venue', 'entertainment', 'decor'] as const)[i % 5],
+      status: (['shortlisted', 'contacted', 'quote_received', 'contract_signed', 'paid'] as const)[i % 5],
       estimatedPrice: 100000 + i * 1000,
       contractedPrice: 95000 + i * 1000,
       paidAmount: 20000,
@@ -102,7 +103,7 @@ describe('Stress & Scalability Performance Benchmark Suite (F7)', () => {
     const categories = Array.from(new Set(vendors.map((v) => v.category)));
     const cateringVendors = vendors.filter((v) => v.category === 'catering');
     const totalCommitted = vendors
-      .filter((v) => v.status === 'contract_signed' || v.status === 'deposit_paid')
+      .filter((v) => v.status === 'contract_signed' || v.status === 'paid')
       .reduce((sum, v) => sum + (v.contractedPrice || v.estimatedPrice), 0);
 
     const duration = performance.now() - start;
@@ -123,10 +124,9 @@ describe('Stress & Scalability Performance Benchmark Suite (F7)', () => {
         title: `Activity ${i}`,
         startTime: `${hour}:${min}`,
         endTime: `${hour}:${nextMin}`,
-        location: `Hall ${i % 3}`,
+        durationMinutes: 15,
+        locationZone: `Hall ${i % 3}`,
         poc: `Coordinator ${i % 5}`,
-        category: 'ceremony',
-        description: 'Details',
       };
     });
 
@@ -139,4 +139,3 @@ describe('Stress & Scalability Performance Benchmark Suite (F7)', () => {
     expect(duration).toBeLessThan(50);
   });
 });
-
