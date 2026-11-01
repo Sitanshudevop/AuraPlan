@@ -79,7 +79,7 @@ export const Sidebar: React.FC = () => {
               </div>
               <button
                 onClick={() => setEditEventModalOpen(true)}
-                className="p-1 rounded text-stone-500 hover:text-stone-700 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors shrink-0"
+                className="p-1 min-h-[44px] min-w-[44px] md:min-h-[28px] md:min-w-[28px] flex items-center justify-center rounded text-stone-600 hover:text-stone-800 dark:text-zinc-400 dark:hover:text-[#EDEDEF] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors shrink-0"
                 title="Edit Event Details"
                 aria-label="Edit event details"
               >
@@ -106,7 +106,7 @@ export const Sidebar: React.FC = () => {
               key={item.id}
               onClick={() => setActiveTab(item.id)}
               aria-current={isActive ? 'page' : undefined}
-              className={`group relative w-full h-9 flex items-center gap-2.5 px-2.5 rounded-lg text-sm transition-colors text-left ${
+              className={`group relative w-full min-h-[44px] md:h-9 flex items-center gap-2.5 px-2.5 rounded-lg text-sm transition-colors text-left ${
                 isActive
                   ? 'bg-black/[0.05] dark:bg-white/[0.06] text-[#111113] dark:text-white font-medium before:absolute before:left-0 before:top-2 before:bottom-2 before:w-0.5 before:bg-indigo-600 before:rounded-r'
                   : 'text-stone-600 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF] hover:bg-black/[0.03] dark:hover:bg-white/[0.03]'
@@ -119,7 +119,7 @@ export const Sidebar: React.FC = () => {
               {!isCollapsed && (
                 <div className="flex items-center justify-between flex-1 min-w-0">
                   <span className="text-[13.5px] whitespace-nowrap">{item.label}</span>
-                  <kbd className="text-[10px] text-stone-500 dark:text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <kbd className="text-[10px] text-stone-600 dark:text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity">
                     {item.shortcut}
                   </kbd>
                 </div>
@@ -138,7 +138,7 @@ export const Sidebar: React.FC = () => {
         )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-1.5 text-stone-500 hover:text-stone-700 dark:text-zinc-500 dark:hover:text-zinc-200 rounded-lg hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors ml-auto"
+          className="p-1.5 min-h-[44px] min-w-[44px] md:min-h-[28px] md:min-w-[28px] flex items-center justify-center text-stone-600 hover:text-stone-800 dark:text-zinc-400 dark:hover:text-zinc-200 rounded-lg hover:bg-black/[0.04] dark:hover:bg-white/[0.04] transition-colors ml-auto"
           aria-label={isCollapsed ? 'Expand navigation' : 'Collapse navigation'}
         >
           {isCollapsed ? <ChevronRight className="w-4 h-4 stroke-[1.5]" /> : <ChevronLeft className="w-4 h-4 stroke-[1.5]" />}

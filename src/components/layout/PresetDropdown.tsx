@@ -33,7 +33,7 @@ export const PresetDropdown: React.FC = () => {
         onClick={() => setPresetOpen(!presetOpen)}
         aria-haspopup="true"
         aria-expanded={presetOpen}
-        className="h-8 flex items-center gap-1.5 px-2.5 text-xs font-medium rounded-lg bg-stone-100 dark:bg-white/[0.04] hover:bg-stone-200/70 dark:hover:bg-white/[0.06] text-stone-800 dark:text-[#EDEDEF] border border-stone-200/70 dark:border-white/[0.06] transition-colors"
+        className="min-h-[44px] md:h-8 flex items-center gap-1.5 px-2.5 text-xs font-medium rounded-lg bg-stone-100 dark:bg-white/[0.04] hover:bg-stone-200/70 dark:hover:bg-white/[0.06] text-stone-800 dark:text-[#EDEDEF] border border-stone-200/70 dark:border-white/[0.06] transition-colors"
       >
         <span className="text-stone-600 dark:text-zinc-400 hidden sm:inline font-normal">Preset:</span>
         <span className="font-medium truncate max-w-[140px] sm:max-w-[180px]">{currentPreset.title}</span>
@@ -45,7 +45,7 @@ export const PresetDropdown: React.FC = () => {
           presetOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
         }`}
       >
-        <div className="px-2 py-1 text-[11px] font-medium text-stone-500 dark:text-zinc-500">
+        <div className="px-2 py-1 text-[11px] font-medium text-stone-600 dark:text-zinc-400">
           Event Presets
         </div>
         {PRESET_OPTIONS.map((p) => {
@@ -58,7 +58,7 @@ export const PresetDropdown: React.FC = () => {
                 setPresetOpen(false);
               }}
               aria-pressed={isActive}
-              className={`w-full text-left px-2.5 py-2 rounded-lg text-xs transition-colors flex items-center justify-between ${
+              className={`w-full text-left px-2.5 py-2 min-h-[44px] md:min-h-[36px] rounded-lg text-xs transition-colors flex items-center justify-between ${
                 isActive
                   ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-300 font-medium'
                   : 'hover:bg-stone-100 dark:hover:bg-white/[0.06] text-stone-700 dark:text-[#EDEDEF]'
@@ -66,7 +66,7 @@ export const PresetDropdown: React.FC = () => {
             >
               <div>
                 <div className="font-medium">{p.title}</div>
-                <div className="text-[11px] text-stone-500 dark:text-zinc-500 mt-0.5">{p.stats}</div>
+                <div className="text-[11px] text-stone-600 dark:text-zinc-400 mt-0.5">{p.stats}</div>
               </div>
               {isActive && <Check className="w-3.5 h-3.5 shrink-0 text-indigo-600 dark:text-indigo-400" />}
             </button>
@@ -80,7 +80,7 @@ export const PresetDropdown: React.FC = () => {
             setNewEventModalOpen(true);
             setPresetOpen(false);
           }}
-          className="w-full flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-stone-700 dark:text-[#EDEDEF] hover:bg-stone-100 dark:hover:bg-white/[0.06] font-medium transition-colors"
+          className="w-full flex items-center gap-1.5 px-2.5 py-1.5 min-h-[44px] md:min-h-[32px] rounded-lg text-stone-700 dark:text-[#EDEDEF] hover:bg-stone-100 dark:hover:bg-white/[0.06] font-medium transition-colors"
         >
           <Plus className="w-3.5 h-3.5 stroke-[1.5]" />
           <span>Create new custom event...</span>

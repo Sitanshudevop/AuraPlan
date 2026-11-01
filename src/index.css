@@ -8,6 +8,9 @@
     --color-surface: #FFFFFF;
     --color-surface-raised: #F3F3F5;
     --color-hairline: rgba(0, 0, 0, 0.08);
+    --border-control: #8C8C96;
+    --color-focus-ring: #5560E6;
+    --color-placeholder: #767676;
     --color-text: #111113;
     --color-text-muted: #6E6E77;
     --color-accent: #5560E6;
@@ -20,6 +23,9 @@
     --color-surface: #111113;
     --color-surface-raised: #161618;
     --color-hairline: rgba(255, 255, 255, 0.08);
+    --border-control: #71717A;
+    --color-focus-ring: #818CF8;
+    --color-placeholder: #9E9EA8;
     --color-text: #EDEDEF;
     --color-text-muted: #8B8B93;
     --color-accent: #636FF6;
@@ -29,6 +35,27 @@
 
   * {
     border-color: var(--color-hairline);
+  }
+
+  /* Form control boundary affordance (WCAG 2.1 AA 1.4.11 >= 3:1) */
+  input:not([type="range"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]),
+  select,
+  textarea,
+  .border-control {
+    border-color: var(--border-control);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-placeholder);
+    opacity: 1;
+  }
+
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid var(--color-focus-ring);
+    outline-offset: 1px;
   }
 
   body {
@@ -41,6 +68,19 @@
   /* Universal tabular figures for currency, dates, percentages, and metrics */
   .tabular-nums {
     font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Touch Target minimums on coarse/mobile devices (A11Y-01 >= 44x44px) */
+@media (pointer: coarse), (max-width: 767px) {
+  button:not(.touch-bypass):not(.inline-link),
+  input:not(.touch-bypass):not([type="checkbox"]):not([type="radio"]),
+  select:not(.touch-bypass),
+  textarea:not(.touch-bypass),
+  [role="button"]:not(.touch-bypass):not(.inline-link),
+  [role="tab"]:not(.touch-bypass) {
+    min-height: 44px !important;
+    min-width: 44px !important;
   }
 }
 
@@ -59,6 +99,9 @@
 }
 .border-hairline {
   border-color: var(--color-hairline);
+}
+.border-control {
+  border-color: var(--border-control);
 }
 
 /* Custom minimal scrollbar */

@@ -67,7 +67,7 @@ const GuestTableRowComponent: React.FC<GuestTableRowProps> = ({
             max="10"
             value={guest.plusOnes}
             onChange={(e) => onUpdateGuest(guest.id, { plusOnes: Math.max(0, Number(e.target.value)) })}
-            className="w-10 px-1 py-0.5 bg-surface-raised border border-hairline rounded text-xs tabular-nums text-foreground focus:outline-none"
+            className="w-10 min-h-[44px] md:min-h-[24px] px-1 py-0.5 bg-surface-raised border border-hairline rounded text-xs tabular-nums text-foreground focus:outline-none"
             aria-label={`Plus-ones for ${guest.name}`}
           />
         </div>
@@ -111,12 +111,12 @@ const GuestTableRowComponent: React.FC<GuestTableRowProps> = ({
 
       <td className="py-2 px-4 text-right">
         {confirmDelete ? (
-          <div className="inline-flex items-center gap-1.5 animate-fade-in">
+          <div className="inline-flex items-center gap-2 animate-fade-in">
             <span className="text-[10px] text-rose-500 font-medium">Delete?</span>
             <button
               type="button"
               onClick={() => onDeleteGuest(guest.id)}
-              className="px-1.5 py-0.5 bg-rose-500 text-white rounded text-[10px] font-medium hover:bg-rose-600 transition-colors"
+              className="px-2 py-1 min-h-[44px] min-w-[44px] md:min-h-[28px] md:min-w-0 bg-rose-500 text-white rounded text-xs md:text-[10px] font-medium hover:bg-rose-600 transition-colors flex items-center justify-center"
               aria-label={`Confirm deletion of ${guest.name}`}
             >
               Confirm
@@ -124,21 +124,21 @@ const GuestTableRowComponent: React.FC<GuestTableRowProps> = ({
             <button
               type="button"
               onClick={() => setConfirmDelete(false)}
-              className="p-1 text-muted hover:text-foreground rounded-md transition-colors min-w-[32px] min-h-[32px] flex items-center justify-center"
+              className="p-1 text-muted hover:text-foreground rounded-md transition-colors min-w-[44px] min-h-[44px] md:min-w-[28px] md:min-h-[28px] flex items-center justify-center"
               title="Cancel"
               aria-label={`Cancel deletion of ${guest.name}`}
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-4 h-4 md:w-3.5 md:h-3.5" />
             </button>
           </div>
         ) : (
           <button
             onClick={() => setConfirmDelete(true)}
-            className="p-1.5 text-muted hover:text-rose-500 rounded-md transition-colors"
+            className="p-1.5 text-muted hover:text-rose-500 rounded-md transition-colors min-w-[44px] min-h-[44px] md:min-w-[28px] md:min-h-[28px] flex items-center justify-center"
             title="Remove guest"
             aria-label={`Remove ${guest.name}`}
           >
-            <Trash2 className="w-3.5 h-3.5" />
+            <Trash2 className="w-4 h-4 md:w-3.5 md:h-3.5" />
           </button>
         )}
       </td>

@@ -128,9 +128,42 @@ describe('GuestsTab, Dietary Matrix & Zone Capacity', () => {
     );
 
     const table = container.querySelector('table');
-    expect(table).toHaveAttribute('aria-rowcount', '1000');
+    // Windowed roster (50 visible of 1000 total): count includes header (1000 + 1 = 1001)
+    expect(table).toHaveAttribute('aria-rowcount', '1001');
+
+    // First data row index is 2 (header row is index 1)
+    const firstRow = container.querySelector('tbody tr');
+    expect(firstRow).toHaveAttribute('aria-rowindex', '2');
+  });
+
+  it('omits aria-rowcount and aria-rowindex when all rows render (non-windowed table)', () => {
+    const smallRoster: Guest[] = Array.from({ length: 5 }, (_, i) => ({
+      id: `small-${i + 1}`,
+      name: `Guest ${i + 1}`,
+      group: 'general',
+      rsvp: 'confirmed',
+      plusOnes: 0,
+      dietary: 'vegetarian',
+    }));
+
+    const mockZones: ZoneCapacity[] = [
+      { id: 'z-hall', name: 'Grand Hall', maxCapacity: 100, assignedCount: 5, type: 'zone' },
+    ];
+
+    const { container } = render(
+      <GuestTable
+        guests={smallRoster}
+        zones={mockZones}
+        onUpdateGuest={() => {}}
+        onDeleteGuest={() => {}}
+      />
+    );
+
+    const table = container.querySelector('table');
+    // Non-windowed table: native table semantics are sufficient per ARIA guidelines
+    expect(table).not.toHaveAttribute('aria-rowcount');
 
     const firstRow = container.querySelector('tbody tr');
-    expect(firstRow).toHaveAttribute('aria-rowindex', '1');
+    expect(firstRow).not.toHaveAttribute('aria-rowindex');
   });
 });

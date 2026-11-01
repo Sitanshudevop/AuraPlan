@@ -16,7 +16,7 @@ export const ThemePaletteTab: React.FC<ThemePaletteTabProps> = ({
 }) => {
   return (
     <div className="space-y-2 pt-1">
-      <div className="text-xs text-stone-500 dark:text-zinc-500">
+      <div className="text-xs text-stone-600 dark:text-zinc-400">
         Click swatch to copy hex code
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -24,7 +24,7 @@ export const ThemePaletteTab: React.FC<ThemePaletteTabProps> = ({
           <button
             key={idx}
             onClick={() => onCopyHex(color.hex)}
-            className="flex items-center gap-2.5 p-2 rounded-lg border border-stone-200/80 dark:border-white/[0.08] hover:border-stone-300 dark:hover:border-white/[0.14] transition-colors text-left bg-stone-50/50 dark:bg-white/[0.02]"
+            className="flex items-center gap-2.5 p-2 min-h-[44px] rounded-lg border border-stone-200/80 dark:border-white/[0.08] hover:border-stone-300 dark:hover:border-white/[0.14] transition-colors text-left bg-stone-50/50 dark:bg-white/[0.02]"
             title={`Click to copy ${color.hex}`}
           >
             <div
@@ -37,7 +37,7 @@ export const ThemePaletteTab: React.FC<ThemePaletteTabProps> = ({
               <span className="text-xs font-medium text-[#111113] dark:text-[#EDEDEF] block truncate">
                 {color.name}
               </span>
-              <span className="text-[11px] text-stone-500 dark:text-zinc-500 tabular-nums">
+              <span className="text-[11px] text-stone-600 dark:text-zinc-400 tabular-nums">
                 {copiedHex === color.hex ? 'Copied' : color.hex}
               </span>
             </div>

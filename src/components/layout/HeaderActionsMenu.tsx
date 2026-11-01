@@ -49,7 +49,7 @@ export const HeaderActionsMenu: React.FC<HeaderActionsMenuProps> = ({
         onClick={() => setMoreOpen(!moreOpen)}
         aria-haspopup="true"
         aria-expanded={moreOpen}
-        className="h-8 w-8 flex items-center justify-center text-stone-500 hover:text-stone-900 dark:text-[#8B8B93] dark:hover:text-[#EDEDEF] rounded-lg hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
+        className="min-h-[44px] min-w-[44px] md:h-8 md:w-8 flex items-center justify-center text-stone-500 hover:text-stone-900 dark:text-[#8B8B93] dark:hover:text-[#EDEDEF] rounded-lg hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
         title="More workspace actions"
         aria-label="More actions"
       >
@@ -66,7 +66,7 @@ export const HeaderActionsMenu: React.FC<HeaderActionsMenuProps> = ({
             toggleDarkMode();
             setMoreOpen(false);
           }}
-          className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-stone-700 dark:text-[#EDEDEF] hover:bg-stone-100 dark:hover:bg-white/[0.06] transition-colors"
+          className="w-full flex items-center gap-2 px-2.5 py-1.5 min-h-[44px] md:min-h-[32px] rounded-lg text-stone-700 dark:text-[#EDEDEF] hover:bg-stone-100 dark:hover:bg-white/[0.06] transition-colors"
         >
           {isDark ? <Sun className="w-3.5 h-3.5 stroke-[1.5]" /> : <Moon className="w-3.5 h-3.5 stroke-[1.5]" />}
           <span>{isDark ? 'Switch to light mode' : 'Switch to dark mode'}</span>
@@ -77,7 +77,7 @@ export const HeaderActionsMenu: React.FC<HeaderActionsMenuProps> = ({
             openCopilot();
             setMoreOpen(false);
           }}
-          className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-stone-700 dark:text-[#EDEDEF] hover:bg-stone-100 dark:hover:bg-white/[0.06] transition-colors"
+          className="w-full flex items-center gap-2 px-2.5 py-1.5 min-h-[44px] md:min-h-[32px] rounded-lg text-stone-700 dark:text-[#EDEDEF] hover:bg-stone-100 dark:hover:bg-white/[0.06] transition-colors"
         >
           <GitCompare className="w-3.5 h-3.5 stroke-[1.5]" />
           <span>What-If simulator</span>
@@ -88,7 +88,7 @@ export const HeaderActionsMenu: React.FC<HeaderActionsMenuProps> = ({
             openAuditDrawer();
             setMoreOpen(false);
           }}
-          className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-stone-700 dark:text-[#EDEDEF] hover:bg-stone-100 dark:hover:bg-white/[0.06] transition-colors"
+          className="w-full flex items-center gap-2 px-2.5 py-1.5 min-h-[44px] md:min-h-[32px] rounded-lg text-stone-700 dark:text-[#EDEDEF] hover:bg-stone-100 dark:hover:bg-white/[0.06] transition-colors"
         >
           <ShieldCheck className="w-3.5 h-3.5 stroke-[1.5]" />
           <span>Rubric audit report</span>
@@ -101,7 +101,7 @@ export const HeaderActionsMenu: React.FC<HeaderActionsMenuProps> = ({
             onExportJson();
             setMoreOpen(false);
           }}
-          className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-stone-700 dark:text-[#EDEDEF] hover:bg-stone-100 dark:hover:bg-white/[0.06] transition-colors"
+          className="w-full flex items-center gap-2 px-2.5 py-1.5 min-h-[44px] md:min-h-[32px] rounded-lg text-stone-700 dark:text-[#EDEDEF] hover:bg-stone-100 dark:hover:bg-white/[0.06] transition-colors"
         >
           <Download className="w-3.5 h-3.5 stroke-[1.5]" />
           <span>Export workspace JSON</span>

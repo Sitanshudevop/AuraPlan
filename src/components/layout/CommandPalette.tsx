@@ -72,7 +72,7 @@ export const CommandPalette: React.FC = () => {
             aria-autocomplete="list"
             aria-controls="command-results"
           />
-          <kbd className="text-[11px] font-sans px-1.5 py-0.5 bg-stone-100 dark:bg-white/[0.06] text-stone-500 dark:text-[#8B8B93] rounded border border-stone-200/80 dark:border-white/[0.08] shrink-0">
+          <kbd className="text-[11px] font-sans px-1.5 py-0.5 bg-stone-100 dark:bg-white/[0.06] text-stone-600 dark:text-[#A1A1AA] rounded border border-stone-200/80 dark:border-white/[0.08] shrink-0">
             ESC
           </kbd>
         </div>

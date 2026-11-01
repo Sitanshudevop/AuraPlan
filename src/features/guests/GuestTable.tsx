@@ -80,42 +80,47 @@ export const GuestTable: React.FC<GuestTableProps> = ({
 
       {/* Guest Table */}
       <div className="overflow-x-auto">
-        <table
-          className="w-full text-left text-xs border-collapse"
-          aria-rowcount={filteredGuests.length}
-          aria-label="Guest attendance and table allocations"
-        >
-          <thead className="bg-surface-raised border-b border-hairline text-xs font-medium text-muted sticky top-0">
-            <tr>
-              <th className="py-2.5 px-4 font-medium">Guest name</th>
-              <th className="py-2.5 px-3 font-medium">Group</th>
-              <th className="py-2.5 px-3 font-medium">RSVP status</th>
-              <th className="py-2.5 px-3 font-medium">Dietary tag</th>
-              <th className="py-2.5 px-3 font-medium min-w-[220px]">Zone / table assignment</th>
-              <th className="py-2.5 px-4 font-medium text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-hairline">
-            {displayedGuests.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="py-12 text-center text-xs text-muted">
-                  No guests matching this filter.
-                </td>
-              </tr>
-            ) : (
-              displayedGuests.map((guest, idx) => (
-                <GuestTableRow
-                  key={guest.id}
-                  guest={guest}
-                  zoneOptions={zoneOptions}
-                  onUpdateGuest={onUpdateGuest}
-                  onDeleteGuest={onDeleteGuest}
-                  rowIndex={idx + 1}
-                />
-              ))
-            )}
-          </tbody>
-        </table>
+        {(() => {
+          const isWindowed = displayedGuests.length < filteredGuests.length;
+          return (
+            <table
+              className="w-full text-left text-xs border-collapse"
+              aria-rowcount={isWindowed ? filteredGuests.length + 1 : undefined}
+              aria-label="Guest attendance and table allocations"
+            >
+              <thead className="bg-surface-raised border-b border-hairline text-xs font-medium text-muted sticky top-0">
+                <tr aria-rowindex={isWindowed ? 1 : undefined}>
+                  <th className="py-2.5 px-4 font-medium">Guest name</th>
+                  <th className="py-2.5 px-3 font-medium">Group</th>
+                  <th className="py-2.5 px-3 font-medium">RSVP status</th>
+                  <th className="py-2.5 px-3 font-medium">Dietary tag</th>
+                  <th className="py-2.5 px-3 font-medium min-w-[220px]">Zone / table assignment</th>
+                  <th className="py-2.5 px-4 font-medium text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-hairline">
+                {displayedGuests.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="py-12 text-center text-xs text-muted">
+                      No guests matching this filter.
+                    </td>
+                  </tr>
+                ) : (
+                  displayedGuests.map((guest, idx) => (
+                    <GuestTableRow
+                      key={guest.id}
+                      guest={guest}
+                      zoneOptions={zoneOptions}
+                      onUpdateGuest={onUpdateGuest}
+                      onDeleteGuest={onDeleteGuest}
+                      rowIndex={isWindowed ? idx + 2 : undefined}
+                    />
+                  ))
+                )}
+              </tbody>
+            </table>
+          );
+        })()}
       </div>
 
       {/* Progressive Loading Footer */}

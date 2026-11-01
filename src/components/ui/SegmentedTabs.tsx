@@ -34,13 +34,13 @@ export const SegmentedTabs: React.FC<SegmentedTabsProps> = ({
               className={`flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] sm:min-h-0 text-xs font-medium rounded-md transition-colors ${
                 isActive
                   ? 'bg-white dark:bg-[#161618] text-[#111113] dark:text-[#EDEDEF] shadow-xs'
-                  : 'text-stone-500 dark:text-[#8B8B93] hover:text-stone-900 dark:hover:text-[#EDEDEF]'
+                  : 'text-stone-600 dark:text-[#A1A1AA] hover:text-stone-900 dark:hover:text-[#EDEDEF]'
               }`}
             >
               {tab.icon && <span className="shrink-0">{tab.icon}</span>}
               <span>{tab.label}</span>
               {tab.count !== undefined && (
-                <span className="text-[11px] font-mono tabular-nums text-stone-500 dark:text-zinc-500">
+                <span className="text-[11px] font-mono tabular-nums text-stone-600 dark:text-zinc-400">
                   {tab.count}
                 </span>
               )}
@@ -62,7 +62,7 @@ export const SegmentedTabs: React.FC<SegmentedTabsProps> = ({
             className={`flex items-center gap-2 pb-2.5 min-h-[44px] sm:min-h-0 text-sm font-medium transition-colors relative whitespace-nowrap ${
               isActive
                 ? 'text-[#111113] dark:text-[#EDEDEF]'
-                : 'text-stone-500 dark:text-[#8B8B93] hover:text-stone-800 dark:hover:text-[#EDEDEF]'
+                : 'text-stone-600 dark:text-[#A1A1AA] hover:text-stone-800 dark:hover:text-[#EDEDEF]'
             }`}
           >
             {tab.icon && <span className="shrink-0">{tab.icon}</span>}
@@ -72,7 +72,7 @@ export const SegmentedTabs: React.FC<SegmentedTabsProps> = ({
                 className={`text-xs px-1.5 py-0.2 rounded font-mono tabular-nums ${
                   isActive
                     ? 'bg-stone-200/70 dark:bg-white/[0.1] text-stone-800 dark:text-[#EDEDEF]'
-                    : 'text-stone-500 dark:text-zinc-500'
+                    : 'text-stone-600 dark:text-zinc-400'
                 }`}
               >
                 {tab.count}
