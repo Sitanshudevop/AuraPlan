@@ -30,7 +30,7 @@ export const VendorVettingDetails: React.FC<VendorVettingDetailsProps> = ({
 
   return (
     <div className="space-y-4 text-xs max-h-[70vh] overflow-y-auto pr-1">
-      {isOfflineFallback && (
+      {isOfflineFallback ? (
         <div className="px-3 py-1.5 bg-stone-100 dark:bg-zinc-800/60 rounded-md text-[11px] text-stone-600 dark:text-zinc-400 flex items-center justify-between">
           <span>Showing deterministic offline suggestions</span>
           <button
@@ -40,6 +40,11 @@ export const VendorVettingDetails: React.FC<VendorVettingDetailsProps> = ({
           >
             Try live AI again
           </button>
+        </div>
+      ) : (
+        <div className="px-3 py-1 bg-indigo-50 dark:bg-indigo-950/30 rounded-md text-[11px] text-indigo-700 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-900/30 font-mono flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+          <span>Gemini live · {data.model || 'gemini-flash-lite-latest'}</span>
         </div>
       )}
 

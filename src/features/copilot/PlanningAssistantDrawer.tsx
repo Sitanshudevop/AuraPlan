@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { useFocusTrap } from '../../hooks';
 import { askPlanningAssistant, MODALITY_PROMPT_CHIPS, AssistantMessage, AssistantAction } from '../../services/planningAssistantService';
-import { isGeminiKeyConfigured, setCustomApiKey, removeCustomApiKey } from '../../services/geminiService';
+import { isGeminiKeyConfigured } from '../../services/geminiService';
 import { executeAssistantAction } from './assistantActionHandler';
 import { AssistantChipBar } from './AssistantChipBar';
 import { AssistantHeader } from './AssistantHeader';
@@ -16,33 +16,17 @@ export const PlanningAssistantDrawer: React.FC = () => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [executedLabels, setExecutedLabels] = useState<Set<string>>(new Set());
-  const [showKeyInput, setShowKeyInput] = useState(false);
-  const [customKey, setCustomKey] = useState('');
-  const [hasKey, setHasKey] = useState(() => isGeminiKeyConfigured());
+  const [isLive, setIsLive] = useState(() => isGeminiKeyConfigured());
+  const [isRetrying, setIsRetrying] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleSaveKey = () => {
-    if (customKey.trim()) {
-      setCustomApiKey(customKey.trim());
-      setHasKey(true);
-      setShowKeyInput(false);
-      setCustomKey('');
-      announce('Gemini API key saved');
-    }
-  };
-
-  const handleClearKey = () => {
-    removeCustomApiKey();
-    setHasKey(isGeminiKeyConfigured());
-    setShowKeyInput(false);
-    announce('Custom Gemini API key cleared');
-  };
 
   const [messages, setMessages] = useState<AssistantMessage[]>([
     {
       id: 'ai-welcome',
       role: 'assistant',
       timestamp: 'Just now',
+      source: 'offline',
+      model: 'system-greeter',
       content: `Hello! I am your AI assistant for **${state.event.name}** (${state.event.type} mode).\n\nAsk about vendor negotiations, buffer times, permits, or select a suggested prompt below.`,
     },
   ]);
@@ -50,43 +34,26 @@ export const PlanningAssistantDrawer: React.FC = () => {
   const handleClose = useCallback(() => setAssistantOpen(false), [setAssistantOpen]);
   const drawerRef = useFocusTrap<HTMLDivElement>(isAssistantOpen, handleClose);
 
-  // Fetch server key status - only a boolean is returned, non-blocking on idle
-  useEffect(() => {
-    let cancelIdle: (() => void) | undefined;
-    const runCheck = () => {
-      fetch('/api/gemini-status', { signal: AbortSignal.timeout(4000) })
-        .then((r) => r.json())
-        .then((data: unknown) => {
-          if (
-            data !== null &&
-            typeof data === 'object' &&
-            'configured' in data &&
-            (data as { configured: unknown }).configured === true
-          ) {
-            setHasKey(true);
-          }
-        })
-        .catch(() => {
-          // silent fail - stays Local if endpoint unreachable
-        });
-    };
-
-    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-      const handle = (window as Window & { requestIdleCallback: (cb: () => void) => number }).requestIdleCallback(runCheck);
-      cancelIdle = () => {
-        if ('cancelIdleCallback' in window) {
-          (window as Window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(handle);
-        }
-      };
-    } else {
-      const timer = setTimeout(runCheck, 200);
-      cancelIdle = () => clearTimeout(timer);
+  const checkHealth = useCallback(async () => {
+    try {
+      const res = await fetch('/api/gemini-status', { signal: AbortSignal.timeout(4000) });
+      const data = (await res.json()) as { configured?: boolean };
+      setIsLive(Boolean(data.configured));
+    } catch {
+      setIsLive(false);
     }
-
-    return () => {
-      if (cancelIdle) cancelIdle();
-    };
   }, []);
+
+  const handleRetry = async () => {
+    setIsRetrying(true);
+    await checkHealth();
+    setIsRetrying(false);
+    announce('Checked Gemini connection status');
+  };
+
+  useEffect(() => {
+    checkHealth();
+  }, [checkHealth]);
 
   useEffect(() => {
     if (isAssistantOpen) {
@@ -115,6 +82,7 @@ export const PlanningAssistantDrawer: React.FC = () => {
     try {
       const res = await askPlanningAssistant(query, state.event, state);
       setMessages((prev) => [...prev, res]);
+      setIsLive(res.source === 'gemini');
       announce(`AI Assistant responded to ${query.slice(0, 30)}`);
     } finally {
       setLoading(false);
@@ -143,18 +111,13 @@ export const PlanningAssistantDrawer: React.FC = () => {
           eventName={state.event.name}
           eventType={state.event.type}
           guestCount={state.event.guestCount}
-          hasKey={hasKey}
-          onToggleKeyInput={() => setShowKeyInput((v) => !v)}
+          isLive={isLive}
+          isRetrying={isRetrying}
+          onRetry={handleRetry}
           onClose={handleClose}
         />
 
         <AssistantChipBar
-          showKeyInput={showKeyInput}
-          customKey={customKey}
-          setCustomKey={setCustomKey}
-          handleSaveKey={handleSaveKey}
-          handleClearKey={handleClearKey}
-          hasKey={hasKey}
           quickChips={quickChips}
           onSelectChip={handleSend}
         />

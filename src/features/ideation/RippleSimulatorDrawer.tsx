@@ -142,7 +142,15 @@ export const RippleSimulatorDrawer: React.FC = () => {
               </Button>
             </div>
           ) : diffResult ? (
-            <RippleDiffSummary diffResult={diffResult} currency={currency} />
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-[11px] px-2 py-1 rounded bg-stone-100 dark:bg-white/[0.04] text-stone-600 dark:text-zinc-400 font-mono">
+                <span>Provenance:</span>
+                <span className={diffResult.source === 'gemini' ? 'text-indigo-600 dark:text-indigo-400 font-semibold' : 'text-stone-600 dark:text-zinc-400'}>
+                  {diffResult.source === 'gemini' ? `Gemini live (${diffResult.model || 'gemini-flash-lite-latest'})` : 'Offline engine (deterministic)'}
+                </span>
+              </div>
+              <RippleDiffSummary diffResult={diffResult} currency={currency} />
+            </div>
           ) : null}
         </div>
 

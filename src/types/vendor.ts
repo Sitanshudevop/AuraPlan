@@ -32,4 +32,6 @@ export interface VendorVetQuestions {
   emailOutreachScript: string;
   vettingQuestions: string[];
   hiddenCostRedFlags: string[];
+  source?: 'gemini' | 'offline';
+  model?: string;
 }

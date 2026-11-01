@@ -1,19 +1,20 @@
 import { z } from 'zod';
 
 export const ALLOWED_MODELS = [
+  'gemini-flash-lite-latest',
+  'gemini-3.5-flash-lite',
   'gemini-3.5-flash',
   'gemini-3.6-flash',
+  'gemini-3.8-flash',
   'gemini-flash-latest',
-  'gemini-flash-lite-latest',
   'gemini-1.5-flash',
   'gemini-1.5-pro',
   'gemini-2.0-flash',
   'gemini-2.5-flash',
-  'gemini-3.8-flash',
 ] as const;
 
 export type AllowedModel = (typeof ALLOWED_MODELS)[number];
-export const DEFAULT_GEMINI_MODEL: AllowedModel = 'gemini-3.5-flash';
+export const DEFAULT_GEMINI_MODEL: AllowedModel = 'gemini-flash-lite-latest';
 
 export function getResolvedModel(requestedModel?: string): AllowedModel {
   const envModel = (globalThis as unknown as { process?: { env?: Record<string, string | undefined> } })
@@ -32,6 +33,7 @@ export const proxyRequestSchema = z
     prompt: z.string().min(1).max(30000),
     model: z.enum(ALLOWED_MODELS).optional(),
     responseMimeType: z.enum(['application/json', 'text/plain']).default('application/json'),
+    responseSchema: z.record(z.string(), z.unknown()).optional(),
     systemInstruction: z.string().max(5000).optional(),
   })
   .strict();

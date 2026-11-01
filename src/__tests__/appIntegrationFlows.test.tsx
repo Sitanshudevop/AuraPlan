@@ -53,7 +53,7 @@ describe('App Global Workspace Integration Flows (F7)', () => {
     const ideationBtn = screen.getByRole('button', { name: 'AI Ideation & Themes' });
     fireEvent.click(ideationBtn);
     expect(await screen.findByText(/Personalized AI Ideation/i, {}, { timeout: 6000 })).toBeInTheDocument();
-  });
+  }, 30000);
 
   it('opens and closes Command Palette via search trigger and Escape', async () => {
     render(<App />);

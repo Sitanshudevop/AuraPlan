@@ -41,4 +41,6 @@ export interface RippleDiffResult {
   netBudgetImpact: number;
   guestCountImpact: number;
   summaryRationale: string;
+  source?: 'gemini' | 'offline';
+  model?: string;
 }

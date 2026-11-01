@@ -49,9 +49,22 @@ export const ThemeConceptCard: React.FC<ThemeConceptCardProps> = ({
     <Card className="p-5 sm:p-6 space-y-4 rounded-xl border border-stone-200/80 dark:border-white/[0.08]">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-stone-200/80 dark:border-white/[0.08]">
         <div>
-          <h3 className="text-base font-semibold tracking-tight text-[#111113] dark:text-[#EDEDEF]">
-            {idea.title}
-          </h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-base font-semibold tracking-tight text-[#111113] dark:text-[#EDEDEF]">
+              {idea.title}
+            </h3>
+            {idea.source === 'gemini' ? (
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/40">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                Gemini{idea.model ? ` · ${idea.model}` : ''}
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono bg-stone-100 dark:bg-zinc-800 text-stone-600 dark:text-zinc-400 border border-stone-200/60 dark:border-zinc-700/40">
+                <span className="w-1.5 h-1.5 rounded-full bg-stone-400" />
+                Offline engine
+              </span>
+            )}
+          </div>
           <p className="text-xs text-stone-500 dark:text-[#8B8B93] mt-0.5 leading-relaxed">
             {idea.description}
           </p>

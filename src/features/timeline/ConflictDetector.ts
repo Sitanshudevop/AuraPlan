@@ -17,18 +17,23 @@ export function sortActivitiesChronologically(activities: DayOfActivity[]): DayO
  */
 export function detectScheduleConflicts(activities: DayOfActivity[]): ScheduleConflict[] {
   const conflicts: ScheduleConflict[] = [];
-  const parsed = activities.map((act) => ({
-    act,
-    start: timeToMinutes(act.startTime),
-    end: timeToMinutes(act.endTime),
-    locLower: act.locationZone ? act.locationZone.toLowerCase() : '',
-    pocLower: act.poc ? act.poc.toLowerCase() : '',
-  }));
+  const sorted = [...activities]
+    .map((act) => ({
+      act,
+      start: timeToMinutes(act.startTime),
+      end: timeToMinutes(act.endTime),
+      locLower: act.locationZone ? act.locationZone.toLowerCase() : '',
+      pocLower: act.poc ? act.poc.toLowerCase() : '',
+    }))
+    .sort((a, b) => a.start - b.start);
 
-  for (let i = 0; i < parsed.length; i++) {
-    const item1 = parsed[i];
-    for (let j = i + 1; j < parsed.length; j++) {
-      const item2 = parsed[j];
+  for (let i = 0; i < sorted.length; i++) {
+    const item1 = sorted[i];
+    for (let j = i + 1; j < sorted.length; j++) {
+      const item2 = sorted[j];
+
+      // Since items are sorted chronologically, break early when item2 starts after item1 ends
+      if (item2.start >= item1.end) break;
 
       // Check if time windows overlap
       if (Math.max(item1.start, item2.start) < Math.min(item1.end, item2.end)) {

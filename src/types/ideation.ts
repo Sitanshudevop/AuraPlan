@@ -39,4 +39,6 @@ export interface ThemeIdea {
   decorConcepts: DecorConcept[];
   menuItems: MenuItemConcept[];
   activities: EngagementActivity[];
+  source?: 'gemini' | 'offline';
+  model?: string;
 }

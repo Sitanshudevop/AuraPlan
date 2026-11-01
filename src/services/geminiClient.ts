@@ -1,10 +1,18 @@
 import { z } from 'zod';
 
 export interface GeminiClientOptions {
-  model?: 'gemini-3.5-flash' | 'gemini-3.6-flash' | 'gemini-flash-latest' | 'gemini-flash-lite-latest' | 'gemini-1.5-flash' | 'gemini-1.5-pro' | 'gemini-2.0-flash' | 'gemini-2.5-flash' | 'gemini-3.8-flash';
+  model?: string;
   customKey?: string;
   timeoutMs?: number;
+  responseSchema?: Record<string, unknown>;
+  systemInstruction?: string;
 }
+
+export type WithGeminiSource<T> = T & {
+  source?: 'gemini';
+  model?: string;
+  [key: string]: unknown;
+};
 
 function buildProxyHeaders(customKey?: string): Record<string, string> {
   const headers: Record<string, string> = {
@@ -37,32 +45,57 @@ function extractRawResponseText(data: unknown): string {
 
 /**
  * Unified client caller for the AuraPlan Gemini serverless proxy (/api/gemini).
+ * Implements structured output enforcement and a 1-time retry on validation failure.
  */
 export async function callGeminiProxy<T>(
   prompt: string,
   schema: z.ZodSchema<T>,
   options: GeminiClientOptions = {}
-): Promise<T> {
-  const { model = 'gemini-3.5-flash', customKey, timeoutMs = 12000 } = options;
+): Promise<WithGeminiSource<T>> {
+  const {
+    model = 'gemini-flash-lite-latest',
+    customKey,
+    timeoutMs = 12000,
+    responseSchema,
+    systemInstruction,
+  } = options;
   const headers = buildProxyHeaders(customKey);
 
-  const res = await fetch('/api/gemini', {
-    method: 'POST',
-    headers,
-    signal: AbortSignal.timeout(timeoutMs),
-    body: JSON.stringify({
-      prompt,
-      model,
-      responseMimeType: 'application/json',
-    }),
-  });
+  const fetchAttempt = async (attemptPrompt: string) => {
+    const res = await fetch('/api/gemini', {
+      method: 'POST',
+      headers,
+      signal: AbortSignal.timeout(timeoutMs),
+      body: JSON.stringify({
+        prompt: attemptPrompt,
+        model,
+        responseMimeType: 'application/json',
+        responseSchema,
+        systemInstruction,
+      }),
+    });
 
-  if (!res.ok) {
-    throw new Error(`Gemini API error: ${res.status}`);
+    if (!res.ok) {
+      throw new Error(`Gemini API error: ${res.status}`);
+    }
+
+    const data = await res.json();
+    const rawText = extractRawResponseText(data);
+    const parsed = JSON.parse(rawText);
+    const validated = schema.parse(parsed);
+    const resModel = (typeof data.model === 'string' ? data.model : model);
+    return { ...validated, source: 'gemini' as const, model: resModel };
+  };
+
+  try {
+    return await fetchAttempt(prompt);
+  } catch (initialErr) {
+    // If parsing or schema validation failed, retry ONCE with stricter prompt before falling back
+    try {
+      const stricterPrompt = `${prompt}\n\nCRITICAL: Return ONLY valid JSON adhering strictly to the schema without markdown formatting or conversational commentary.`;
+      return await fetchAttempt(stricterPrompt);
+    } catch {
+      throw initialErr;
+    }
   }
-
-  const data = await res.json();
-  const rawText = extractRawResponseText(data);
-  const parsed = JSON.parse(rawText);
-  return schema.parse(parsed);
 }

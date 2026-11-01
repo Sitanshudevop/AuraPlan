@@ -76,7 +76,7 @@ export async function handleGeminiProxyRequest(
     );
   }
 
-  const { prompt, model: reqModel, responseMimeType } = parseResult.data;
+  const { prompt, model: reqModel, responseMimeType, responseSchema, systemInstruction } = parseResult.data;
   const activeKey = resolveActiveKey(req, serverApiKey);
 
   if (!activeKey || activeKey.length < 6 || activeKey === 'YOUR_GEMINI_API_KEY') {
@@ -89,8 +89,25 @@ export async function handleGeminiProxyRequest(
     );
   }
 
+  const startTime = Date.now();
   const resolvedModel = getResolvedModel(reqModel);
-  const upstreamResult = await callGoogleGeminiApi(prompt, resolvedModel, responseMimeType, activeKey);
+  const upstreamResult = await callGoogleGeminiApi(
+    prompt,
+    resolvedModel,
+    responseMimeType,
+    activeKey,
+    responseSchema as Record<string, unknown> | undefined,
+    systemInstruction
+  );
+  const latencyMs = Date.now() - startTime;
+
+  const envObj = (globalThis as unknown as { process?: { env?: Record<string, string | undefined> } }).process?.env;
+  if (envObj?.AURAPLAN_DEBUG_AI || envObj?.NODE_ENV === 'production') {
+    const code = upstreamResult.ok ? 'OK' : (upstreamResult.code || 'UPSTREAM_ERROR');
+    const status = upstreamResult.ok ? 200 : (upstreamResult.status || 502);
+    // Sanitized logging: reason code, status, model, latency only (NEVER prompt or keys)
+    console.log(`[AI PROXY] code=${code} status=${status} model=${resolvedModel} latencyMs=${latencyMs}`);
+  }
 
   if (!upstreamResult.ok) {
     return makeJsonResponse(
@@ -99,5 +116,9 @@ export async function handleGeminiProxyRequest(
     );
   }
 
-  return makeJsonResponse({ text: upstreamResult.text });
+  return makeJsonResponse({
+    text: upstreamResult.text,
+    source: 'gemini',
+    model: resolvedModel,
+  });
 }

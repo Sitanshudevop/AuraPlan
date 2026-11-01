@@ -113,10 +113,12 @@ describe('Planning Assistant Local Responses & Domain Templates', () => {
     expect(modality.content).toContain('Tailored Execution');
   });
 
-  it('falls back gracefully on unknown queries', () => {
+  it('falls back gracefully on unknown queries without canned Regarding template or echoed actions', () => {
     const fallback = getSmartLocalAssistantResponse('quantum entanglement physics in event management', weddingEvent);
-    expect(fallback.content).toContain('Regarding **"quantum entanglement');
-    expect(fallback.suggestedActions?.length).toBeGreaterThan(0);
+    expect(fallback.content).not.toContain('Regarding');
+    expect(fallback.content).toContain('tactical planning');
+    expect(fallback.suggestedActions?.length).toBe(0);
+    expect(fallback.source).toBe('offline');
   });
 
   it('executes all MODALITY_PROMPT_CHIPS successfully without throwing', () => {
@@ -173,6 +175,6 @@ describe('Planning Assistant Local Responses & Domain Templates', () => {
     expect(m.content).toContain('Tailored Execution Framework');
 
     const fb = getFallbackResponse('Custom Inquiry', weddingEvent, timeStr);
-    expect(fb.content).toContain('Custom Inquiry');
+    expect(fb.content).toContain('tactical planning');
   });
 });

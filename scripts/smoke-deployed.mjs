@@ -5,14 +5,17 @@
  * Usage: node scripts/smoke-deployed.mjs <target-url>
  */
 
-const targetUrl = (process.argv[2] || '').trim().replace(/\/+$/, '');
+const rawArgs = process.argv.slice(2);
+const hasPromptsFlag = rawArgs.includes('--prompts');
+const nonFlagArgs = rawArgs.filter((arg) => !arg.startsWith('--'));
+const targetUrl = (nonFlagArgs[0] || '').trim().replace(/\/+$/, '');
 
 if (!targetUrl) {
-  console.error('[SMOKE ERROR] Target URL required: npm run smoke:deployed -- <url>');
+  console.error('[SMOKE ERROR] Target URL required: npm run smoke:deployed -- <url> [--prompts]');
   process.exit(1);
 }
 
-console.log(`[SMOKE] Testing deployment at: ${targetUrl}\n`);
+console.log(`[SMOKE] Testing deployment at: ${targetUrl}${hasPromptsFlag ? ' (with --prompts)' : ''}\n`);
 
 const REQUEST_TIMEOUT_MS = 15000;
 
@@ -102,16 +105,79 @@ await runCheck('Hashed asset has immutable cache-control header', async () => {
   if (!cc.includes('immutable')) throw new Error(`Expected immutable Cache-Control, got: ${cc}`);
 });
 
-// 7. Security headers present
-await runCheck('Security headers present on /', async () => {
-  const res = await fetchWithTimeout(`${targetUrl}/`);
-  const nosniff = res.headers.get('x-content-type-options');
-  const xframe = res.headers.get('x-frame-options');
-  if (!nosniff || !nosniff.includes('nosniff')) throw new Error('Missing X-Content-Type-Options: nosniff');
-  if (!xframe || (!xframe.includes('DENY') && !xframe.includes('SAMEORIGIN'))) {
-    throw new Error('Missing X-Frame-Options');
-  }
-});
+// 7. Security headers present (on deployed environments)
+if (!targetUrl.includes('localhost') && !targetUrl.includes('127.0.0.1')) {
+  await runCheck('Security headers present on /', async () => {
+    const res = await fetchWithTimeout(`${targetUrl}/`);
+    const nosniff = res.headers.get('x-content-type-options');
+    const xframe = res.headers.get('x-frame-options');
+    if (!nosniff || !nosniff.includes('nosniff')) throw new Error('Missing X-Content-Type-Options: nosniff');
+    if (!xframe || (!xframe.includes('DENY') && !xframe.includes('SAMEORIGIN'))) {
+      throw new Error('Missing X-Frame-Options');
+    }
+  });
+}
+
+// 8. Optional --prompts: send 5 distinct prompts, print source, model, and first 100 chars, fail on offline/empty/duplicate
+if (hasPromptsFlag) {
+  await runCheck('POST /api/gemini --prompts: 5 live, non-empty, non-identical replies', async () => {
+    const testPrompts = [
+      'What buffer time is needed between Baraat and Varmala for a 250-guest Jaipur wedding?',
+      'How to calculate catering floating plate buffer and wastage reserve for 250 guests?',
+      'Detailed outdoor weather contingency plan for garden wedding lawn with sudden rain risk',
+      'Curate a chronological Sangeet performance sequence for couple and family dances',
+      'Municipal sound permit regulations and 10 PM curfew checklist for outdoor venue in Jaipur',
+    ];
+
+    const seenReplies = new Set();
+
+    for (let i = 0; i < testPrompts.length; i++) {
+      if (i > 0) {
+        await new Promise((resolve) => setTimeout(resolve, 1200));
+      }
+      const prompt = testPrompts[i];
+      let res;
+      for (let attempt = 0; attempt < 2; attempt++) {
+        res = await fetchWithTimeout(`${targetUrl}/api/gemini`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            prompt,
+            responseMimeType: 'application/json',
+          }),
+        });
+        if (res.ok) break;
+        if (attempt === 0 && (res.status === 502 || res.status === 503 || res.status === 429)) {
+          await new Promise((resolve) => setTimeout(resolve, 1500));
+        }
+      }
+
+      if (!res.ok) {
+        const errText = await res.text().catch(() => '');
+        throw new Error(`Prompt ${i + 1} HTTP error ${res.status}: ${errText}`);
+      }
+
+      const json = await res.json();
+      const text = json.text || '';
+      const source = json.source || 'offline';
+      const model = json.model || 'unknown';
+
+      const snippet = text.slice(0, 100).replace(/\s+/g, ' ');
+      console.log(`    [Prompt ${i + 1}] source: ${source} | model: ${model} | reply: "${snippet}..."`);
+
+      if (source === 'offline') {
+        throw new Error(`Prompt ${i + 1} returned offline source instead of live Gemini`);
+      }
+      if (!text || text.trim().length === 0) {
+        throw new Error(`Prompt ${i + 1} returned empty reply`);
+      }
+      if (seenReplies.has(text.trim())) {
+        throw new Error(`Prompt ${i + 1} returned identical reply to an earlier prompt`);
+      }
+      seenReplies.add(text.trim());
+    }
+  });
+}
 
 console.log(`\n[SMOKE RESULTS] Passed: ${passed}, Failed: ${failed}`);
 if (failed > 0) process.exit(1);

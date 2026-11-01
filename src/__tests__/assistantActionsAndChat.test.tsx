@@ -142,12 +142,6 @@ describe('Assistant Actions Handler and Chat UI Components', () => {
     const handleSelectChip = vi.fn();
     render(
       <AssistantChipBar
-        showKeyInput={false}
-        customKey=""
-        setCustomKey={vi.fn()}
-        handleSaveKey={vi.fn()}
-        handleClearKey={vi.fn()}
-        hasKey={false}
         quickChips={['Rain contingency plan', 'Vendor payment schedule']}
         onSelectChip={handleSelectChip}
       />

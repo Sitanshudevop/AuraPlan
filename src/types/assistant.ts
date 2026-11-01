@@ -16,6 +16,8 @@ export interface AssistantMessage {
   role: 'user' | 'assistant';
   content: string;
   timestamp: string;
+  source?: 'gemini' | 'offline';
+  model?: string;
   suggestedActions?: AssistantAction[];
 }
 

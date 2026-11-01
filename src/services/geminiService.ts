@@ -2,7 +2,7 @@ import { ThemeIdea } from '../types/ideation';
 import { RippleDiffResult, RipplePresetId } from '../types/ripple';
 import { VendorVetQuestions } from '../types/vendor';
 import { EventWorkspaceState } from '../types/state';
-import { themeIdeaSchema, vendorVetSchema, rippleDiffResultSchema } from '../schemas/aiSchemas';
+import { themeIdeaSchema, vendorVetSchema, rippleDiffResultSchema, VENDOR_VET_JSON_SCHEMA } from '../schemas/aiSchemas';
 import { getLocalThemeIdea, getLocalVendorVet } from './deterministicFallback';
 import { calculateDeterministicRipple } from './rippleEngine';
 import { NewEventFormInput, synthesizePlanLocally } from './planSynthesizer';
@@ -41,7 +41,7 @@ export async function generateThemeIdea(
 
   const customKey = getActiveApiKey();
   if ((import.meta.env.MODE === 'test' && !customKey) || !aiRateLimiter.checkRateLimit().allowed) {
-    const fallback = getLocalThemeIdea(eventType, cleanVibe);
+    const fallback: ThemeIdea = { ...getLocalThemeIdea(eventType, cleanVibe), source: 'offline', model: 'offline-engine' };
     themeCache.set(cacheKey, fallback);
     return fallback;
   }
@@ -60,10 +60,11 @@ export async function generateThemeIdea(
     }`;
 
     const validated = await callGeminiProxy(prompt, themeIdeaSchema, { customKey });
-    themeCache.set(cacheKey, validated);
-    return validated;
+    const result: ThemeIdea = { ...validated, source: 'gemini', model: validated.model || 'gemini-flash-lite-latest' };
+    themeCache.set(cacheKey, result);
+    return result;
   } catch {
-    const fallback = getLocalThemeIdea(eventType, cleanVibe);
+    const fallback: ThemeIdea = { ...getLocalThemeIdea(eventType, cleanVibe), source: 'offline', model: 'offline-engine' };
     themeCache.set(cacheKey, fallback);
     return fallback;
   }
@@ -84,18 +85,22 @@ export async function generateVendorVet(
 
   const customKey = getActiveApiKey();
   if ((import.meta.env.MODE === 'test' && !customKey) || !aiRateLimiter.checkRateLimit().allowed) {
-    const fallback = getLocalVendorVet(cleanName, cleanCat, contractedPrice);
+    const fallback: VendorVetQuestions = { ...getLocalVendorVet(cleanName, cleanCat, contractedPrice), source: 'offline', model: 'offline-engine' };
     vendorVetCache.set(cacheKey, fallback);
     return fallback;
   }
 
   try {
     const prompt = `Generate vendor vetting & negotiation scripts for vendor "${cleanName}" in category "${cleanCat}" with budget target ₹${contractedPrice}. Return ONLY JSON with keys: whatsappOutreachScript, emailOutreachScript, vettingQuestions (array of 5), hiddenCostRedFlags (array of 4).`;
-    const validated = await callGeminiProxy(prompt, vendorVetSchema, { customKey });
-    vendorVetCache.set(cacheKey, validated);
-    return validated;
+    const validated = await callGeminiProxy(prompt, vendorVetSchema, {
+      customKey,
+      responseSchema: VENDOR_VET_JSON_SCHEMA,
+    });
+    const result: VendorVetQuestions = { ...validated, source: 'gemini', model: validated.model || 'gemini-flash-lite-latest' };
+    vendorVetCache.set(cacheKey, result);
+    return result;
   } catch {
-    const fallback = getLocalVendorVet(cleanName, cleanCat, contractedPrice);
+    const fallback: VendorVetQuestions = { ...getLocalVendorVet(cleanName, cleanCat, contractedPrice), source: 'offline', model: 'offline-engine' };
     vendorVetCache.set(cacheKey, fallback);
     return fallback;
   }
@@ -115,14 +120,15 @@ export async function generateRippleScenario(
     (import.meta.env.MODE === 'test' && !customKey) ||
     !aiRateLimiter.checkRateLimit().allowed
   ) {
-    return calculateDeterministicRipple(presetId, state, cleanPrompt);
+    return { ...calculateDeterministicRipple(presetId, state, cleanPrompt), source: 'offline', model: 'offline-engine' };
   }
 
   try {
     const prompt = `Simulate ripple effect for event "${state.event.name}" (Guests: ${state.event.guestCount}, Budget: ${state.event.targetBudget}). Scenario: "${cleanPrompt}". Return JSON schema matching rippleDiffResult with scenarioTitle, scenarioDescription, budgetAdjustments, newVendors, timelineModifications, netBudgetImpact, guestCountImpact, summaryRationale.`;
-    return await callGeminiProxy(prompt, rippleDiffResultSchema, { customKey });
+    const validated = await callGeminiProxy(prompt, rippleDiffResultSchema, { customKey });
+    return { ...validated, source: 'gemini', model: validated.model || 'gemini-flash-lite-latest' };
   } catch {
-    return calculateDeterministicRipple(presetId, state, cleanPrompt);
+    return { ...calculateDeterministicRipple(presetId, state, cleanPrompt), source: 'offline', model: 'offline-engine' };
   }
 }
 

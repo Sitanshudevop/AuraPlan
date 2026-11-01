@@ -49,7 +49,7 @@ export const VendorNegotiationModal: React.FC<VendorNegotiationModalProps> = ({
         const res = await generateVendorVet(vendor.name, vendor.category, price);
         if (!active) return;
         setData(res);
-        setIsOfflineFallback(false);
+        setIsOfflineFallback(res.source === 'offline');
         setStatus('success');
       } catch (err) {
         if (!active) return;

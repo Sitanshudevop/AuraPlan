@@ -95,29 +95,35 @@ export const rippleDiffResultSchema = z.object({
 export const vendorVetSchema = z.object({
   whatsappOutreachScript: sanitizedString,
   emailOutreachScript: sanitizedString,
-  vettingQuestions: z.array(sanitizedString),
-  hiddenCostRedFlags: z.array(sanitizedString),
-});
+  vettingQuestions: z.array(sanitizedString).default([]),
+  hiddenCostRedFlags: z.array(sanitizedString).default([]),
+}).passthrough();
 
 const assistantTaskActionPayloadSchema = z.object({
   title: sanitizedString,
-  horizon: z.enum(['6_months', '3_months', '1_month', '1_week', 'day_before']),
-  category: sanitizedString,
-  priority: z.enum(['critical', 'high', 'normal']),
-});
+  horizon: z.string().transform((v) => {
+    const valid = ['6_months', '3_months', '1_month', '1_week', 'day_before'] as const;
+    return (valid as readonly string[]).includes(v) ? (v as (typeof valid)[number]) : '1_week';
+  }),
+  category: sanitizedString.optional().default('Operations'),
+  priority: z.string().transform((v) => {
+    const valid = ['critical', 'high', 'normal'] as const;
+    return (valid as readonly string[]).includes(v) ? (v as (typeof valid)[number]) : 'high';
+  }),
+}).passthrough();
 
 const assistantBudgetActionPayloadSchema = z.object({
   name: sanitizedString,
-  category: budgetCategoryEnum,
-  allocated: z.number().nonnegative(),
-});
+  category: budgetCategoryEnum.catch('buffer'),
+  allocated: z.number().nonnegative().catch(0),
+}).passthrough();
 
 const assistantVendorActionPayloadSchema = z.object({
   name: sanitizedString,
-  category: budgetCategoryEnum,
-  estimatedPrice: z.number().nonnegative(),
-  deliverables: z.array(sanitizedString),
-});
+  category: budgetCategoryEnum.catch('venue'),
+  estimatedPrice: z.number().nonnegative().catch(0),
+  deliverables: z.array(sanitizedString).default([]),
+}).passthrough();
 
 const assistantActionSchema = z.object({
   type: z.enum(['add_task', 'add_budget', 'add_vendor']),
@@ -126,10 +132,55 @@ const assistantActionSchema = z.object({
     task: assistantTaskActionPayloadSchema.optional(),
     budget: assistantBudgetActionPayloadSchema.optional(),
     vendor: assistantVendorActionPayloadSchema.optional(),
-  }),
-});
+  }).passthrough(),
+}).passthrough();
 
 export const rawAssistantResponseSchema = z.object({
   content: sanitizedString,
-  suggestedActions: z.array(assistantActionSchema).optional(),
-});
+  suggestedActions: z.array(assistantActionSchema).optional().default([]),
+}).passthrough();
+
+export const ASSISTANT_RESPONSE_JSON_SCHEMA = {
+  type: 'OBJECT',
+  properties: {
+    content: { type: 'STRING' },
+    suggestedActions: {
+      type: 'ARRAY',
+      items: {
+        type: 'OBJECT',
+        properties: {
+          type: { type: 'STRING', enum: ['add_task', 'add_budget', 'add_vendor'] },
+          label: { type: 'STRING' },
+          payload: {
+            type: 'OBJECT',
+            properties: {
+              task: {
+                type: 'OBJECT',
+                properties: {
+                  title: { type: 'STRING' },
+                  horizon: { type: 'STRING', enum: ['6_months', '3_months', '1_month', '1_week', 'day_before'] },
+                  category: { type: 'STRING' },
+                  priority: { type: 'STRING', enum: ['critical', 'high', 'normal'] },
+                },
+                required: ['title', 'horizon', 'category', 'priority'],
+              },
+            },
+          },
+        },
+        required: ['type', 'label'],
+      },
+    },
+  },
+  required: ['content'],
+};
+
+export const VENDOR_VET_JSON_SCHEMA = {
+  type: 'OBJECT',
+  properties: {
+    whatsappOutreachScript: { type: 'STRING' },
+    emailOutreachScript: { type: 'STRING' },
+    vettingQuestions: { type: 'ARRAY', items: { type: 'STRING' } },
+    hiddenCostRedFlags: { type: 'ARRAY', items: { type: 'STRING' } },
+  },
+  required: ['whatsappOutreachScript', 'emailOutreachScript', 'vettingQuestions', 'hiddenCostRedFlags'],
+};

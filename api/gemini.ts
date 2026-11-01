@@ -1,6 +1,6 @@
 import { handleGeminiProxyRequest } from '../server/geminiProxy.js';
 
-const HANDLER_DEADLINE_MS = 9000;
+const HANDLER_DEADLINE_MS = 13500;
 
 function createTimeoutResponse(): Response {
   return new Response(
