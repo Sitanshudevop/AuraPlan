@@ -1,15 +1,18 @@
 import { z } from 'zod';
 
 export const ALLOWED_MODELS = [
+  'gemini-flash-latest',
   'gemini-1.5-flash',
   'gemini-1.5-pro',
   'gemini-2.0-flash',
+  'gemini-2.5-flash',
+  'gemini-3.8-flash',
 ] as const;
 
 export const proxyRequestSchema = z
   .object({
     prompt: z.string().min(1).max(30000),
-    model: z.enum(ALLOWED_MODELS).default('gemini-1.5-flash'),
+    model: z.enum(ALLOWED_MODELS).default('gemini-flash-latest'),
     responseMimeType: z.enum(['application/json', 'text/plain']).default('application/json'),
     systemInstruction: z.string().max(5000).optional(),
   })
