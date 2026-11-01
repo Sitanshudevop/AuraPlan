@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+﻿import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { useFocusTrap } from '../../hooks';
@@ -49,6 +49,25 @@ export const PlanningAssistantDrawer: React.FC = () => {
 
   const handleClose = useCallback(() => setAssistantOpen(false), [setAssistantOpen]);
   const drawerRef = useFocusTrap<HTMLDivElement>(isAssistantOpen, handleClose);
+
+  // Detect server-side GEMINI_API_KEY - only exposes a boolean, never the key value
+  useEffect(() => {
+    fetch('/api/gemini-status')
+      .then((r) => r.json())
+      .then((data: unknown) => {
+        if (
+          data !== null &&
+          typeof data === 'object' &&
+          'configured' in data &&
+          (data as { configured: unknown }).configured === true
+        ) {
+          setHasKey(true);
+        }
+      })
+      .catch(() => {
+        // silent fail - stays Local if endpoint unreachable
+      });
+  }, []);
 
   useEffect(() => {
     if (isAssistantOpen) {

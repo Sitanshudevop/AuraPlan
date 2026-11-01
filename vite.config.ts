@@ -9,6 +9,14 @@ function geminiDevProxyPlugin(serverApiKey?: string): Plugin {
     res: { statusCode: number; setHeader: (name: string, value: string) => void; end: (chunk?: string) => void },
     next: () => void
   ) => {
+    if (req.url === '/api/gemini-status') {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Cache-Control', 'no-store');
+      const configured = typeof serverApiKey === 'string' && serverApiKey.trim().length > 5;
+      res.end(JSON.stringify({ configured }));
+      return;
+    }
     if (req.url === '/api/gemini' || req.url?.startsWith('/api/gemini?')) {
       if (req.method !== 'POST') {
         res.statusCode = 405;
