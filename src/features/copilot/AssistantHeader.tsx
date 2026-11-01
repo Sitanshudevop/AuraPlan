@@ -1,5 +1,5 @@
 import React from 'react';
-import { X } from 'lucide-react';
+import { X, RotateCcw } from 'lucide-react';
 import { StatusDot } from '../../components/ui/StatusDot';
 
 interface AssistantHeaderProps {
@@ -10,6 +10,7 @@ interface AssistantHeaderProps {
   isRetrying?: boolean;
   onRetry?: () => void;
   onClose: () => void;
+  onClearChat?: () => void;
 }
 
 export const AssistantHeader: React.FC<AssistantHeaderProps> = ({
@@ -20,6 +21,7 @@ export const AssistantHeader: React.FC<AssistantHeaderProps> = ({
   isRetrying,
   onRetry,
   onClose,
+  onClearChat,
 }) => {
   return (
     <div className="h-14 px-5 border-b border-stone-200/80 dark:border-white/[0.08] bg-[#FAF9F6] dark:bg-[#111113] flex items-center justify-between shrink-0">
@@ -47,6 +49,16 @@ export const AssistantHeader: React.FC<AssistantHeaderProps> = ({
             aria-label="Retry connecting to Gemini API"
           >
             {isRetrying ? 'Checking...' : 'Retry'}
+          </button>
+        )}
+        {onClearChat && (
+          <button
+            onClick={onClearChat}
+            className="p-1.5 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 flex items-center justify-center text-stone-500 hover:text-stone-700 dark:hover:text-[#EDEDEF] rounded-md transition-colors"
+            title="Clear conversation history"
+            aria-label="Clear conversation history"
+          >
+            <RotateCcw className="w-4 h-4" />
           </button>
         )}
         <button

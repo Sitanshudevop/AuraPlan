@@ -1,10 +1,18 @@
-﻿import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useWorkspace } from '../../context/WorkspaceContext';
 import { useFocusTrap } from '../../hooks';
 import { askPlanningAssistant, MODALITY_PROMPT_CHIPS, AssistantMessage, AssistantAction } from '../../services/planningAssistantService';
 import { isGeminiKeyConfigured } from '../../services/geminiService';
 import { executeAssistantAction } from './assistantActionHandler';
+import {
+  loadAssistantMessages,
+  saveAssistantMessages,
+  loadExecutedLabels,
+  saveExecutedLabels,
+  createInitialWelcomeMessage,
+  clearAssistantStorage,
+} from './assistantStorage';
 import { AssistantChipBar } from './AssistantChipBar';
 import { AssistantHeader } from './AssistantHeader';
 import { AssistantMessageList } from './AssistantMessageList';
@@ -15,21 +23,39 @@ export const PlanningAssistantDrawer: React.FC = () => {
 
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [executedLabels, setExecutedLabels] = useState<Set<string>>(new Set());
+  const [executedLabels, setExecutedLabels] = useState<Set<string>>(() => loadExecutedLabels(state.event));
   const [isLive, setIsLive] = useState(() => isGeminiKeyConfigured());
   const [isRetrying, setIsRetrying] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [messages, setMessages] = useState<AssistantMessage[]>([
-    {
-      id: 'ai-welcome',
-      role: 'assistant',
-      timestamp: 'Just now',
-      source: 'offline',
-      model: 'system-greeter',
-      content: `Hello! I am your AI assistant for **${state.event.name}** (${state.event.type} mode).\n\nAsk about vendor negotiations, buffer times, permits, or select a suggested prompt below.`,
-    },
-  ]);
+  const [messages, setMessages] = useState<AssistantMessage[]>(() => loadAssistantMessages(state.event));
+
+  // Sync to session storage whenever messages or executedLabels change
+  useEffect(() => {
+    saveAssistantMessages(state.event, messages);
+  }, [messages, state.event]);
+
+  useEffect(() => {
+    saveExecutedLabels(state.event, executedLabels);
+  }, [executedLabels, state.event]);
+
+  // If user switches events, load that event's conversation
+  const prevEventIdRef = useRef(state.event.id);
+  useEffect(() => {
+    if (prevEventIdRef.current !== state.event.id) {
+      prevEventIdRef.current = state.event.id;
+      setMessages(loadAssistantMessages(state.event));
+      setExecutedLabels(loadExecutedLabels(state.event));
+    }
+  }, [state.event]);
+
+  const handleClearChat = useCallback(() => {
+    clearAssistantStorage(state.event);
+    const fresh = [createInitialWelcomeMessage(state.event)];
+    setMessages(fresh);
+    setExecutedLabels(new Set());
+    announce('Cleared assistant conversation history');
+  }, [state.event, announce]);
 
   const handleClose = useCallback(() => setAssistantOpen(false), [setAssistantOpen]);
   const drawerRef = useFocusTrap<HTMLDivElement>(isAssistantOpen, handleClose);
@@ -115,6 +141,7 @@ export const PlanningAssistantDrawer: React.FC = () => {
           isRetrying={isRetrying}
           onRetry={handleRetry}
           onClose={handleClose}
+          onClearChat={handleClearChat}
         />
 
         <AssistantChipBar
