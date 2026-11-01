@@ -50,7 +50,7 @@ export const PlanningAssistantDrawer: React.FC = () => {
   const handleClose = useCallback(() => setAssistantOpen(false), [setAssistantOpen]);
   const drawerRef = useFocusTrap<HTMLDivElement>(isAssistantOpen, handleClose);
 
-  // Detect server-side GEMINI_API_KEY - only exposes a boolean, never the key value
+  // Fetch server key status - only a boolean is returned, the actual key is never sent to the client
   useEffect(() => {
     fetch('/api/gemini-status')
       .then((r) => r.json())

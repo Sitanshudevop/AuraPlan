@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+﻿import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import handler from '../../api/gemini';
 
 describe('Vercel API Entry Handler: /api/gemini', () => {
@@ -83,7 +83,7 @@ describe('Vercel API Entry Handler: /api/gemini', () => {
   });
 
   it('returns 200 with generated text on successful upstream response, without leaking key', async () => {
-    const mockKey = 'AIzaFakeTestKeyForHandlerUnitTesting123';
+    const mockKey = 'FAKE-TEST-KEY-FOR-HANDLER-UNIT-TESTING-123';
     globalThis.fetch = vi.fn().mockResolvedValue(
       new Response(
         JSON.stringify({
@@ -116,7 +116,7 @@ describe('Vercel API Entry Handler: /api/gemini', () => {
   });
 
   it('returns 500 redacted response if upstream maliciously echoes back the active API key', async () => {
-    const mockKey = 'AIzaSecretKeyThatMustNeverBeLeaked123';
+    const mockKey = 'FAKE-SECRET-KEY-MUST-NEVER-BE-LEAKED-123';
     globalThis.fetch = vi.fn().mockResolvedValue(
       new Response(
         JSON.stringify({
@@ -157,7 +157,7 @@ describe('Vercel API Entry Handler: /api/gemini', () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-gemini-api-key': 'AIzaValidKeyForUpstreamErrorTest1234',
+        'x-gemini-api-key': 'FAKE-VALID-KEY-FOR-UPSTREAM-ERROR-TEST-1234',
       },
       body: JSON.stringify({ prompt: 'Plan wedding schedule' }),
     });
@@ -177,7 +177,7 @@ describe('Vercel API Entry Handler: /api/gemini', () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-gemini-api-key': 'AIzaValidKeyForTimeoutTest12345678',
+        'x-gemini-api-key': 'FAKE-GOOGLE-API-KEY-PLACEHOLDER',
       },
       body: JSON.stringify({ prompt: 'Plan wedding schedule' }),
     });
