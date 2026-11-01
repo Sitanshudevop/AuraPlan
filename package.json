@@ -16,7 +16,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "check:no-client-secrets": "node scripts/checkNoClientSecrets.cjs"
+    "check:no-client-secrets": "node scripts/checkNoClientSecrets.cjs",
+    "smoke:deployed": "node scripts/smoke-deployed.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.16.0",

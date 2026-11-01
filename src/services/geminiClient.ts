@@ -43,7 +43,7 @@ export async function callGeminiProxy<T>(
   schema: z.ZodSchema<T>,
   options: GeminiClientOptions = {}
 ): Promise<T> {
-  const { model = 'gemini-3.5-flash', customKey, timeoutMs = 15000 } = options;
+  const { model = 'gemini-3.5-flash', customKey, timeoutMs = 12000 } = options;
   const headers = buildProxyHeaders(customKey);
 
   const res = await fetch('/api/gemini', {

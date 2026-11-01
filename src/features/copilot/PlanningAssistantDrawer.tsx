@@ -50,23 +50,42 @@ export const PlanningAssistantDrawer: React.FC = () => {
   const handleClose = useCallback(() => setAssistantOpen(false), [setAssistantOpen]);
   const drawerRef = useFocusTrap<HTMLDivElement>(isAssistantOpen, handleClose);
 
-  // Fetch server key status - only a boolean is returned, the actual key is never sent to the client
+  // Fetch server key status - only a boolean is returned, non-blocking on idle
   useEffect(() => {
-    fetch('/api/gemini-status')
-      .then((r) => r.json())
-      .then((data: unknown) => {
-        if (
-          data !== null &&
-          typeof data === 'object' &&
-          'configured' in data &&
-          (data as { configured: unknown }).configured === true
-        ) {
-          setHasKey(true);
+    let cancelIdle: (() => void) | undefined;
+    const runCheck = () => {
+      fetch('/api/gemini-status', { signal: AbortSignal.timeout(4000) })
+        .then((r) => r.json())
+        .then((data: unknown) => {
+          if (
+            data !== null &&
+            typeof data === 'object' &&
+            'configured' in data &&
+            (data as { configured: unknown }).configured === true
+          ) {
+            setHasKey(true);
+          }
+        })
+        .catch(() => {
+          // silent fail - stays Local if endpoint unreachable
+        });
+    };
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      const handle = (window as Window & { requestIdleCallback: (cb: () => void) => number }).requestIdleCallback(runCheck);
+      cancelIdle = () => {
+        if ('cancelIdleCallback' in window) {
+          (window as Window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(handle);
         }
-      })
-      .catch(() => {
-        // silent fail - stays Local if endpoint unreachable
-      });
+      };
+    } else {
+      const timer = setTimeout(runCheck, 200);
+      cancelIdle = () => clearTimeout(timer);
+    }
+
+    return () => {
+      if (cancelIdle) cancelIdle();
+    };
   }, []);
 
   useEffect(() => {
