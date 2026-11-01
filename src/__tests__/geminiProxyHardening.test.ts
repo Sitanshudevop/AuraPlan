@@ -184,24 +184,31 @@ describe('F2 Hardening: True Sliding Window Rate Limiter & Memory Bound', () => 
 });
 
 describe('F2 Hardening: Model Resolution and Server Env Override', () => {
-  const originalEnv = process.env.GEMINI_MODEL;
+  const proc = (globalThis as unknown as { process?: { env: Record<string, string | undefined> } }).process;
+  const originalEnv = proc?.env?.GEMINI_MODEL;
 
   afterEach(() => {
-    process.env.GEMINI_MODEL = originalEnv;
+    if (proc?.env) {
+      if (originalEnv !== undefined) {
+        proc.env.GEMINI_MODEL = originalEnv;
+      } else {
+        delete proc.env.GEMINI_MODEL;
+      }
+    }
   });
 
   it('resolves DEFAULT_GEMINI_MODEL by default', () => {
-    delete process.env.GEMINI_MODEL;
+    if (proc?.env) delete proc.env.GEMINI_MODEL;
     expect(getResolvedModel()).toBe(DEFAULT_GEMINI_MODEL);
   });
 
   it('overrides model via server env GEMINI_MODEL when valid', () => {
-    process.env.GEMINI_MODEL = 'gemini-3.8-flash';
+    if (proc?.env) proc.env.GEMINI_MODEL = 'gemini-3.8-flash';
     expect(getResolvedModel('gemini-3.5-flash')).toBe('gemini-3.8-flash');
   });
 
   it('ignores invalid GEMINI_MODEL and falls back safely', () => {
-    process.env.GEMINI_MODEL = 'invalid-model-xyz';
+    if (proc?.env) proc.env.GEMINI_MODEL = 'invalid-model-xyz';
     expect(getResolvedModel('gemini-3.6-flash')).toBe('gemini-3.6-flash');
   });
 });
