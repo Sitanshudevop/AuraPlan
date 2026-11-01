@@ -86,7 +86,6 @@ export default defineConfig(({ mode }) => {
           manualChunks: {
             'vendor-react': ['react', 'react-dom'],
             'vendor-zod': ['zod'],
-            'vendor-icons': ['lucide-react'],
           },
         },
       },

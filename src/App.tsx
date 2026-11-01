@@ -6,10 +6,9 @@ import { CommandPalette } from './components/layout/CommandPalette';
 import { Toast } from './components/ui/Toast';
 import { TabSkeleton } from './components/ui/Skeleton';
 
-// Lazy-loaded feature tabs with zero-lag chunking
-const DashboardTab = lazy(() =>
-  import('./features/dashboard/DashboardTab').then((m) => ({ default: m.DashboardTab }))
-);
+import { DashboardTab } from './features/dashboard/DashboardTab';
+
+// Lazy-loaded secondary feature tabs with zero-lag chunking
 const BudgetTab = lazy(() =>
   import('./features/budget/BudgetTab').then((m) => ({ default: m.BudgetTab }))
 );
@@ -69,6 +68,54 @@ const MainWorkspaceContent: React.FC = () => {
   );
 };
 
+const WorkspaceOverlays: React.FC = () => {
+  const {
+    isAuditDrawerOpen,
+    isCopilotOpen,
+    isAssistantOpen,
+    isNewEventModalOpen,
+    isEditEventModalOpen,
+  } = useWorkspace();
+
+  // Prefetch non-critical modals and drawers on browser idle so interaction is instant
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === 'test') return;
+    const prefetch = () => {
+      import('./features/budget/BudgetTab');
+      import('./features/timeline/TimelineTab');
+      import('./features/vendors/VendorsTab');
+      import('./features/ideation/IdeationTab');
+      import('./features/guests/GuestsTab');
+      import('./features/copilot/PlanningAssistantDrawer');
+      import('./features/ideation/RippleSimulatorDrawer');
+      import('./features/audit/AuditDrawer');
+      import('./components/modals/NewEventModal');
+      import('./components/modals/EditEventModal');
+    };
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      const handle = (window as Window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback(prefetch, { timeout: 3500 });
+      return () => (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback?.(handle);
+    } else {
+      const timer = setTimeout(prefetch, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  return (
+    <>
+      <CommandPalette />
+      <Suspense fallback={null}>
+        {isCopilotOpen && <RippleSimulatorDrawer />}
+        {isAssistantOpen && <PlanningAssistantDrawer />}
+        {isAuditDrawerOpen && <AuditDrawer />}
+        {isNewEventModalOpen && <NewEventModal />}
+        {isEditEventModalOpen && <EditEventModal />}
+      </Suspense>
+    </>
+  );
+};
+
 export const App: React.FC = () => {
   return (
     <WorkspaceProvider>
@@ -89,14 +136,7 @@ export const App: React.FC = () => {
         </div>
 
         {/* Global Overlays & Modals */}
-        <CommandPalette />
-        <Suspense fallback={null}>
-          <RippleSimulatorDrawer />
-          <PlanningAssistantDrawer />
-          <AuditDrawer />
-          <NewEventModal />
-          <EditEventModal />
-        </Suspense>
+        <WorkspaceOverlays />
         <Toast />
       </div>
     </WorkspaceProvider>
