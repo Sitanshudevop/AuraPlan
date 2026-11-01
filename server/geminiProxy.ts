@@ -1,7 +1,10 @@
 import { z } from 'zod';
 
 export const ALLOWED_MODELS = [
+  'gemini-3.5-flash',
+  'gemini-3.6-flash',
   'gemini-flash-latest',
+  'gemini-flash-lite-latest',
   'gemini-1.5-flash',
   'gemini-1.5-pro',
   'gemini-2.0-flash',
@@ -12,7 +15,7 @@ export const ALLOWED_MODELS = [
 export const proxyRequestSchema = z
   .object({
     prompt: z.string().min(1).max(30000),
-    model: z.enum(ALLOWED_MODELS).default('gemini-flash-latest'),
+    model: z.enum(ALLOWED_MODELS).default('gemini-3.5-flash'),
     responseMimeType: z.enum(['application/json', 'text/plain']).default('application/json'),
     systemInstruction: z.string().max(5000).optional(),
   })
@@ -157,7 +160,7 @@ export async function handleGeminiProxyRequest(
     const upstreamResponse = await fetch(upstreamUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-goog-api-key': activeKey },
-      signal: AbortSignal.timeout(9000),
+      signal: AbortSignal.timeout(15000),
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
         generationConfig: { responseMimeType },

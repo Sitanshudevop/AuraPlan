@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export interface GeminiClientOptions {
-  model?: 'gemini-flash-latest' | 'gemini-1.5-flash' | 'gemini-1.5-pro' | 'gemini-2.0-flash' | 'gemini-2.5-flash' | 'gemini-3.8-flash';
+  model?: 'gemini-3.5-flash' | 'gemini-3.6-flash' | 'gemini-flash-latest' | 'gemini-flash-lite-latest' | 'gemini-1.5-flash' | 'gemini-1.5-pro' | 'gemini-2.0-flash' | 'gemini-2.5-flash' | 'gemini-3.8-flash';
   customKey?: string;
   timeoutMs?: number;
 }
@@ -43,7 +43,7 @@ export async function callGeminiProxy<T>(
   schema: z.ZodSchema<T>,
   options: GeminiClientOptions = {}
 ): Promise<T> {
-  const { model = 'gemini-flash-latest', customKey, timeoutMs = 9000 } = options;
+  const { model = 'gemini-3.5-flash', customKey, timeoutMs = 15000 } = options;
   const headers = buildProxyHeaders(customKey);
 
   const res = await fetch('/api/gemini', {
